@@ -19,11 +19,21 @@ namespace Shared {
          */
         protected $_user;
 
+        public function seo($params = array()) {
+            $seo = Registry::get("seo");
+            foreach ($params as $key => $value) {
+                $property = "set" . ucfirst($key);
+                $seo->$property($value);
+            }
+            $params["view"]->set("seo", $seo);
+        }
+
         /**
          * @protected
          */
         public function _admin() {
             if (!$this->user->admin) {
+                $this->setUser(false);
                 throw new Router\Exception\Controller("Not a valid admin user account");
             }
         }
@@ -35,6 +45,17 @@ namespace Shared {
             $user = $this->getUser();
             if (!$user) {
                 header("Location: /login.html");
+                exit();
+            }
+        }
+
+        /**
+         * @protected
+         */
+        public function _session() {
+            $user = $this->getUser();
+            if ($user) {
+                header("Location: /member.html");
                 exit();
             }
         }
