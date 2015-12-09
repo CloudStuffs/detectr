@@ -32,14 +32,13 @@ class Auth extends Controller {
                 if($user) {
                     if ($user->live) {
                         $this->setUser($user);
-                        $this->session();
+                        self::redirect('/member.html');
                     } else {
                         $view->set("message", "User account not verified");
                     }
                 } else{
                     $view->set("message", 'Wrong Password, Try again or <a href="/auth/forgotpassword">Reset Password</a>');
                 }
-                
             } else {
                 $view->set("message", 'User doesnot exist. Please signup <a href="/auth/register">here</a>');
             }
@@ -62,40 +61,19 @@ class Auth extends Controller {
             $exist = User::first(array("email = ?" => RequestMethods::post("email")));
             if (!$exist) {
                 $user = new User(array(
-                    "username" => RequestMethods::post("username"),
                     "name" => RequestMethods::post("name"),
                     "email" => RequestMethods::post("email"),
                     "password" => sha1(RequestMethods::post("password")),
-                    "phone" => RequestMethods::post("phone"),
-                    "admin" => 0,
-                    "currency" => "INR",
-                    "live" => 0
+                    "admin" => false,
+                    "live" => false
                 ));
                 $user->save();
                 
-                $platform = new Platform(array(
-                    "user_id" => $user->id,
-                    "name" => "FACEBOOK_PAGE",
-                    "link" =>  RequestMethods::post("link"),
-                    "image" => $this->_upload("fbadmin", "images")
-                ));
-                $platform->save();
                 $view->set("message", "Your account has been created and will be activate within 3 hours after verification.");
             } else {
-                $view->set("message", 'Username exists, login from <a href="/admin/login">here</a>');
+                $view->set("message", 'Email exists, login from <a href="/auth/login">here</a>');
             }
         }
-    }
-
-    protected function session() {
-        $session = Registry::get("session");
-        $where = array(
-            "property = ?" => "domain",
-            "live = ?" => true
-        );
-        $domains = Meta::all($where);
-        $session->set("domains", $domains);
-        self::redirect("/member");
     }
 
     public function forgotpassword() {

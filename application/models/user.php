@@ -22,10 +22,10 @@ class User extends Shared\Model {
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 255
      * @index
      * 
-     * @validate required, max(100)
+     * @validate required, max(255)
      * @label email address
      */
     protected $_email;

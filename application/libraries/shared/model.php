@@ -46,9 +46,10 @@ namespace Shared {
         public function save() {
             $primary = $this->getPrimaryColumn();
             $raw = $primary["raw"];
-            if (empty($this-> $raw)) {
+            if (empty($this->$raw)) {
                 $this->setCreated(date("Y-m-d H:i:s"));
-                $this->setLive(true);
+                $live = $this->live;
+                $this->live = !isset($live) ? true : $live;
             }
             $this->setModified(date("Y-m-d H:i:s"));
             parent::save();
