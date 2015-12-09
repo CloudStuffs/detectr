@@ -11,23 +11,12 @@ class User extends Shared\Model {
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 255
      * 
      * @validate required, alpha, min(3), max(32)
-     * @label first name
+     * @label name
      */
-    protected $_first;
-
-    /**
-     * @column
-     * @readwrite
-     * @type text
-     * @length 100
-     * 
-     * @validate required, alpha, min(3), max(32)
-     * @label last name
-     */
-    protected $_last;
+    protected $_name;
 
     /**
      * @column
