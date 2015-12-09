@@ -19,12 +19,22 @@ class Detectr extends Admin {
 		
 	}
 
-	public function delete() {
+	public function remove($trigger_id) {
 		$this->noview();
+		// delete the trigger
+		// $this->delete('Trigger', $trigger_id);
+		// @todo
+		// Remove all the actions corresponding to the trigger
 	}
 
+	/**
+	 * @before _secure, changeLayout
+	 */
 	public function manage($website_id) {
-		
+		$view = $this->getActionView();
+
+		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true));
+		$view->set("triggers", $triggers);
 	}
 
 	public function all() {
