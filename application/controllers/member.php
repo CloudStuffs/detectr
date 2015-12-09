@@ -1,6 +1,6 @@
 <?php
 /**
- * Description of auth
+ * Description of Member
  *
  * @author Faizan Ayubi
  */
@@ -10,7 +10,7 @@ use Framework\Registry as Registry;
 class Member extends Admin {
     
     /**
-     * @before _secure, memberLayout
+     * @before _secure, changeLayout, _admin
      */
     public function index() {
         $this->seo(array(
@@ -21,7 +21,7 @@ class Member extends Admin {
     }
     
     /**
-     * @before _secure, memberLayout
+     * @before _secure, changeLayout, _admin
      */
     public function profile() {
         $this->seo(array(
@@ -29,10 +29,6 @@ class Member extends Admin {
             "view" => $this->getLayoutView()
         ));
         $view = $this->getActionView();
-        $account = Account::first(array("user_id = ?" => $this->user->id));
-        if(!$account) {
-            $account = new Account();
-        }
         
         if (RequestMethods::post('action') == 'saveUser') {
             $user = User::first(array("id = ?" => $this->user->id));
@@ -43,23 +39,5 @@ class Member extends Admin {
             $view->set("success", true);
             $view->set("user", $user);
         }
-        
-        if (RequestMethods::get("action") == "saveAccount") {
-            $account->user_id = $this->user->id;
-            $account->name = RequestMethods::post("name");
-            $account->bank = RequestMethods::post("bank");
-            $account->number = RequestMethods::post("number");
-            $account->ifsc = RequestMethods::post("ifsc");
-            
-            $account->save();
-            $view->set("success", true);
-        }
-        
-        $view->set("account", $account);
-    }
-        
-    public function memberLayout() {
-        $this->defaultLayout = "layouts/member";
-        $this->setLayout();
     }
 }
