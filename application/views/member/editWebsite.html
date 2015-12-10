@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Add Your Website</h1>
+                <h1 class="page-header">Edit Your Website</h1>
                 {if isset($message)}
                 <div class="alert alert-info alert-dismissible fade in" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -13,17 +13,17 @@
                     <form class="" action="" method="post">
                         <div class="form-group">
                             <label for="name">Name</label>
-                            <input type="text" name="name" class="form-control" requried="">
+                            <input type="text" name="name" placeholder="Enter your website name" value="{echo $website->title}" class="form-control" requried="">
                         </div>
                         
                         <div class="form-group">
                             <label for="url">URL</label>
-                            <input type="text" name="url" class="form-control" required="">
+                            <input type="text" name="url" value="{echo urldecode($website->url)}" placeholder="Enter domain of your website" class="form-control" required="">
                         </div>
 
-                        <input type="hidden" name="action" value="addWebsite">
-                        <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Submit</button>
-                        <a href="/member" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
+                        <input type="hidden" name="action" value="editWebsite">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
+                        <a href="/member/" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
                     </form>
                 </div>
             </div>

@@ -54,7 +54,8 @@ class Member extends Admin {
 
         if (RequestMethods::post('action') == 'addWebsite') {
             $name = RequestMethods::post('name');
-            $url = urlencode(RequestMethods::post('url'));
+            $url = RequestMethods::post('url');
+            $url = preg_replace('/^http:\/\//', '', $url);
 
             $website = new Website(array(
                 "title" => $name,
@@ -64,5 +65,35 @@ class Member extends Admin {
             $website->save();
             $view->set("message", "Website Added Successfully");
         }
+    }
+
+    /**
+     * @before _secure, changeLayout
+     */
+    public function editWebsite($id) {
+        if (!$id) {
+            self::redirect("/member");
+        }
+        $website = Website::first(array("id = ?" => $id));
+        if (!$website || $website->user_id != $this->user->id) {
+            self::redirect("/member");
+        }
+        $this->seo(array(
+            "title" => "Edit your website",
+            "view" => $this->getLayoutView()
+        ));
+        $view = $this->getActionView();
+
+        if (RequestMethods::post('action') == 'editWebsite') {
+            $title = RequestMethods::post('name');
+            $url = RequestMethods::post('url');
+            $url = preg_replace('/^http:\/\//', '', $url);
+
+            $website->url = $url;
+            $website->title = $title;
+            $website->save();
+            $view->set("message", "Website Changed Successfully");
+        }
+        $view->set('website', $website);
     }
 }
