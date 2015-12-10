@@ -40,4 +40,28 @@ class Member extends Admin {
             $view->set("user", $user);
         }
     }
+
+    /**
+     * @before _secure, changeLayout
+     */
+    public function addWebsite() {
+        $this->seo(array(
+            "title" => "Create a Trigger for your website",
+            "view" => $this->getLayoutView()
+        ));
+        $view = $this->getActionView();
+
+        if (RequestMethods::post('action') == 'addWebsite') {
+            $name = RequestMethods::post('name');
+            $url = urlencode(RequestMethods::post('url'));
+
+            $website = new Website(array(
+                "title" => $name,
+                "url" => $url,
+                "user_id" => $this->user->id
+            ));
+            $website->save();
+            $view->set("message", "Website Added Successfully");
+        }
+    }
 }

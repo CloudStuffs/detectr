@@ -95,6 +95,9 @@ class Detectr extends Admin {
 
 	}
 
+	/**
+	 * @before _secure
+	 */
 	public function remove($trigger_id) {
 		$this->noview();
 		// delete the trigger
@@ -113,32 +116,15 @@ class Detectr extends Admin {
 		$view->set("triggers", $triggers);
 	}
 
-	public function all() {
-		
-	}
-
 	/**
 	 * @before _secure, changeLayout
 	 */
-	public function addWebsite() {
+	public function all() {
 		$this->seo(array(
-            "title" => "Create a Trigger for your website",
+            "title" => "All Trigger for your website",
             "view" => $this->getLayoutView()
         ));
 		$view = $this->getActionView();
-
-		if (RequestMethods::post('action') == 'addWebsite') {
-			$name = RequestMethods::post('name');
-			$url = urlencode(RequestMethods::post('url'));
-
-			$website = new Website(array(
-				"title" => $name,
-				"url" => $url,
-				"user_id" => $this->user->id
-			));
-			$website->save();
-			$view->set("message", "Website Added Successfully");
-		}
 	}
 
 	protected function _save($opts) {
