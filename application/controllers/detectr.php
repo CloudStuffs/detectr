@@ -67,7 +67,7 @@ class Detectr extends Admin {
 		$view = $this->getActionView();
 
 		$website = Website::first(array("id = ?" => $website_id));
-		if (!$website) {
+		if (!$website || $website->user_id != $this->user->id) {
 			self::redirect("/detectr/all");
 		}
 
@@ -90,30 +90,37 @@ class Detectr extends Admin {
 			));
 			$view->set('message', 'Trigger created Successfully');
 		}
-		$view->set('website', $website->title);
-		$view->set('url', $website->url);
+		$view->set('website', $website);
 
 	}
 
 	/**
 	 * @before _secure
 	 */
-	public function remove($trigger_id) {
+	public function remove($trigger_id, $action_id) {
 		$this->noview();
-		// delete the trigger
-		// $this->delete('Trigger', $trigger_id);
-		// @todo
-		// Remove all the actions corresponding to the trigger
+		
+		$this->delete('Trigger', $trigger_id, false);
+		$this->delete('Action', $action_id);
 	}
 
 	/**
 	 * @before _secure, changeLayout
 	 */
 	public function manage($website_id) {
+		$this->seo(array(
+            "title" => "All Triggers for your website",
+            "view" => $this->getLayoutView()
+        ));
 		$view = $this->getActionView();
 
+		$website = Website::first(array("id = ?" => $website_id));
+		if (!$website || $website->user_id != $this->user->id) {
+			self::redirect("/member");
+		}
 		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true));
 		$view->set("triggers", $triggers);
+		$view->set("website", $website);
 	}
 
 	/**

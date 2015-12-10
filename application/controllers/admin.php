@@ -178,7 +178,7 @@ class Admin extends Auth {
      * @param type $model the model object to be deleted
      * @param type $id the id of object to be deleted
      */
-    public function delete($model = NULL, $id = NULL) {
+    public function delete($model = NULL, $id = NULL, $redirect = true) {
         $view = $this->getActionView();
         $this->JSONview();
         
@@ -186,7 +186,9 @@ class Admin extends Auth {
         $object->delete();
         $view->set("deleted", true);
         
-        self::redirect($_SERVER['HTTP_REFERER']);
+        if ($redirect) {
+            self::redirect($_SERVER['HTTP_REFERER']);    
+        }
     }
 
     /**
