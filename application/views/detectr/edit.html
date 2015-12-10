@@ -2,8 +2,8 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="page-header">Create a Trigger for <a href="{echo 'http://'.urldecode($website->url)}" target="_blank">{echo $website->title}</a></h2>
                 <div class="row">
+                    <h2 class="page-header">Editing Trigger for <a href="{echo 'http://'.urldecode($website->url)}" target="_blank">{echo $website->title}</a></h2>
                     {if isset($message)}
                     <div class="alert alert-info alert-dismissible fade in" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
@@ -17,13 +17,13 @@
                                 <option>Choose Trigger</option>
                                 {script $i = 1}
                                 {foreach $t in $triggers}
-                                <option value="{echo $i}">{echo $t}</option>
+                                <option value="{echo $i}" {if $i == $trigger_key}selected=""{/if}>{echo $t}</option>
                                 {script ++$i}
                                 {/foreach}
                             </select>
                         </div>
                         <div class="form-group">
-                            <input type="text" placeholder="Enter Required data.." class="form-control" name="trigger_val" id="trigger_val">
+                            <input type="text" placeholder="Enter Required data.." class="form-control" name="trigger_val" id="trigger_val" value="{$trigger->meta}">
                         </div>
                         <div class="form-group">
                             <label for="action">Action</label>
@@ -31,16 +31,16 @@
                                 <option >Choose Action</option>
                                 {script $i = 1}
                                 {foreach $a in $actions}
-                                <option value="{echo $i}">{echo $a}</option>
+                                <option value="{echo $i}" {if $i == $action_key}selected=""{/if}>{echo $a}</option>
                                 {script ++$i}
                                 {/foreach}
                             </select>
                         </div>
                         <div class="form-group">
-                            <input type="text" placeholder="Enter the required action input.." class="form-control" name="action_val" id="action_val">
+                            <input type="text" placeholder="Enter the required action input.." class="form-control" name="action_val" id="action_val" value="{$action->inputs}">
                         </div>
 
-                        <input type="hidden" name="key" value="createTrigger">
+                        <input type="hidden" name="key" value="editTrigger">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
                         <a href="/detectr/manage/{echo $website->id}" class="btn btn-warning"><i class="fa fa-times"></i> Cancel</a>
                     </form>

@@ -35,21 +35,21 @@ class Detectr extends Admin {
 		"1" => "Everything Else",
 		"2" => "Location",
 		"3" => "Landing Page",
-		"6" => "Time of Visit",
-		"7" => "Bots",
-		"8" => "Whois",
-		"9" => "User-Agent",
-		"10" => "Browser",
-		"11" => "Operating System",
-		"12" => "Device Type",
-		"13" => "Referrer",
-		"14" => "Incoming Search Term",
-		"15" => "IP Range",
-		"16" => "Active Login",
-		"17" => "Javascript Enabled",
-		"18" => "Repeat Visitor",
-		"19" => "Custom Javascript",
-		"20" => "Custom PHP"
+		"4" => "Time of Visit",
+		"5" => "Bots",
+		"6" => "Whois",
+		"7" => "User-Agent",
+		"8" => "Browser",
+		"9" => "Operating System",
+		"10" => "Device Type",
+		"11" => "Referrer",
+		"12" => "Incoming Search Term",
+		"13" => "IP Range",
+		"14" => "Active Login",
+		"15" => "Javascript Enabled",
+		"16" => "Repeat Visitor",
+		"17" => "Custom Javascript",
+		"18" => "Custom PHP"
 	);
 
 	public function index() {
@@ -72,26 +72,63 @@ class Detectr extends Admin {
 		}
 
 		if (RequestMethods::post("key") == 'createTrigger') {
-			$trigger = RequestMethods::post("trigger");
-			$action = RequestMethods::post("action");
-
-			$trigger_val = RequestMethods::post("trigger_val");
-			$action_val = RequestMethods::post("action_val");
-			$this->_save(array(
-				'trigger' => array(
-					'title' => $trigger,
-					'meta' => $trigger_val
-				),
-				'action' => array(
-					'title' => $action,
-					'inputs' => $action_val
-				),
-				'website_id' => $website->id
-			));
+			$this->_process(array('trigger' => false, 'action' => false, 'website_id' => $website->id));
 			$view->set('message', 'Trigger created Successfully');
 		}
+
+		$view->set('triggers', $this->triggers);
+		$view->set('actions', $this->actions);
 		$view->set('website', $website);
 
+	}
+
+	/**
+	 * @before _secure, changeLayout
+	 */
+	public function edit($trigger_id) {
+		if (!$trigger_id) {
+			self::redirect("/member");
+		}
+		$trigger = Trigger::first(array("id = ?" => $trigger_id));
+		if (!$trigger) {
+			self::redirect("/member");
+		}
+		$website = Website::first(array("id = ?" => $trigger->website_id));
+		$action = Action::first(array("trigger_id = ?" => $trigger->id));
+
+		$this->seo(array(
+            "title" => "Edit trigger",
+            "view" => $this->getLayoutView()
+        ));
+		$view = $this->getActionView();
+
+		if (RequestMethods::post('key') == 'editTrigger') {
+			$this->_process(array('trigger' => $trigger, 'action' => $action, 'website_id' => $trigger->website_id));
+			$view->set('message', 'Trigger edited Successfully');
+		}
+
+		$trigger_key = null;
+		foreach ($this->triggers as $key => $value) {
+			if ($value == $trigger->title) {
+				$trigger_key = $key;
+				break;
+			}
+		}
+		$action_key = null;
+		foreach ($this->actions as $key => $value) {
+			if ($value == $action->title) {
+				$action_key = $key;
+				break;
+			}
+		}
+		$view->set('triggers', $this->triggers);
+		$view->set('actions', $this->actions);
+
+		$view->set('trigger_key', $trigger_key);
+		$view->set('action_key', $action_key);
+		$view->set('trigger', $trigger);
+		$view->set('action', $action);
+		$view->set('website', $website);
 	}
 
 	/**
@@ -134,14 +171,38 @@ class Detectr extends Admin {
 		$view = $this->getActionView();
 	}
 
+	protected function _process($opts) {
+		$trigger_title = RequestMethods::post("trigger");
+		$action_title = RequestMethods::post("action");
+
+		$trigger_val = RequestMethods::post("trigger_val");
+		$action_val = RequestMethods::post("action_val");
+		$this->_save(array(
+			'trigger' => array(
+				'title' => $trigger_title,
+				'meta' => $trigger_val,
+				'saved' => $opts['trigger']
+			),
+			'action' => array(
+				'title' => $action_title,
+				'inputs' => $action_val,
+				'saved' => $opts['action']
+			),
+			'website_id' => $opts['website_id']
+		));
+	}
+
 	protected function _save($opts) {
 		$trigger_title = $this->triggers[$opts['trigger']['title']];
-		$trigger = new Trigger(array(
-			"title" => $trigger_title,
-			"meta" => $opts['trigger']['meta'],
-			"website_id" => $opts['website_id'],
-			"user_id" => $this->user->id
-		));
+		if (!$opts['trigger']['saved']) {
+			$trigger = new Trigger();
+		} else {
+			$trigger = $opts['trigger']['saved'];
+		}
+		$trigger->title = $trigger_title;
+		$trigger->meta = $opts['trigger']['meta'];
+		$trigger->website_id = $opts['website_id'];
+		$trigger->user_id = $this->user->id;
 		$trigger->save();
 
 		// what is the action corresponding to the trigger
@@ -152,7 +213,7 @@ class Detectr extends Admin {
 			
 			case '2':
 				if (!preg_match('/[0-9]{1,3}/', $opts['action']['inputs'])) {
-					throw \Exception('Invalid time for wait');
+					throw new \Exception('Invalid time for wait');
 				}
 				$code = 'sleep('.$opts['action']['inputs'].');';
 				break;
@@ -195,13 +256,17 @@ class Detectr extends Admin {
 		}
 		
 		$action_title = $this->actions[$opts['action']['title']];
-		$action = new Action(array(
-			"user_id" => $this->user->id,
-			"trigger_id" => $trigger->id,
-			"title" => $action_title,
-			"inputs" => $opts['action']['inputs'],
-			"code" => $code
-		));
+		if (!$opts['action']['saved']) {
+			$action = new Action();
+		} else {
+			$action = $opts['action']['saved'];
+		}
+		
+		$action->user_id = $this->user->id;
+		$action->trigger_id = $trigger->id;
+		$action->title = $action_title;
+		$action->inputs = $opts['action']['inputs'];
+		$action->code = $code;
 		$action->save();
 	}
 
