@@ -53,7 +53,16 @@ class Detectr extends Admin {
 	);
 
 	public function index() {
-		//echo php code
+		$this->noview();
+		if (RequestMethods::post('q') == 'getTrigger') {
+			// snippet will send curl request to this page
+			$domain = $_SERVER['HTTP_HOST'];
+			// $unique_key = ''; // to identify valid request
+			// query the db to find the required triggers and actions
+			// echo php code
+		} else {
+			self::redirect('/404');
+		}
 	}
 
 	/**
