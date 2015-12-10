@@ -68,7 +68,7 @@ class Detectr extends Admin {
 
 		$website = Website::first(array("id = ?" => $website_id));
 		if (!$website || $website->user_id != $this->user->id) {
-			self::redirect("/detectr/all");
+			self::redirect("/member");
 		}
 
 		if (RequestMethods::post("key") == 'createTrigger') {
@@ -158,17 +158,6 @@ class Detectr extends Admin {
 		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true));
 		$view->set("triggers", $triggers);
 		$view->set("website", $website);
-	}
-
-	/**
-	 * @before _secure, changeLayout
-	 */
-	public function all() {
-		$this->seo(array(
-            "title" => "All Trigger for your website",
-            "view" => $this->getLayoutView()
-        ));
-		$view = $this->getActionView();
 	}
 
 	protected function _process($opts) {
