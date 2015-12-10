@@ -13,11 +13,12 @@ class Member extends Admin {
      * @before _secure, changeLayout, _admin
      */
     public function index() {
-        $this->seo(array(
-            "title" => "Dashboard",
-            "view" => $this->getLayoutView()
-        ));
+        $this->seo(array("title" => "Dashboard","view" => $this->getLayoutView()));
         $view = $this->getActionView();
+
+        $websites = Website::all(array("user_id = ?" => $this->user->id));
+
+        $view->set("websites", $websites);
     }
     
     /**
