@@ -54,12 +54,39 @@ class Detectr extends Admin {
 
 	public function index() {
 		$this->noview();
-		if (RequestMethods::post('q') == 'getTrigger') {
-			// snippet will send curl request to this page
-			$domain = $_SERVER['HTTP_HOST'];
-			// $unique_key = ''; // to identify valid request
-			// query the db to find the required triggers and actions
-			// echo php code
+		if (RequestMethods::post('plugin_detector') == 'getTrigger') {
+			$domain = RequestMethods::post("HTTP_HOST");
+			$ip = RequestMethods::post("REMOTE_ADDR");
+			$ua = RequestMethods::post("HTTP_USER_AGENT");
+			
+			$ip_info = Shared\Detector::IPInfo($ip);
+			// $user_agent = Shared\Detector::UA($ua);
+			$website = Website::first(array("url = ?" => $domain));
+
+			if (!$website) {
+				echo 'return 0;';
+				return;
+			}
+			$triggers = Trigger::all(array("website_id = ?" => $website->id));
+			$code = '';
+			foreach ($triggers as $t) {
+				switch ($t->title) {
+					case 'Location':
+						// check if condition is fullfilling if yes then execute the action
+
+						if ($t->meta == $ip_info->geoplugin_countryCode) {
+							$action = Action::first(array("trigger_id = ?" => $t->id));
+							$code .= $action->code;
+						}
+						break;
+					
+					default:
+						$code .= 'return;';
+						break;
+				}
+			}
+
+			echo $code;
 		} else {
 			self::redirect('/404');
 		}
@@ -167,6 +194,11 @@ class Detectr extends Admin {
 		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true));
 		$view->set("triggers", $triggers);
 		$view->set("website", $website);
+	}
+
+	public function test() {
+		$this->noview();
+		$this->_detector();
 	}
 
 	protected function _process($opts) {
