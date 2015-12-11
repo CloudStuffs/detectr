@@ -10,47 +10,178 @@ use Framework\RequestMethods as RequestMethods;
 use \Curl\Curl;
 
 class Detectr extends Admin {
+	/**
+	 * @readwrite
+	 */
+	protected $_actions;
 
 	/**
 	 * @readwrite
 	 */
-	protected $_actions = array(
-		"1" => "Do Nothing",
-		"2" => "Wait",
-		"3" => "Redirect",
-		"4" => "POST Values",
-		"5" => "Overlay Iframe",
-		"6" => "Popup",
-		"7" => "Hide Content",
-		"8" => "Replace Content",
-		"9" => "Send Email",
-		"10" => "Run Javascript",
-		"11" => "Run PHP"
-	);
+	protected $_triggers;
 
-	/**
-	 * @readwrite
-	 */
-	protected $_triggers = array(
-		"1" => "Everything Else",
-		"2" => "Location",
-		"3" => "Landing Page",
-		"4" => "Time of Visit",
-		"5" => "Bots",
-		"6" => "Whois",
-		"7" => "User-Agent",
-		"8" => "Browser",
-		"9" => "Operating System",
-		"10" => "Device Type",
-		"11" => "Referrer",
-		"12" => "Incoming Search Term",
-		"13" => "IP Range",
-		"14" => "Active Login",
-		"15" => "Javascript Enabled",
-		"16" => "Repeat Visitor",
-		"17" => "Custom Javascript",
-		"18" => "Custom PHP"
-	);
+	public function __construct($options = array()) {
+		parent::__construct($options);
+
+		$this->_actions = array(
+			"1" => array(
+				"title" => "Do Nothing",
+				"func" => function ($inputs) {
+
+				}
+			),
+			"2" => array(
+				"title" => "Wait",
+				"func" => function ($inputs) {
+					return 'sleep('. $inputs . ');';
+				}
+			),
+			"3" => array(
+				"title" => "Redirect",
+				"func" => function ($inputs) {
+					return 'header("Location: '.$inputs.'");exit;';
+				}
+			),
+			"4" => array(
+				"title" => "POST Values",
+				"func" => function ($inputs) {
+					
+				}
+			),
+			"5" => array(
+				"title" => "Overlay Iframe",
+				"func" => function ($inputs) {
+					
+				}
+			),
+			"6" => array(
+				"title" => "Popup",
+				"func" => function ($inputs) {
+					
+				}
+			),
+			"7" => array(
+				"title" => "Hide Content",
+				"func" => function ($inputs) {
+					
+				}
+			),
+			"8" => array(
+				"title" => "Replace Content",
+				"func" => function ($inputs) {
+					
+				}
+			),
+			"9" => array(
+				"title" => "Send Email",
+				"func" => function ($inputs) {
+					
+				}
+			),
+			"10" => array(
+				"title" => "Run Javascript",
+				"func" => function ($inputs) {
+					
+				}
+			),
+			"11" => array(
+				"title" => "Run PHP",
+				"func" => function ($inputs) {
+					
+				}
+			)
+		);
+
+		$this->_triggers = array(
+			"1" => array(
+				"title" => "Everything Else"
+			),
+			"2" => array(
+				"title" => "Location",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"3" => array(
+				"title" => "Landing Page",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"4" => array(
+				"title" => "Time of Visit",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"5" => array(
+				"title" => "Bots"
+			),
+			"6" => array(
+				"title" => "Whois"
+			),
+			"7" => array(
+				"title" => "User-Agent",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"8" => array(
+				"title" => "Browser",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"9" => array(
+				"title" => "Operating System",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"10" => array(
+				"title" => "Device Type",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"11" => array(
+				"title" => "Referrer",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"12" => array(
+				"title" => "Incoming Search Term",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"13" => array(
+				"title" => "IP Range",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"14" => array(
+				"title" => "Active Login",
+				"verify" => function ($inputs) {
+					
+				}
+			),
+			"15" => array(
+				"title" => "Javascript Enabled"
+			),
+			"16" => array(
+				"title" => "Repeat Visitor"
+			),
+			"17" => array(
+				"title" => "Custom Javascript"
+			),
+			"18" => array(
+				"title" => "Custom PHP"
+			)
+		);
+	}
 
 	public function index() {
 		$this->noview();
@@ -143,25 +274,9 @@ class Detectr extends Admin {
 			$view->set('message', 'Trigger edited Successfully');
 		}
 
-		$trigger_key = null;
-		foreach ($this->triggers as $key => $value) {
-			if ($value == $trigger->title) {
-				$trigger_key = $key;
-				break;
-			}
-		}
-		$action_key = null;
-		foreach ($this->actions as $key => $value) {
-			if ($value == $action->title) {
-				$action_key = $key;
-				break;
-			}
-		}
 		$view->set('triggers', $this->triggers);
 		$view->set('actions', $this->actions);
 
-		$view->set('trigger_key', $trigger_key);
-		$view->set('action_key', $action_key);
 		$view->set('trigger', $trigger);
 		$view->set('action', $action);
 		$view->set('website', $website);
@@ -192,6 +307,9 @@ class Detectr extends Admin {
 			self::redirect("/member");
 		}
 		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true));
+
+		$view->set('actions', $this->actions);
+		$view->set('trigs', $this->triggers);
 		$view->set("triggers", $triggers);
 		$view->set("website", $website);
 	}
@@ -223,69 +341,20 @@ class Detectr extends Admin {
 	}
 
 	protected function _save($opts) {
-		$trigger_title = $this->triggers[$opts['trigger']['title']];
 		if (!$opts['trigger']['saved']) {
 			$trigger = new Trigger();
 		} else {
 			$trigger = $opts['trigger']['saved'];
 		}
-		$trigger->title = $trigger_title;
+		$trigger->title = $opts['trigger']['title'];
 		$trigger->meta = $opts['trigger']['meta'];
 		$trigger->website_id = $opts['website_id'];
 		$trigger->user_id = $this->user->id;
 		$trigger->save();
 
 		// what is the action corresponding to the trigger
-		switch ($opts['action']['title']) {
-			case '1':
-				$code = 'return 0;';
-				break;
-			
-			case '2':
-				if (!preg_match('/[0-9]{1,3}/', $opts['action']['inputs'])) {
-					throw new \Exception('Invalid time for wait');
-				}
-				$code = 'sleep('.$opts['action']['inputs'].');';
-				break;
-			
-			case '3':
-				$code = $this->_buildRedirect($opts['action']['inputs']);
-				break;
-			
-			case '4':
-				// post values
-				break;
-			
-			case '5':
-				// overlay iframes
-				break;
-			
-			case '6':
-				// popups
-				break;
-			
-			case '7':
-				// hide content
-				break;
-			
-			case '8':
-				// replace content
-				break;
-			
-			case '9':
-				// send email
-				break;
-			
-			case '10':
-				// run JS
-				break;
-			
-			case '11':
-				// run PHP
-				break;
-		}
+		call_user_func_array($this->actions[$opts['action']['title']['func']], $opts['action']['inputs']);
 		
-		$action_title = $this->actions[$opts['action']['title']];
 		if (!$opts['action']['saved']) {
 			$action = new Action();
 		} else {
@@ -294,13 +363,9 @@ class Detectr extends Admin {
 		
 		$action->user_id = $this->user->id;
 		$action->trigger_id = $trigger->id;
-		$action->title = $action_title;
+		$action->title = $opts['action']['title'];
 		$action->inputs = $opts['action']['inputs'];
 		$action->code = $code;
 		$action->save();
 	}
-
-    protected function _buildRedirect($url='') {
-        return 'header("Location: '.$url.'");exit;';
-    }
 }

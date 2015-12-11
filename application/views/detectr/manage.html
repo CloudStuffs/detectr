@@ -31,10 +31,10 @@
                                 {foreach $trigger in $triggers}
                                 <tr>
                                 	<td>{$i}</td>
-                                    <td>{$trigger->title}</td>
+                                    <td>{echo $trigs["$trigger->title"]["title"]}</td>
                                     <td>{$trigger->meta}</td>
                                     {script $action = Action::first(array("trigger_id = ?" => $trigger->id))}
-                                    <td>{$action->title}</td>
+                                    <td>{echo $actions["$action->title"]["title"]}</td>
                                     <td>{$action->inputs}</td>
                                     <td>
                                         <a href="/detectr/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit Trigger</a>

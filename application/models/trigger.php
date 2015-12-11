@@ -27,9 +27,9 @@ class Trigger extends Shared\Model {
      * @column
      * @readwrite
      * @type text
-     * @length 255
+     * @length 2
      * 
-     * @validate required, min(3), max(32)
+     * @validate required, min(1), max(2)
      * @label title
      */
     protected $_title;

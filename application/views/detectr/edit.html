@@ -17,7 +17,7 @@
                                 <option>Choose Trigger</option>
                                 {script $i = 1}
                                 {foreach $t in $triggers}
-                                <option value="{echo $i}" {if $i == $trigger_key}selected=""{/if}>{echo $t}</option>
+                                <option value="{echo $i}" {if $i == $trigger->title}selected=""{/if}>{echo $t['title']}</option>
                                 {script ++$i}
                                 {/foreach}
                             </select>
@@ -31,7 +31,7 @@
                                 <option >Choose Action</option>
                                 {script $i = 1}
                                 {foreach $a in $actions}
-                                <option value="{echo $i}" {if $i == $action_key}selected=""{/if}>{echo $a}</option>
+                                <option value="{echo $i}" {if $i == $action->title}selected=""{/if}>{echo $a['title']}</option>
                                 {script ++$i}
                                 {/foreach}
                             </select>
