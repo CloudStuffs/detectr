@@ -26,8 +26,8 @@ class Detectr extends Admin {
 		$this->_actions = array(
 			"1" => array(
 				"title" => "Do Nothing",
-				"func" => function ($inputs) {
-
+				"func" => function ($inputs = '') {
+					return 'return 0;';
 				}
 			),
 			"2" => array(
@@ -353,7 +353,7 @@ class Detectr extends Admin {
 		$trigger->save();
 
 		// what is the action corresponding to the trigger
-		call_user_func_array($this->actions[$opts['action']['title']['func']], $opts['action']['inputs']);
+		$code = call_user_func_array($this->actions[$opts['action']['title']]['func'], array($opts['action']['inputs']));
 		
 		if (!$opts['action']['saved']) {
 			$action = new Action();
