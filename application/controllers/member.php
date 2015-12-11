@@ -56,14 +56,20 @@ class Member extends Admin {
             $name = RequestMethods::post('name');
             $url = RequestMethods::post('url');
             $url = preg_replace('/^http:\/\//', '', $url);
-
-            $website = new Website(array(
-                "title" => $name,
-                "url" => $url,
-                "user_id" => $this->user->id
-            ));
-            $website->save();
-            $view->set("message", "Website Added Successfully");
+            
+            // Check if the domain already exists
+            $website = Website::first(array("url = ?" => $url));
+            if ($website) {
+                $view->set("message", "Website Already exists");
+            } else {
+                $website = new Website(array(
+                    "title" => $name,
+                    "url" => $url,
+                    "user_id" => $this->user->id
+                ));
+                $website->save();
+                $view->set("message", "Website Added Successfully");    
+            }
         }
     }
 
