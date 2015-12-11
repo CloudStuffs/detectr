@@ -24,6 +24,7 @@
                         </div>
                         <div class="form-group">
                             <input type="text" placeholder="Enter Required data.." class="form-control" name="trigger_val" id="trigger_val">
+                            <span class="help-text" id="helpTrigger"></span>
                         </div>
                         <div class="form-group">
                             <label for="action">Action</label>
@@ -37,7 +38,8 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <input type="text" placeholder="Enter the required action input.." class="form-control" name="action_val" id="action_val">
+                            <textarea placeholder="Enter the required action input.." class="form-control" name="action_val" id="action_val" rows="5"></textarea>
+                            <span class="help-text" id="helpAction"></span>
                         </div>
 
                         <input type="hidden" name="key" value="createTrigger">

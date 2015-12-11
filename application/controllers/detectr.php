@@ -28,157 +28,159 @@ class Detectr extends Admin {
 				"title" => "Do Nothing",
 				"func" => function ($inputs = '') {
 					return 'return 0;';
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"2" => array(
 				"title" => "Wait",
 				"func" => function ($inputs) {
 					return 'sleep('. $inputs . ');';
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"3" => array(
 				"title" => "Redirect",
 				"func" => function ($inputs) {
 					return 'header("Location: '.$inputs.'");exit;';
-				}
+				},
+				"help" => "Enter the location where to redirect"
 			),
 			"4" => array(
 				"title" => "POST Values",
 				"func" => function ($inputs) {
 					
-				}
+				},
+				"help" => ""
 			),
 			"5" => array(
 				"title" => "Overlay Iframe",
 				"func" => function ($inputs) {
 					
-				}
+				},
+				"help" => ""
 			),
 			"6" => array(
 				"title" => "Popup",
 				"func" => function ($inputs) {
 					
-				}
+				},
+				"help" => ""
 			),
 			"7" => array(
 				"title" => "Hide Content",
 				"func" => function ($inputs) {
 					
-				}
+				},
+				"help" => ""
 			),
 			"8" => array(
 				"title" => "Replace Content",
 				"func" => function ($inputs) {
 					
-				}
+				},
+				"help" => ""
 			),
 			"9" => array(
 				"title" => "Send Email",
 				"func" => function ($inputs) {
 					
-				}
+				},
+				"help" => ""
 			),
 			"10" => array(
 				"title" => "Run Javascript",
 				"func" => function ($inputs) {
 					
-				}
+				},
+				"help" => ""
 			),
 			"11" => array(
 				"title" => "Run PHP",
 				"func" => function ($inputs) {
 					
-				}
+				},
+				"help" => ""
 			)
 		);
 
 		$this->_triggers = array(
 			"1" => array(
-				"title" => "Everything Else"
+				"title" => "PageView",
+				"help" => "Just used for tracking website, leave the field empty"
 			),
 			"2" => array(
 				"title" => "Location",
 				"verify" => function ($inputs) {
 					
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"3" => array(
 				"title" => "Landing Page",
 				"verify" => function ($inputs) {
 					
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"4" => array(
 				"title" => "Time of Visit",
 				"verify" => function ($inputs) {
 					
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"5" => array(
-				"title" => "Bots"
+				"title" => "Bots",
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"6" => array(
-				"title" => "Whois"
+				"title" => "IP Range",
+				"verify" => function ($inputs) {
+					
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"7" => array(
 				"title" => "User-Agent",
 				"verify" => function ($inputs) {
 					
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"8" => array(
 				"title" => "Browser",
 				"verify" => function ($inputs) {
 					
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"9" => array(
 				"title" => "Operating System",
 				"verify" => function ($inputs) {
 					
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"10" => array(
 				"title" => "Device Type",
 				"verify" => function ($inputs) {
 					
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"11" => array(
 				"title" => "Referrer",
 				"verify" => function ($inputs) {
 					
-				}
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			),
 			"12" => array(
-				"title" => "Incoming Search Term",
-				"verify" => function ($inputs) {
-					
-				}
-			),
-			"13" => array(
-				"title" => "IP Range",
-				"verify" => function ($inputs) {
-					
-				}
-			),
-			"14" => array(
 				"title" => "Active Login",
 				"verify" => function ($inputs) {
 					
-				}
-			),
-			"15" => array(
-				"title" => "Javascript Enabled"
-			),
-			"16" => array(
-				"title" => "Repeat Visitor"
-			),
-			"17" => array(
-				"title" => "Custom Javascript"
-			),
-			"18" => array(
-				"title" => "Custom PHP"
+				},
+				"help" => "Edit the Code Replace the text with the data"
 			)
 		);
 	}
@@ -367,5 +369,23 @@ class Detectr extends Admin {
 		$action->inputs = $opts['action']['inputs'];
 		$action->code = $code;
 		$action->save();
+	}
+
+	public function read($type, $id) {
+		$this->noview();
+		$arr = array();
+		switch ($type) {
+			case 'trigger':
+				$triggers = $this->_triggers;
+				$arr = $triggers[$id];
+				break;
+			
+			case 'action':
+				$actions = $this->_actions;
+				$arr = $actions[$id];
+				break;
+		}
+
+		echo json_encode($arr);
 	}
 }

@@ -97,26 +97,6 @@ $(document).ready(function () {
         });
     });
 
-    $('button[name=message]').click(function (e) {
-        var self = this;
-        window.opts.subject = $(this).data("subject");
-        window.opts.email = $(this).data("from");
-        $('#message_modal').modal('show');
-    });
-
-    $('#messageform').submit(function (e) {
-        e.preventDefault();
-        var body = $('#body').val();
-        request.create({
-            action: "employer/messages",
-            data: {action: 'support', subject: window.opts.subject, email: window.opts.email, body: body},
-            callback: function (data) {
-                $('#status').html('Message Sent Successfully!!!');
-                $('#message_modal').modal('hide');
-            }
-        });
-    });
-
     // find all the selectors 
     var types = $('#addOptions select');
     types.on("change", function () { // bind the change function
@@ -159,6 +139,19 @@ $(document).ready(function () {
             $("input[name=value]").datepicker();
             $("input[name=value]").datepicker("option", "dateFormat", "yy-mm-dd");
         };
+    });
+
+
+    $("#trigger").change(function() {
+        var self = $(this);
+        $('#helpTrigger').html('');
+        request.read({
+            action: "detectr/read/trigger/" + this.value,
+            callback: function(data) {
+                var d = $.parseJSON(data);
+                $('#helpTrigger').html(d.help);
+            }
+        });
     });
 
 });
