@@ -102,4 +102,23 @@ class Member extends Admin {
         }
         $view->set('website', $website);
     }
+
+    /**
+     * @before _secure, changeLayout
+     */
+    public function removeWebsite($id) {
+        $this->noview();
+
+        $website = Website::first(array("id = ?" => $id));
+        if (!$website) {
+            self::redirect("/member");
+        }
+        $trigger = Trigger::all(array("website_id = ?" => $website->id));
+        foreach ($trigger as $t) {
+            $action = Action::first(array("trigger_id = ?" => $t->id));
+            $this->delete('Action', $action->id, false);
+            $this->delete('Trigger', $t->id, false);
+        }
+        $this->delete('Website', $website->id);
+    }
 }
