@@ -154,6 +154,18 @@ $(document).ready(function () {
         });
     });
 
+    $("#action").change(function() {
+        var self = $(this);
+        $('#helpAction').html('');
+        request.read({
+            action: "detectr/read/action/" + this.value,
+            callback: function(data) {
+                var d = $.parseJSON(data);
+                $('#helpAction').html(d.help);
+            }
+        });
+    });
+
 });
 
 function toArray(object) {

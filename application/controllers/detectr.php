@@ -29,14 +29,14 @@ class Detectr extends Admin {
 				"func" => function ($inputs = '') {
 					return 'return 0;';
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "This will do Nothing.."
 			),
 			"2" => array(
 				"title" => "Wait",
 				"func" => function ($inputs) {
 					return 'sleep('. $inputs . ');';
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "For how many seconds user-agent should wait when trigger is detected"
 			),
 			"3" => array(
 				"title" => "Redirect",
@@ -50,56 +50,76 @@ class Detectr extends Admin {
 				"func" => function ($inputs) {
 					
 				},
-				"help" => ""
+				"help" => "Enter {key} => {value} pairs separated with semicolon"
 			),
 			"5" => array(
 				"title" => "Overlay Iframe",
 				"func" => function ($inputs) {
-					
+					return 'echo "'. $inputs .'"';
 				},
-				"help" => ""
+				"help" => "Enter the code for iframe"
 			),
 			"6" => array(
 				"title" => "Popup",
 				"func" => function ($inputs) {
-					
+					return 'echo "<script>alert(\''.$inputs.'\')</script>"';
 				},
-				"help" => ""
+				"help" => "enter the message for popup"
 			),
 			"7" => array(
 				"title" => "Hide Content",
 				"func" => function ($inputs) {
-					
+					return 'echo "
+						<script>
+						document.getElementById('.$inputs.').style.display = "none";
+						</script>
+					";';
 				},
-				"help" => ""
+				"help" => "Enter id of the element which is to be hidden"
 			),
 			"8" => array(
 				"title" => "Replace Content",
 				"func" => function ($inputs) {
-					
+					$data = split(";", $inputs);
+					$id = preg_replace("id=", '', $data[0]);
+					$content = preg_replace("subject=", '', $data[1]);
+					return 'echo "
+						<script>
+						document.getElementById('.$id.').innerHTML = "'.$content.'";
+						</script>
+					";';
 				},
-				"help" => ""
+				"help" => "Enter id of the element which is to be replaced"
 			),
 			"9" => array(
 				"title" => "Send Email",
 				"func" => function ($inputs) {
+					$header = "From: ".$this->user->email."\r\n";
+					$header.= "MIME-Version: 1.0\r\n";
+					$header.= "Content-Type: text/html; charset=utf-8\r\n";
+					$header.= "X-Priority: 1\r\n";
 					
+					$data = split(";", $inputs);
+					$to = preg_replace("/[a-z]=/", '', $data[0]);
+					$subject = preg_replace("/[a-z]=/", '', $data[1]);
+					$body = preg_replace("/[a-z]=/", '', $data[2]);
+					mail($to, $subject, $body, $header);
 				},
-				"help" => ""
+				"help" => 'to="Enter the email id of recipient";subject="Add the subject of email";body="Enter the text of email"; Only change the content within the quotes'
 			),
 			"10" => array(
 				"title" => "Run Javascript",
 				"func" => function ($inputs) {
-					
+					return 'echo "<script>'.$inputs.'</script>"';
 				},
-				"help" => ""
+				"help" => "Copy and paste the javascript code in the text box"
 			),
 			"11" => array(
 				"title" => "Run PHP",
 				"func" => function ($inputs) {
-					
+					return $inputs;
 				},
-				"help" => ""
+				"help" => "Copy and paste the php code in the text box. Exclude <?php ?> tags"
 			)
 		);
 
@@ -113,74 +133,74 @@ class Detectr extends Admin {
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => 'Enter the 2-digit country code.. Refer: <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements">Country Codes</a>'
 			),
 			"3" => array(
 				"title" => "Landing Page",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "Enter full url of the page on which trigger is to be executed"
 			),
 			"4" => array(
 				"title" => "Time of Visit",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "Enter the range of time. For eg. 10.30-14.50 (Time in 24 hours)"
 			),
 			"5" => array(
 				"title" => "Bots",
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => 'This trigger will be executed for the all the Bots- User Agent. Eg: Google Bot, Baidu Spider etc. Refer: <a href="http://www.useragentstring.com/pages/Crawlerlist/">Crawlers List</a>'
 			),
 			"6" => array(
 				"title" => "IP Range",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "Range of IP eg: 168.240.10.10-168.241.10.10"
 			),
 			"7" => array(
 				"title" => "User-Agent",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => 'Enter the user agent on which trigger is to be executed. Refer: <a href="http://www.useragentstring.com/pages/useragentstring.php">Differnent User Agents</a>'
 			),
 			"8" => array(
 				"title" => "Browser",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "Enter the name of browser on which trigger is to be executed. Eg: Chrome, Firefox, Opera etc"
 			),
 			"9" => array(
 				"title" => "Operating System",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "Enter the name of Operating System on which trigger is to be executed. Eg: Linux, Windows etc"
 			),
 			"10" => array(
 				"title" => "Device Type",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "Device Type: mobile, desktop"
 			),
 			"11" => array(
 				"title" => "Referrer",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "URL from which the visit was done"
 			),
 			"12" => array(
 				"title" => "Active Login",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Edit the Code Replace the text with the data"
+				"help" => "Enter the session key in which uniquely identifies the user"
 			)
 		);
 	}
