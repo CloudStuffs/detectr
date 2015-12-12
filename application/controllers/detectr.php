@@ -316,23 +316,27 @@ class Detectr extends Admin {
 				return;
 			}
 			$triggers = Trigger::all(array("website_id = ?" => $website->id));
-			$code = '';
+			$code = ''; $last = '';
 			foreach ($triggers as $t) {
 				$key = $t->title;
 				$title = $this->triggers["$key"]['title'];
-				if ($title == 'Location') {
-					$action = Action::first(array("trigger_id = ?" => $t->id), array("code"));
-					$last = $action->code;
-				}
 
 				if ($t->meta && isset($this->triggers["$key"]["detect"])) {
 					$data['saved'] = $t->meta;
-					if (call_user_func_array($this->triggers["$key"]["detect"], array($data))) {
-						$action = Action::first(array("trigger_id = ?" => $t->id), array("code"));
+					if (!call_user_func_array($this->triggers["$key"]["detect"], array($data))) {
+						continue;
+					}
+					$action = Action::first(array("trigger_id = ?" => $t->id), array("code", "title"));
+					if ($this->actions[$action->title]["title"] == "Redirect") {
+						if (!empty($last)) {
+							$last = $action->code;
+						}
+					} else {
 						$code .= $action->code;
 					}
 				}
 			}
+			$code .= $last;
 
 			echo $code;
 		} else {
