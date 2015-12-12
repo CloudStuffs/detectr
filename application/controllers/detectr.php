@@ -84,7 +84,7 @@ class Detectr extends Admin {
 			"6" => array(
 				"title" => "Popup",
 				"func" => function ($inputs) {
-					return "echo '<script>alert($inputs)</script>'";
+					return "echo '<script>alert($inputs)</script>';";
 				},
 				"help" => 'enter the message for popup in "double quotes"'
 			),
@@ -308,7 +308,7 @@ class Detectr extends Admin {
 			$data['server']['name'] = RequestMethods::post("HTTP_HOST");
 			$data['server']['landingPage'] = 'http://'. $data['server']['name']. RequestMethods::post("REQUEST_URI");
 			$data['server']['referer'] = RequestMethods::post("HTTP_REFERER");
-			
+			$this->log('<pre>'. print_r($data, true) . '</pre>');
 			$website = Website::first(array("url = ?" => $data['server']['name']));
 
 			if (!$website) {
@@ -326,17 +326,18 @@ class Detectr extends Admin {
 					if (!call_user_func_array($this->triggers["$key"]["detect"], array($data))) {
 						continue;
 					}
+
 					$action = Action::first(array("trigger_id = ?" => $t->id), array("code", "title"));
-					if ($this->actions[$action->title]["title"] == "Redirect") {
-						if (!empty($last)) {
-							$last = $action->code;
-						}
+					$key = $action->title;
+					if ($this->actions["$key"]["title"] == "Redirect") {
+						$last .= $action->code;
 					} else {
 						$code .= $action->code;
 					}
 				}
 			}
 			$code .= $last;
+			$this->log($code);
 
 			echo $code;
 		} else {
