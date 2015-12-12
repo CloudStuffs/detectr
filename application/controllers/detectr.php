@@ -63,7 +63,7 @@ class Detectr extends Admin {
 					$ch = curl_init();
 					curl_setopt($ch, CURLOPT_URL, "'.$url.'");
 					curl_setopt($ch, CURLOPT_POST, ' .count($postfields).');
-					curl_setopt($ch, CURLOPT_POSTFIELDS, '.http_build_query($postfields).');
+					curl_setopt($ch, CURLOPT_POSTFIELDS, "'.http_build_query($postfields).'");
 					curl_setopt($ch, CURLOPT_HEADER, TRUE);
 					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -153,6 +153,9 @@ class Detectr extends Admin {
 				"verify" => function ($inputs) {
 					
 				},
+				"detect" => function ($opts) {
+					return $opts['user']['location'] == $opts['stored'];
+				},
 				"help" => 'Enter the 2-digit country code.. Refer: <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements">Country Codes</a>'
 			),
 			"3" => array(
@@ -160,30 +163,78 @@ class Detectr extends Admin {
 				"verify" => function ($inputs) {
 					// see if the $inputs is correct
 				},
-				"help" => "Enter full url of the page on which trigger is to be executed"
+				"detect" => function ($opts) {
+					$stored = strtolower($opts['saved']);
+					$current = strtolower($opts['server']['landingPage']);
+					return $current == $stored;
+				},
+				"help" => "Enter full url of the page on which trigger is to be executed<br> The page should be on your domain"
 			),
 			"4" => array(
 				"title" => "Time of Visit",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Enter the range of time. For eg. 10.30-14.50 (Time in 24 hours)"
+				"detect" => function ($opts) {
+					$range = split("-", $opts['saved']);
+					
+					$start = $range[0];
+					$current = date('G:i');
+					$end = $range[1];
+
+					$start_time = strtotime($start);
+					$current_time = strtotime($current);
+					$end_time = strtotime($end);
+
+					return ($current_time > $start_time && $current_time < $end_time);
+				},
+				"help" => "Enter the range of time. For eg. 10:30-14:50 (Time in 24 hours)"
 			),
 			"5" => array(
 				"title" => "Bots",
-				"help" => 'This trigger will be executed for the all the Bots- User Agent. Eg: Google Bot, Baidu Spider etc. Refer: <a href="http://www.useragentstring.com/pages/Crawlerlist/">Crawlers List</a>'
+				"detect" => function ($opts) {
+					$bots = split(",", $opts['saved']);
+					$response = false;
+					foreach ($bots as $b) {
+						if ($opts['user']['ua'] == $b) {
+							$response = true;
+							break;
+						}
+					}
+
+					if ($opts['saved'] == 'Crawler') {
+						$response = true;
+					}
+					return $response;
+				},
+				"help" => 'This trigger will be executed for the all the Bots- User Agent. Eg: Google Bot, Baidu Spider etc. <br>Refer: <a href="http://www.useragentstring.com/pages/Crawlerlist/">Crawlers List</a><br>Enter Crawler-User agent string "," separated. Or for all bots just enter "Crawler"'
 			),
 			"6" => array(
 				"title" => "IP Range",
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Range of IP eg: 168.240.10.10-168.241.10.10"
+				"detect" => function ($opts) {
+					if (strpos($opts['saved'], '/') == false) {
+					    $range.= '/32';
+					}
+					// $range is in IP/CIDR format eg 127.0.0.1/24
+					list($opts['saved'], $netmask) = explode('/', $opts['saved'], 2);
+					$range_decimal = ip2long($opts['saved']);
+					$ip_decimal = ip2long($opts['user']['ip']);
+					$wildcard_decimal = pow(2, (32 - $netmask)) - 1;
+					$netmask_decimal = ~ $wildcard_decimal;
+					return (($ip_decimal & $netmask_decimal) == ($range_decimal & $netmask_decimal));
+				},
+				"help" => "Range of IP eg: 168.240.10.10/168.241.10.10"
 			),
 			"7" => array(
 				"title" => "User-Agent",
 				"verify" => function ($inputs) {
 					
+				},
+				"detect" => function ($opts) {
+					return ($opts['user']['ua'] == $opts['saved']);
 				},
 				"help" => 'Enter the user agent on which trigger is to be executed. Refer: <a href="http://www.useragentstring.com/pages/useragentstring.php">Differnent User Agents</a>'
 			),
@@ -192,12 +243,18 @@ class Detectr extends Admin {
 				"verify" => function ($inputs) {
 					
 				},
-				"help" => "Enter the name of browser on which trigger is to be executed. Eg: Chrome, Firefox, Opera etc"
+				"detect" => function ($opts) {
+					return ($opts['user']['ua_info']->agent_name == $opts['saved']);
+				},
+				"help" => "Enter the name of browser on which trigger is to be executed. Eg: Chrome, Firefox, Opera etc."
 			),
 			"9" => array(
 				"title" => "Operating System",
 				"verify" => function ($inputs) {
 					
+				},
+				"detect" => function ($opts) {
+					return ($opts['user']['ua_info']->agent_name == $opts['saved']);
 				},
 				"help" => "Enter the name of Operating System on which trigger is to be executed. Eg: Linux, Windows etc"
 			),
@@ -206,6 +263,9 @@ class Detectr extends Admin {
 				"verify" => function ($inputs) {
 					
 				},
+				"detect" => function ($opts) {
+					return true;
+				},
 				"help" => "Device Type: mobile, desktop"
 			),
 			"11" => array(
@@ -213,12 +273,19 @@ class Detectr extends Admin {
 				"verify" => function ($inputs) {
 					
 				},
+				"detect" => function ($opts) {
+					$response = stristr($opts['server']['referer'], $opts['saved']);
+					return ($response !== FALSE) ? true : false;
+				},
 				"help" => "URL from which the visit was done"
 			),
 			"12" => array(
 				"title" => "Active Login",
 				"verify" => function ($inputs) {
 					
+				},
+				"detect" => function ($opts) {
+					return false;
 				},
 				"help" => "Enter the session key in which uniquely identifies the user"
 			)
@@ -228,13 +295,21 @@ class Detectr extends Admin {
 	public function index() {
 		$this->noview();
 		if (RequestMethods::post('plugin_detector') == 'getTrigger') {
-			$domain = RequestMethods::post("HTTP_HOST");
-			$ip = RequestMethods::post("REMOTE_ADDR");
-			$ua = RequestMethods::post("HTTP_USER_AGENT");
-			
 			$ip_info = Shared\Detector::IPInfo($ip);
-			// $user_agent = Shared\Detector::UA($ua);
-			$website = Website::first(array("url = ?" => $domain));
+			$user_agent = Shared\Detector::UA($ua);
+			
+			$data = array();
+			$data['user']['ip'] = RequestMethods::post("REMOTE_ADDR");
+			$data['user']['location'] = $ip_info->geoplugin_countryCode;
+			$data['user']['ua'] = RequestMethods::post("HTTP_USER_AGENT");
+			$data['user']['ua_info'] = $user_agent;
+			//$data['user']['time'] = 
+			
+			$data['server']['name'] = RequestMethods::post("HTTP_HOST");
+			$data['server']['landingPage'] = 'http://'. $data['server']['name']. RequestMethods::post("REQUEST_URI");
+			$data['server']['referer'] = RequestMethods::post("HTTP_REFERER");
+			
+			$website = Website::first(array("url = ?" => $data['server']['name']));
 
 			if (!$website) {
 				echo 'return 0;';
@@ -243,19 +318,19 @@ class Detectr extends Admin {
 			$triggers = Trigger::all(array("website_id = ?" => $website->id));
 			$code = '';
 			foreach ($triggers as $t) {
-				switch ($t->title) {
-					case 'Location':
-						// check if condition is fullfilling if yes then execute the action
+				$key = $t->title;
+				$title = $this->triggers["$key"]['title'];
+				if ($title == 'Location') {
+					$action = Action::first(array("trigger_id = ?" => $t->id), array("code"));
+					$last = $action->code;
+				}
 
-						if ($t->meta == $ip_info->geoplugin_countryCode) {
-							$action = Action::first(array("trigger_id = ?" => $t->id));
-							$code .= $action->code;
-						}
-						break;
-					
-					default:
-						$code .= 'return;';
-						break;
+				if ($t->meta && isset($this->triggers["$key"]["detect"])) {
+					$data['saved'] = $t->meta;
+					if (call_user_func_array($this->triggers["$key"]["detect"], array($data))) {
+						$action = Action::first(array("trigger_id = ?" => $t->id), array("code"));
+						$code .= $action->code;
+					}
 				}
 			}
 
