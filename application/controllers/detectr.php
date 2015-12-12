@@ -48,12 +48,16 @@ class Detectr extends Admin {
 			"4" => array(
 				"title" => "POST Values",
 				"func" => function ($inputs) {
-					$postfields = split(";", $inputs);
+					$data = split(";", $inputs);
 					
-					// url='somepage.com/something'
 					$url = array_shift($data);
-					$url = split("=", $url);
-					$url = $url[1];
+					$url = preg_replace('/url=/', '', $url);
+					
+					$postfields = array();
+					foreach ($data as $d) {
+						$d = split("=", $d);
+						$postfields["$d[0]"] = $d[1];
+					}
 
 					return '
 					$ch = curl_init();
@@ -68,30 +72,30 @@ class Detectr extends Admin {
 					curl_exec($ch);
 					';
 				},
-				"help" => "Enter {key} => {value} pairs separated with semicolon and url of the page must be set using url='something' URL should be the the first key. <br/>Eg: url=somepage.com/something;name=Darrin;country=Canada"
+				"help" => "Enter {key} => {value} pairs separated with semicolon and url of the page must be set using url='something' URL should be the the first key. <br/>Eg: url=http://somepage.com/something;name=Darrin;country=Canada"
 			),
 			"5" => array(
 				"title" => "Overlay Iframe",
 				"func" => function ($inputs) {
-					return 'echo "'. $inputs .'"';
+					return "echo '$inputs';";
 				},
 				"help" => "Enter the code for iframe"
 			),
 			"6" => array(
 				"title" => "Popup",
 				"func" => function ($inputs) {
-					return 'echo "<script>alert(\"'.$inputs.'\")</script>"';
+					return "echo '<script>alert($inputs)</script>'";
 				},
-				"help" => "enter the message for popup"
+				"help" => 'enter the message for popup in "double quotes"'
 			),
 			"7" => array(
 				"title" => "Hide Content",
 				"func" => function ($inputs) {
-					return 'echo "
+					return "echo '
 						<script>
-						document.getElementById(\"'.$inputs.'\").style.display = "none";
+						document.getElementById($inputs).style.display = 'none';
 						</script>
-					";';
+					';";
 				},
 				"help" => 'Enter id of the element which is to be hidden. eg: "My_Custom_ID". (Id must be in double quotes)'
 			),
@@ -101,28 +105,25 @@ class Detectr extends Admin {
 					$data = split(";", $inputs);
 					$id = preg_replace("/id=/", '', $data[0]);
 					$content = preg_replace("/content=/", '', $data[1]);
-					return 'echo "
+					return "echo '
 						<script>
-						document.getElementById('.$id.').innerHTML = '.$content.';
+						document.getElementById($id).innerHTML = $content;
 						</script>
-					";';
+					';";
 				},
 				"help" => 'Enter id of the element which is to be replaced. Eg: id="myThisContent";content="Your Content" (id & content must be in double-inverted-quotes)'
 			),
 			"9" => array(
 				"title" => "Send Email",
 				"func" => function ($inputs, $email) {
-					$header = "From: ".$email."\r\n";
-					$header.= "MIME-Version: 1.0\r\n";
-					$header.= "Content-Type: text/html; charset=utf-8\r\n";
-					$header.= "X-Priority: 1\r\n";
+					$header = "From: $email \r\n";
 					
 					$data = split(";", $inputs);
-					$to = preg_replace("/[a-z]=/", '', $data[0]);
-					$subject = preg_replace("/[a-z]=/", '', $data[1]);
-					$body = preg_replace("/[a-z]=/", '', $data[2]);
+					$to = preg_replace("/to=/", '', $data[0]);
+					$subject = preg_replace("/subject=/", '', $data[1]);
+					$body = preg_replace("/body=/", '', $data[2]);
 					
-					return 'mail('.$to.', '.$subject.', '.$body.', '.$header.');';
+					return "mail($to, $subject, $body, '$header');";
 				},
 				"help" => 'to="Enter the email id of recipient";subject="Add the subject of email";body="Enter the text of email"; Only change the content within the quotes'
 			),
