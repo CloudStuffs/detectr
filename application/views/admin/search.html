@@ -64,7 +64,7 @@
                     {foreach $item in $items}
                         <tr>
                         {foreach $value in $values}
-                            <td>{echo $item[$value]}</td>
+                            <td>{echo htmlspecialchars($item[$value])}</td>
                         {/foreach}
                         <td>
                             <a href="/admin/update/{$model}/{echo $item[id]}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Edit</a>

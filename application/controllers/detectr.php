@@ -156,7 +156,7 @@ class Detectr extends Admin {
 			"3" => array(
 				"title" => "Landing Page",
 				"verify" => function ($inputs) {
-					
+					// see if the $inputs is correct
 				},
 				"help" => "Enter full url of the page on which trigger is to be executed"
 			),
@@ -394,7 +394,6 @@ class Detectr extends Admin {
 
 		// what is the action corresponding to the trigger
 		$code = call_user_func_array($this->actions[$opts['action']['title']]['func'], array($opts['action']['inputs']));
-		
 		if (!$opts['action']['saved']) {
 			$action = new Action();
 		} else {
