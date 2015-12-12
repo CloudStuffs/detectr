@@ -68,7 +68,7 @@ class Detectr extends Admin {
 					curl_exec($ch);
 					';
 				},
-				"help" => "Enter {key} => {value} pairs separated with semicolon and url of the page must be set using url='something' URL should be the the first key. <br/>Eg: url=somepage.com/something;name=Darrin;country=Canda"
+				"help" => "Enter {key} => {value} pairs separated with semicolon and url of the page must be set using url='something' URL should be the the first key. <br/>Eg: url=somepage.com/something;name=Darrin;country=Canada"
 			),
 			"5" => array(
 				"title" => "Overlay Iframe",
@@ -80,7 +80,7 @@ class Detectr extends Admin {
 			"6" => array(
 				"title" => "Popup",
 				"func" => function ($inputs) {
-					return 'echo "<script>alert(\''.$inputs.'\')</script>"';
+					return 'echo "<script>alert(\"'.$inputs.'\")</script>"';
 				},
 				"help" => "enter the message for popup"
 			),
@@ -89,11 +89,11 @@ class Detectr extends Admin {
 				"func" => function ($inputs) {
 					return 'echo "
 						<script>
-						document.getElementById('.$inputs.').style.display = "none";
+						document.getElementById(\"'.$inputs.'\").style.display = "none";
 						</script>
 					";';
 				},
-				"help" => "Enter id of the element which is to be hidden"
+				"help" => 'Enter id of the element which is to be hidden. eg: "My_Custom_ID". (Id must be in double quotes)'
 			),
 			"8" => array(
 				"title" => "Replace Content",
@@ -103,11 +103,11 @@ class Detectr extends Admin {
 					$content = preg_replace("/content=/", '', $data[1]);
 					return 'echo "
 						<script>
-						document.getElementById('.$id.').innerHTML = "'.$content.'";
+						document.getElementById('.$id.').innerHTML = '.$content.';
 						</script>
 					";';
 				},
-				"help" => "Enter id of the element which is to be replaced. Eg: id=myThisContent;content='Your Content'"
+				"help" => 'Enter id of the element which is to be replaced. Eg: id="myThisContent";content="Your Content" (id & content must be in double-inverted-quotes)'
 			),
 			"9" => array(
 				"title" => "Send Email",
@@ -121,7 +121,8 @@ class Detectr extends Admin {
 					$to = preg_replace("/[a-z]=/", '', $data[0]);
 					$subject = preg_replace("/[a-z]=/", '', $data[1]);
 					$body = preg_replace("/[a-z]=/", '', $data[2]);
-					mail($to, $subject, $body, $header);
+					
+					return 'mail('.$to.', '.$subject.', '.$body.', '.$header.');';
 				},
 				"help" => 'to="Enter the email id of recipient";subject="Add the subject of email";body="Enter the text of email"; Only change the content within the quotes'
 			),
@@ -393,7 +394,12 @@ class Detectr extends Admin {
 		$trigger->save();
 
 		// what is the action corresponding to the trigger
-		$code = call_user_func_array($this->actions[$opts['action']['title']]['func'], array($opts['action']['inputs']));
+		if ($this->actions[$opts['action']['title']]['title'] == 'Send Email') {
+			$args = array($opts['action']['inputs'], $this->user->email);
+		} else {
+			$args = array($opts['action']['inputs']);
+		}
+		$code = call_user_func_array($this->actions[$opts['action']['title']]['func'], $args);
 		if (!$opts['action']['saved']) {
 			$action = new Action();
 		} else {
