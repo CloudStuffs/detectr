@@ -48,9 +48,27 @@ class Detectr extends Admin {
 			"4" => array(
 				"title" => "POST Values",
 				"func" => function ($inputs) {
+					$postfields = split(";", $inputs);
 					
+					// url='somepage.com/something'
+					$url = array_shift($data);
+					$url = split("=", $url);
+					$url = $url[1];
+
+					return '
+					$ch = curl_init();
+					curl_setopt($ch, CURLOPT_URL, "'.$url.'");
+					curl_setopt($ch, CURLOPT_POST, ' .count($postfields).');
+					curl_setopt($ch, CURLOPT_POSTFIELDS, '.http_build_query($postfields).');
+					curl_setopt($ch, CURLOPT_HEADER, TRUE);
+					curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+					curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+					curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+					curl_exec($ch);
+					';
 				},
-				"help" => "Enter {key} => {value} pairs separated with semicolon"
+				"help" => "Enter {key} => {value} pairs separated with semicolon and url of the page must be set using url='something' URL should be the the first key. <br/>Eg: url=somepage.com/something;name=Darrin;country=Canda"
 			),
 			"5" => array(
 				"title" => "Overlay Iframe",
@@ -81,20 +99,20 @@ class Detectr extends Admin {
 				"title" => "Replace Content",
 				"func" => function ($inputs) {
 					$data = split(";", $inputs);
-					$id = preg_replace("id=", '', $data[0]);
-					$content = preg_replace("subject=", '', $data[1]);
+					$id = preg_replace("/id=/", '', $data[0]);
+					$content = preg_replace("/content=/", '', $data[1]);
 					return 'echo "
 						<script>
 						document.getElementById('.$id.').innerHTML = "'.$content.'";
 						</script>
 					";';
 				},
-				"help" => "Enter id of the element which is to be replaced"
+				"help" => "Enter id of the element which is to be replaced. Eg: id=myThisContent;content='Your Content'"
 			),
 			"9" => array(
 				"title" => "Send Email",
-				"func" => function ($inputs) {
-					$header = "From: ".$this->user->email."\r\n";
+				"func" => function ($inputs, $email) {
+					$header = "From: ".$email."\r\n";
 					$header.= "MIME-Version: 1.0\r\n";
 					$header.= "Content-Type: text/html; charset=utf-8\r\n";
 					$header.= "X-Priority: 1\r\n";
