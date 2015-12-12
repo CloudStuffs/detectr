@@ -17,6 +17,11 @@ $routes = array(
         "pattern" => "login",
         "controller" => "auth",
         "action" => "login"
+    ),
+    array(
+        "pattern" => "logout",
+        "controller" => "auth",
+        "action" => "logout"
     )
 );
 
