@@ -335,13 +335,13 @@ class Detectr extends Admin {
 			$data['server']['landingPage'] = 'http://'. $data['server']['name']. RequestMethods::post("REQUEST_URI");
 			$data['server']['referer'] = RequestMethods::post("HTTP_REFERER");
 			$this->log('<pre>'. print_r($data, true) . '</pre>');
-			$website = Website::first(array("url = ?" => $data['server']['name']));
+			$website = Website::first(array("url = ?" => $data['server']['name']), array("id"));
 
 			if (!$website) {
 				echo 'return 0;';
 				return;
 			}
-			$triggers = Trigger::all(array("website_id = ?" => $website->id));
+			$triggers = Trigger::all(array("website_id = ?" => $website->id, "live = ?" => true), array("id", "title", "meta"));
 			$code = ''; $last = '';
 			foreach ($triggers as $t) {
 				$key = $t->title;
@@ -381,7 +381,7 @@ class Detectr extends Admin {
         ));
 		$view = $this->getActionView();
 
-		$website = Website::first(array("id = ?" => $website_id));
+		$website = Website::first(array("id = ?" => $website_id), array("id", "title", "url", "user_id"));
 		if (!$website || $website->user_id != $this->user->id) {
 			self::redirect("/member");
 		}
@@ -454,7 +454,7 @@ class Detectr extends Admin {
 		if (!$website || $website->user_id != $this->user->id) {
 			self::redirect("/member");
 		}
-		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true));
+		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true), array("title", "meta", "website_id", "user_id", "id"));
 
 		$view->set('actions', $this->actions);
 		$view->set('trigs', $this->triggers);
