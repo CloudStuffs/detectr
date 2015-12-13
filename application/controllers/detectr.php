@@ -264,9 +264,34 @@ class Detectr extends Admin {
 					
 				},
 				"detect" => function ($opts) {
-					return true;
+					$saved = strtolower($opts['saved']);
+
+					$check = strtolower($opts['user']['ua_info']->os_name);
+					switch ($check) {
+						case 'linux':
+							$result = 'desktop';
+							break;
+						
+						case 'windows nt':
+							$result = 'desktop';
+							break;
+
+						case 'os x':
+							$result = 'desktop';
+							break;
+
+						case 'unknown':
+							$result = 'desktop';
+							break;
+
+						default:
+							$result = 'mobile';
+							break;
+					}
+
+					return ($saved == $result);
 				},
-				"help" => "Device Type: mobile, desktop"
+				"help" => "Device Type: mobile or desktop"
 			),
 			"11" => array(
 				"title" => "Referrer",
@@ -295,15 +320,16 @@ class Detectr extends Admin {
 	public function index() {
 		$this->noview();
 		if (RequestMethods::post('plugin_detector') == 'getTrigger') {
-			$ip_info = Shared\Detector::IPInfo($ip);
-			$user_agent = Shared\Detector::UA($ua);
 			
 			$data = array();
 			$data['user']['ip'] = RequestMethods::post("REMOTE_ADDR");
-			$data['user']['location'] = $ip_info->geoplugin_countryCode;
 			$data['user']['ua'] = RequestMethods::post("HTTP_USER_AGENT");
+			
+			$ip_info = Shared\Detector::IPInfo($data['user']['ip']);
+			$user_agent = Shared\Detector::UA($data['user']['ua']);
+			
+			$data['user']['location'] = $ip_info->geoplugin_countryCode;
 			$data['user']['ua_info'] = $user_agent;
-			//$data['user']['time'] = 
 			
 			$data['server']['name'] = RequestMethods::post("HTTP_HOST");
 			$data['server']['landingPage'] = 'http://'. $data['server']['name']. RequestMethods::post("REQUEST_URI");

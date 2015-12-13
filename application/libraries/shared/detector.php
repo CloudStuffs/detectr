@@ -43,6 +43,7 @@ class Detector {
 	}
 
 	public static function UA($ua) {
+		$ua = urlencode($ua);
 		$url = "http://www.useragentstring.com/?getJSON=all&uas=$ua";
 		return self::_execute(array(
 			'urls' => array('user-agent' => $url),
