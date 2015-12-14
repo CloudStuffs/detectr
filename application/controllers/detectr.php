@@ -48,14 +48,14 @@ class Detectr extends Admin {
 			"4" => array(
 				"title" => "POST Values",
 				"func" => function ($inputs) {
-					$data = split(";", $inputs);
+					$data = explode(";", $inputs);
 					
 					$url = array_shift($data);
 					$url = preg_replace('/url=/', '', $url);
 					
 					$postfields = array();
 					foreach ($data as $d) {
-						$d = split("=", $d);
+						$d = explode("=", $d);
 						$postfields["$d[0]"] = $d[1];
 					}
 
@@ -102,7 +102,7 @@ class Detectr extends Admin {
 			"8" => array(
 				"title" => "Replace Content",
 				"func" => function ($inputs) {
-					$data = split(";", $inputs);
+					$data = explode(";", $inputs);
 					$id = preg_replace("/id=/", '', $data[0]);
 					$content = preg_replace("/content=/", '', $data[1]);
 					return "echo '
@@ -118,7 +118,7 @@ class Detectr extends Admin {
 				"func" => function ($inputs, $email) {
 					$header = "From: $email \r\n";
 					
-					$data = split(";", $inputs);
+					$data = explode(";", $inputs);
 					$to = preg_replace("/to=/", '', $data[0]);
 					$subject = preg_replace("/subject=/", '', $data[1]);
 					$body = preg_replace("/body=/", '', $data[2]);
@@ -176,7 +176,7 @@ class Detectr extends Admin {
 					
 				},
 				"detect" => function ($opts) {
-					$range = split("-", $opts['saved']);
+					$range = explode("-", $opts['saved']);
 					
 					$start = $range[0];
 					$current = date('G:i');
@@ -193,7 +193,7 @@ class Detectr extends Admin {
 			"5" => array(
 				"title" => "Bots",
 				"detect" => function ($opts) {
-					$bots = split(",", $opts['saved']);
+					$bots = explode(",", $opts['saved']);
 					$response = false;
 					foreach ($bots as $b) {
 						if ($opts['user']['ua'] == $b) {
