@@ -10,7 +10,7 @@ use Framework\Registry as Registry;
 class Member extends Admin {
     
     /**
-     * @before _secure, changeLayout, _admin
+     * @before _secure, changeLayout
      */
     public function index() {
         $this->seo(array("title" => "Dashboard","view" => $this->getLayoutView()));
@@ -110,10 +110,10 @@ class Member extends Admin {
         $this->noview();
 
         $website = Website::first(array("id = ?" => $id));
-        if (!$website) {
+        if (!$website || $website->user_id != $this->user->id) {
             self::redirect("/member");
         }
-        $trigger = Trigger::all(array("website_id = ?" => $website->id));
+        $trigger = Trigger::all(array("website_id = ?" => $website->id, "user_id = ?" => $this->user->id));
         foreach ($trigger as $t) {
             $action = Action::first(array("trigger_id = ?" => $t->id));
             $this->delete('Action', $action->id, false);

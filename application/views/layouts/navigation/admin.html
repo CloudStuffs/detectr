@@ -31,9 +31,12 @@
     <div class="navbar-default sidebar" role="navigation">
         <div class="sidebar-nav navbar-collapse">
             <ul class="nav" id="side-menu">
+                {if $user->admin}
                 <li><a href="/admin/index"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
                 <li><a href="/admin/search"><i class="fa fa-search fa-fw"></i> Search</a></li>
                 <li><a href="/admin/dataAnalysis"><i class="fa fa-line-chart fa-fw"></i> Analytics</a></li>
+                <li><a href="/users/stats"><i class="fa fa-users fa-fw"></i> Users</a></li>
+                {/if}
                 <li>
                     <a href="#"><i class="fa fa-user-plus fa-fw"></i> Member <span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">

@@ -9,7 +9,7 @@ use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 use \Curl\Curl;
 
-class Detectr extends Admin {
+class Detectr extends Member {
 	/**
 	 * @readwrite
 	 */
@@ -382,7 +382,7 @@ class Detectr extends Admin {
 		$view = $this->getActionView();
 
 		$website = Website::first(array("id = ?" => $website_id), array("id", "title", "url", "user_id"));
-		if (!$website || $website->user_id != $this->user->id) {
+		if ((!$website || $website->user_id != $this->user->id) && !$this->user->admin) {
 			self::redirect("/member");
 		}
 
@@ -405,7 +405,7 @@ class Detectr extends Admin {
 			self::redirect("/member");
 		}
 		$trigger = Trigger::first(array("id = ?" => $trigger_id));
-		if (!$trigger) {
+		if ((!$trigger || $trigger->user_id != $this->user->id) && !$this->user->admin) {
 			self::redirect("/member");
 		}
 		$website = Website::first(array("id = ?" => $trigger->website_id));
@@ -436,8 +436,19 @@ class Detectr extends Admin {
 	public function remove($trigger_id, $action_id) {
 		$this->noview();
 		
-		$this->delete('Trigger', $trigger_id, false);
-		$this->delete('Action', $action_id);
+		$trigger = Trigger::first(array("id = ?" => $trigger_id));
+		if (($trigger && $trigger->user_id == $this->user->id) || $this->user->admin) {
+			$this->delete('Trigger', $trigger_id, false);
+		} else {
+			self::redirect("/member");
+		}
+
+		$action = Action::first(array("id = ?" => $action_id));
+		if (($action && $action->user_id == $this->user->id) || $this->user->admin) {
+			$this->delete('Action', $action_id);
+		} else {
+			self::redirect("/member");
+		}	
 	}
 
 	/**
@@ -451,7 +462,7 @@ class Detectr extends Admin {
 		$view = $this->getActionView();
 
 		$website = Website::first(array("id = ?" => $website_id));
-		if (!$website || $website->user_id != $this->user->id) {
+		if ((!$website || $website->user_id != $this->user->id) && !$this->user->admin) {
 			self::redirect("/member");
 		}
 		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true), array("title", "meta", "website_id", "user_id", "id"));

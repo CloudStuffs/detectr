@@ -41,6 +41,18 @@ class User extends Shared\Model {
      * @label password
      */
     protected $_password;
+
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 15
+     * @index
+     * 
+     * @validate required, alpha, min(8), max(15)
+     * @label password
+     */
+    protected $_phone;
     
     /**
     * @column
