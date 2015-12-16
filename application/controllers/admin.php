@@ -7,6 +7,7 @@
  */
 use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
+use Framework\ArrayMethods as ArrayMethods;
 
 class Admin extends Auth {
 
@@ -16,10 +17,15 @@ class Admin extends Auth {
     public function index() {
         $this->seo(array("title" => "Dashboard", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
-        $now = strftime("%Y-%m-%d", strtotime('now'));
-        $database = Registry::get("database");
         
-        $view->set("now", $now);
+        $count = array();
+        $count["users"] = User::count();
+        $count["triggers"] = Trigger::count();
+        $count["websites"] = Website::count();
+
+        $count = ArrayMethods::toObject($count);
+        $view->set("data", $count);
+
     }
 
     /**
