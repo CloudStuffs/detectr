@@ -166,6 +166,16 @@ $(document).ready(function () {
         });
     });
 
+    $('.delete').click(function(e) {
+        e.preventDefault();
+        var self = $(this);
+        bootbox.confirm("Are you sure, you want to delete this object?", function(result) {
+            if (result) {
+                window.location.href = self.attr('href');
+            }
+        });
+    });
+
 });
 
 function toArray(object) {
