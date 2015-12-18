@@ -11,7 +11,7 @@ use Framework\RequestMethods as RequestMethods;
 class Home extends Auth {
 
     public function index() {
-        
+        $this->getLayoutView()->set("seo", Framework\Registry::get("seo"));
     }
 
     public function test() {

