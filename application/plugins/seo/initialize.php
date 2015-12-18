@@ -4,12 +4,12 @@
 include("seo.php");
 
 $seo = new SEO(array(
-    "title" => "SwiftDetectr",
-    "keywords" => "Triggers action for users",
-    "description" => "Welcome to Our Trigger Network",
+    "title" => "Traffic Monitor",
+    "keywords" => "Free Website monitor and Trigger any action for a user",
+    "description" => "Welcome to Our Traffic Monitoring Trigger Network",
     "author" => "CloudStuff.Tech",
     "robots" => "INDEX,FOLLOW",
-    "photo" => CDN . "img/logo.png"
+    "photo" => CDN . "images/logo.png"
 ));
 
 Framework\Registry::set("seo", $seo);
