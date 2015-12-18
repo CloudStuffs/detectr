@@ -10,7 +10,7 @@ use Framework\Registry as Registry;
 class Member extends Admin {
     
     /**
-     * @before _secure, changeLayout
+     * @before _secure, memberLayout
      */
     public function index() {
         $this->seo(array("title" => "Dashboard","view" => $this->getLayoutView()));
@@ -42,7 +42,7 @@ class Member extends Admin {
     }
 
     /**
-     * @before _secure, changeLayout
+     * @before _secure, memberLayout
      */
     public function addWebsite() {
         $this->seo(array(
@@ -73,7 +73,7 @@ class Member extends Admin {
     }
 
     /**
-     * @before _secure, changeLayout
+     * @before _secure, memberLayout
      */
     public function editWebsite($id) {
         if (!$id) {
@@ -103,7 +103,7 @@ class Member extends Admin {
     }
 
     /**
-     * @before _secure, changeLayout
+     * @before _secure, memberLayout
      */
     public function removeWebsite($id) {
         $this->noview();
@@ -119,5 +119,10 @@ class Member extends Admin {
             $this->delete('Trigger', $t->id, false);
         }
         $this->delete('Website', $website->id);
+    }
+
+    public function memberLayout() {
+        $this->defaultLayout = "layouts/member";
+        $this->setLayout();
     }
 }
