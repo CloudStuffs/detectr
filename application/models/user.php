@@ -53,6 +53,17 @@ class User extends Shared\Model {
      * @label password
      */
     protected $_phone;
+
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 255
+     * 
+     * @validate required, max(255)
+     * @label paypal email address
+     */
+    protected $_paypal;
     
     /**
     * @column

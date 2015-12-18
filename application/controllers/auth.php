@@ -65,6 +65,7 @@ class Auth extends Controller {
                     "email" => RequestMethods::post("email"),
                     "password" => sha1(RequestMethods::post("password")),
                     "phone" => RequestMethods::post("phone"),
+                    "paypal" => RequestMethods::post("paypal"),
                     "admin" => false,
                     "live" => false
                 ));
