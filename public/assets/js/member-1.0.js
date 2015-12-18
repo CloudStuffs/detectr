@@ -75,28 +75,6 @@ $(document).ready(function () {
         });
     });
 
-    $('#getstats').submit(function (e) {
-        $('#stats').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-5x"></i></p>');
-        e.preventDefault();
-        var data = $(this).serializeArray();
-        request.read({
-            action: "member/stats",
-            data: data,
-            callback: function (data) {
-                $('#stats').html('');
-                if (data.data) {
-                    Morris.Bar({
-                        element: 'stats',
-                        data: toArray(data.data),
-                        xkey: 'y',
-                        ykeys: ['a'],
-                        labels: ['Total']
-                    });
-                }
-            }
-        });
-    });
-
     // find all the selectors 
     var types = $('#addOptions select');
     types.on("change", function () { // bind the change function
@@ -141,6 +119,30 @@ $(document).ready(function () {
         };
     });
 
+
+    $("#trigger").change(function() {
+        var self = $(this);
+        $('#helpTrigger').html('');
+        request.read({
+            action: "detectr/read/trigger/" + this.value,
+            callback: function(data) {
+                var d = $.parseJSON(data);
+                $('#helpTrigger').html(d.help);
+            }
+        });
+    });
+
+    $("#action").change(function() {
+        var self = $(this);
+        $('#helpAction').html('');
+        request.read({
+            action: "detectr/read/action/" + this.value,
+            callback: function(data) {
+                var d = $.parseJSON(data);
+                $('#helpAction').html(d.help);
+            }
+        });
+    });
 
     $('.delete').click(function(e) {
         e.preventDefault();
