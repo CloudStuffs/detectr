@@ -9,7 +9,7 @@ use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 use \Curl\Curl;
 
-class Detectr extends Member {
+class Detectr extends Admin {
 	/**
 	 * @readwrite
 	 */
@@ -372,7 +372,7 @@ class Detectr extends Member {
 	}
 
 	/**
-	 * @before _secure, changeLayout
+	 * @before _secure, memberLayout
 	 */
 	public function create($website_id) {
 		$this->seo(array(
@@ -398,7 +398,7 @@ class Detectr extends Member {
 	}
 
 	/**
-	 * @before _secure, changeLayout
+	 * @before _secure, memberLayout
 	 */
 	public function edit($trigger_id) {
 		if (!$trigger_id) {
@@ -452,7 +452,7 @@ class Detectr extends Member {
 	}
 
 	/**
-	 * @before _secure, changeLayout
+	 * @before _secure, memberLayout
 	 */
 	public function manage($website_id) {
 		$this->seo(array(

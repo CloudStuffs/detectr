@@ -32,7 +32,7 @@ class Auth extends Controller {
                 if($user) {
                     if ($user->live) {
                         $this->setUser($user);
-                        self::redirect('/member.html');
+                        self::redirect('/member/index.html');
                     } else {
                         $view->set("message", "User account not verified");
                     }
@@ -168,6 +168,11 @@ class Auth extends Controller {
     public function JSONview() {
         $this->willRenderLayoutView = false;
         $this->defaultExtension = "json";
+    }
+
+    public function memberLayout() {
+        $this->defaultLayout = "layouts/member";
+        $this->setLayout();
     }
     
     /**

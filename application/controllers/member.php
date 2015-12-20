@@ -7,7 +7,7 @@
 use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 
-class Member extends Admin {
+class Member extends Detectr {
     
     /**
      * @before _secure, memberLayout
@@ -15,10 +15,16 @@ class Member extends Admin {
     public function index() {
         $this->seo(array("title" => "Dashboard","view" => $this->getLayoutView()));
         $view = $this->getActionView();
+
+        $websites = Website::all(array("user_id = ?" => $this->user->id));
+
+        $view->set('actions', $this->actions);
+        $view->set('trigs', $this->triggers);
+        $view->set("websites", $websites);
     }
     
     /**
-     * @before _secure, changeLayout, _admin
+     * @before _secure, memberLayout
      */
     public function profile() {
         $this->seo(array(
@@ -35,10 +41,5 @@ class Member extends Admin {
             $view->set("success", true);
             $this->setUser($user);
         }
-    }
-
-    public function memberLayout() {
-        $this->defaultLayout = "layouts/member";
-        $this->setLayout();
     }
 }
