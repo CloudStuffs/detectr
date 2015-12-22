@@ -7,6 +7,7 @@
 use Shared\Controller as Controller;
 use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
+use Shared\CloudMail as Mail;
 
 class Auth extends Controller {
     
@@ -21,6 +22,19 @@ class Auth extends Controller {
             "view" => $this->getLayoutView()
         ));
         $view = $this->getActionView();
+
+        if (RequestMethods::get("action") == "reset") {
+            $exist = User::first(array("email = ?" => RequestMethods::get("email")), array("id", "email", "name"));
+            if ($exist) {
+                $this->notify(array(
+                    "template" => "forgotPassword",
+                    "subject" => "New Password Requested",
+                    "user" => $exist
+                ));
+
+                $view->set("message", "Password Reset Email Sent Check Your Email. Check in Spam too.");
+            }
+        }
         
         if (RequestMethods::post("action") == "login") {
             $exist = User::first(array("email = ?" => RequestMethods::post("email")), array("id"));
@@ -70,7 +84,11 @@ class Auth extends Controller {
                     "live" => false
                 ));
                 $user->save();
-                
+                $this->notify(array(
+                    "template" => "register",
+                    "subject" => "Welcome to TrafficMonitor.ca",
+                    "user" => $user
+                ));
                 $view->set("message", "Your account has been created and will be activate within 3 hours after verification.");
             } else {
                 $view->set("message", 'Email exists, login from <a href="/auth/login">here</a>');
@@ -86,21 +104,42 @@ class Auth extends Controller {
             "view" => $this->getLayoutView()
         ));
         $view = $this->getActionView();
-    }
-    
-    /**
-     * The Main Method to return SendGrid Instance
-     * 
-     * @return \SendGrid\SendGrid Instance of Sendgrid
-     */
-    protected function sendgrid() {
-        $configuration = Registry::get("configuration");
-        $parsed = $configuration->parse("configuration/mail");
 
-        if (!empty($parsed->mail->sendgrid) && !empty($parsed->mail->sendgrid->username)) {
-            $sendgrid = new \SendGrid\SendGrid($parsed->mail->sendgrid->username, $parsed->mail->sendgrid->password);
-            return $sendgrid;
+        if (RequestMethods::get("reset")) {
+            $token = RequestMethods::get("id");
+            $id = base64_decode($token);
+            $exist = User::first(array("id = ?" => $id), array("id"));
+            if($exist) {
+                $view->set("token", $token);
+            } else{
+                $view->set("message", 'Something Went Wrong please contact admin');
+            }
         }
+
+        if (RequestMethods::post("action") == "change") {
+            $token = RequestMethods::post("token");
+            $id = base64_decode($token);
+            $user = User::first(array("id = ?" => $id), array("id"));
+            if(RequestMethods::post("password") == RequestMethods::post("cpassword")) {
+                $user->password = sha1(RequestMethods::post("password"));
+                $user->save();
+                $this->setUser($user);
+                $this->session();
+            } else{
+                $view->set("message", 'Password Does not match');
+            }
+        }
+    }
+
+    protected function session() {
+        $session = Registry::get("session");
+        $where = array(
+            "property = ?" => "domain",
+            "live = ?" => true
+        );
+        $domains = Meta::all($where);
+        $session->set("domains", $domains);
+        self::redirect("/member");
     }
     
     protected function getBody($options) {
@@ -120,19 +159,13 @@ class Auth extends Controller {
         $body = $this->getBody($options);
         $emails = isset($options["emails"]) ? $options["emails"] : array($options["user"]->email);
 
-        switch ($options["delivery"]) {
-            default:
-                $sendgrid = $this->sendgrid();
-                $email = new \SendGrid\Email();
-                $email->setSmtpapiTos($emails)
-                        ->setFrom('info@swiftintern.com')
-                        ->setFromName("Swiftintern Team")
-                        ->setSubject($options["subject"])
-                        ->setHtml($body);
-                $sendgrid->send($email);
-                break;
-        }
-        $this->log(implode(",", $emails));
+        $params = array();
+        $params["to"] = $emails;
+        $params["subject"] = $options["subject"];
+        $params["body"] = $body;
+
+        $mail = new Mail($params);
+        
     }
     
     protected function log($message = "") {
