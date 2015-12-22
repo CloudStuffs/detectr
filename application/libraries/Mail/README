@@ -1,0 +1,10 @@
+SMTPClient is a SMTP client library for PHP.
+
+It sends email without the sendmail command on Windows or *NIX.
+
+It is very usefull if your PHP server is hosted on Windows does not activate sendmail.
+
+Just look at SMTP example.php to see how to send an email.
+
+
+Bye !
