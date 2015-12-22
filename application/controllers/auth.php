@@ -124,22 +124,11 @@ class Auth extends Controller {
                 $user->password = sha1(RequestMethods::post("password"));
                 $user->save();
                 $this->setUser($user);
-                $this->session();
+                self::redirect("/member");
             } else{
                 $view->set("message", 'Password Does not match');
             }
         }
-    }
-
-    protected function session() {
-        $session = Registry::get("session");
-        $where = array(
-            "property = ?" => "domain",
-            "live = ?" => true
-        );
-        $domains = Meta::all($where);
-        $session->set("domains", $domains);
-        self::redirect("/member");
     }
     
     protected function getBody($options) {

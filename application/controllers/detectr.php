@@ -7,6 +7,7 @@
  */
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
+use Framework\ArrayMethods as ArrayMethods;
 use \Curl\Curl;
 
 class Detectr extends Admin {
@@ -370,6 +371,41 @@ class Detectr extends Admin {
 			self::redirect('/404');
 		}
 	}
+
+	/**
+     * @before _secure, _admin, changeLayout
+     */
+    public function approve() {
+        $this->seo(array("title" => "Approve or Disapprove websites triggers", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+
+        $limit = RequestMethods::get("limit", 10);
+        $page = RequestMethods::get("page", 1);
+        $active = RequestMethods::get("active", 0);
+        $websites = \Website::all(array(), array("id", "url"), "created", "desc", $limit, $page);
+
+        $results = array(); $i = 0;
+        foreach ($websites as $w) {
+            $trigs = \Trigger::all(array("website_id = ?" => $w->id, "live = ?" => $active), array("title", "meta", "id", "live"));
+            
+            foreach ($trigs as $t) {
+            	$results[] = array(
+            	    "website_id" => $w->id,
+            	    "domain" => $w->url,
+            	    "title" => $this->triggers[$t->title],
+            	    "meta" => $t->meta,
+            	    "trigger_id" => $t->id,
+            	    "status" => $t->live
+            	);
+            	++$i;
+            }
+        }
+        $results = ArrayMethods::toObject($results);
+        $view->set("count", $i);
+        $view->set("limit", $limit);
+        $view->set("page", $page);
+        $view->set("triggers", $results);
+    }
 
 	/**
 	 * @before _secure, memberLayout
