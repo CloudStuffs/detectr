@@ -35,6 +35,7 @@ class FakeReferer extends Admin {
 			$tld = RequestMethods::post("tld");
 
 			$fakereferer = new \Referer(array(
+				"user_id" => $this->user->id,
 				"title" => $title,
 				"url" => $url,
 				"keyword" => $keyword,
@@ -43,7 +44,7 @@ class FakeReferer extends Admin {
 				"live" => false
 			));
 			$fakereferer->save();
-			
+
 			$view->set("success", "Your request has been submiited. Will be verified within 24 hours");
 		}
 	}
