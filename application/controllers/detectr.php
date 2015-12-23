@@ -386,16 +386,17 @@ class Detectr extends Admin {
 
         $results = array(); $i = 0;
         foreach ($websites as $w) {
-            $trigs = \Trigger::all(array("website_id = ?" => $w->id, "live = ?" => $active), array("title", "meta", "id", "live"));
+            $trigs = \Trigger::all(array("website_id = ?" => $w->id, "live = ?" => $active), array("title", "meta", "id", "live", "created"));
             
             foreach ($trigs as $t) {
             	$results[] = array(
             	    "website_id" => $w->id,
             	    "domain" => $w->url,
-            	    "title" => $this->triggers[$t->title],
+            	    "title" => $this->triggers[$t->title]["title"],
             	    "meta" => $t->meta,
             	    "trigger_id" => $t->id,
-            	    "status" => $t->live
+            	    "status" => $t->live,
+            	    "created" => $t->created
             	);
             	++$i;
             }
