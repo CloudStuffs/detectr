@@ -29,5 +29,5 @@ class Analytics extends Admin {
         }
 
         $view->set("logs", $logs);
-    }    
+    }
 }

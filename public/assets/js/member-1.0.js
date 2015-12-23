@@ -154,6 +154,16 @@ $(document).ready(function () {
         });
     });
 
+    $("#referer").on("change", function (e) {
+        e.preventDefault();
+
+        if ($(this).val() != "google") {
+            $("#tldSelection").attr("disabled", true);
+        } else {
+            $("#tldSelection").attr("disabled", false);
+        }
+    });
+
 });
 
 function toArray(object) {

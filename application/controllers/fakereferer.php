@@ -17,5 +17,36 @@ class FakeReferer extends Admin {
 	    }
 	}
 
+	/**
+	 * @before _secure, memberLayout
+	 */
+	public function submit() {
+		$this->seo(array(
+            "title" => "Submit Your FakeReferer",
+            "view" => $this->getLayoutView()
+        ));
+		$view = $this->getActionView();
+
+		if (RequestMethods::post("action") == "submitTrigger") {
+			$title = RequestMethods::post("title");
+			$url = RequestMethods::post("url");
+			$keyword = RequestMethods::post("keyword");
+			$referer = RequestMethods::post("referer");
+			$tld = RequestMethods::post("tld");
+
+			$fakereferer = new \Referer(array(
+				"title" => $title,
+				"url" => $url,
+				"keyword" => $keyword,
+				"referer" => $referer,
+				"tld" => $tld,
+				"live" => false
+			));
+			$fakereferer->save();
+			
+			$view->set("success", "Your request has been submiited. Will be verified within 24 hours");
+		}
+	}
+
 	
 }
