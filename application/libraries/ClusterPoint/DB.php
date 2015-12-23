@@ -7,9 +7,9 @@ namespace ClusterPoint;
 */
 class DB {
 	
-	const ACCOUNT_ID = '4219';
-    const DATABASE = 'stats';
-    const AUTH = 'savanramani255@gmail.com:Swift123';
+	const ACCOUNT_ID = 'account-id';
+    const DATABASE = 'db';
+    const AUTH = 'user@domain.com:pass';
 
 	public function url() {
 		$url = 'https://api-eu.clusterpoint.com/v4/' . self::ACCOUNT_ID . '/' . self::DATABASE;

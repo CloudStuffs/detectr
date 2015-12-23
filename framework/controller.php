@@ -177,7 +177,7 @@ namespace Framework {
                                 }
                             }
                         }
-                        echo json_encode($obj, JSON_PRETTY_PRINT);
+                        echo json_encode($obj);
                     }
 
                     $results = $view->render();

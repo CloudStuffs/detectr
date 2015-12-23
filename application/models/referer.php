@@ -40,6 +40,17 @@ class Referer extends Shared\Model {
      * @column
      * @readwrite
      * @type text
+     * @length 255
+     * 
+     * @validate required
+     * @label url
+     */
+    protected $_short_url;
+
+    /**
+     * @column
+     * @readwrite
+     * @type text
      * @length 15
      * @index
      * 

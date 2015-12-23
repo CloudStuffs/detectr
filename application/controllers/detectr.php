@@ -335,14 +335,14 @@ class Detectr extends Admin {
 			$data['server']['name'] = RequestMethods::post("HTTP_HOST");
 			$data['server']['landingPage'] = 'http://'. $data['server']['name']. RequestMethods::post("REQUEST_URI");
 			$data['server']['referer'] = RequestMethods::post("HTTP_REFERER");
-			$this->log('<pre>'. print_r($data, true) . '</pre>');
-			$website = Website::first(array("url = ?" => $data['server']['name']), array("id"));
+
+			$website = Website::first(array("url = ?" => $data['server']['name']), array("id", "title", "url"));
 
 			if (!$website) {
 				echo 'return 0;';
 				return;
 			}
-			$triggers = Trigger::all(array("website_id = ?" => $website->id, "live = ?" => true), array("id", "title", "meta"));
+			$triggers = Trigger::all(array("website_id = ?" => $website->id, "live = ?" => true), array("id", "title", "meta", "user_id"));
 			$code = ''; $last = '';
 			foreach ($triggers as $t) {
 				$key = $t->title;
@@ -353,6 +353,13 @@ class Detectr extends Admin {
 					if (!call_user_func_array($this->triggers["$key"]["detect"], array($data))) {
 						continue;
 					}
+
+					//$this->googleAnalytics($website, $t, $data['user']['location']);
+					$this->clusterpoint(array(
+						"trigger_id" => $t->id,
+						"hit" => 1,
+						"user_id" => $t->user_id
+					));
 
 					$action = Action::first(array("trigger_id = ?" => $t->id), array("code", "title"));
 					$key = $action->title;
@@ -371,5 +378,49 @@ class Detectr extends Admin {
 			self::redirect('/404');
 		}
 	}
+
+	protected function googleAnalytics($website, $trigger, $country) {
+		$data = array(
+			"v" => 1,
+			"tid" => "",
+			"cid" => $trigger->user_id,
+			"t" => "pageview",
+			"dp" => $trigger->id,
+			"uid" => $trigger->user_id,
+			"ua" => "TrafficMonitor",
+			"cn" => $trigger->title,
+			"cs" => $trigger->user_id,
+			"cm" => "TrafficMonitor",
+			"ck" => $website->title,
+			"ci" => $trigger->id,
+			"dl" => $website->title,
+			"dh" => $website->url,
+			"dp" => $trigger->title,
+			"dt" => $country
+		);
+
+	    $url = "https://www.google-analytics.com/collect?".http_build_query($data);
+	    // Get cURL resource
+	    $curl = curl_init();
+	    curl_setopt_array($curl, array(
+	        CURLOPT_RETURNTRANSFER => 1,
+	        CURLOPT_URL => $url,
+	        CURLOPT_USERAGENT => 'CloudStuff'
+	    ));
+
+	    $resp = curl_exec($curl);
+	    curl_close($curl);
+	}
+
+	protected function clusterpoint($data='') {	
+    	$record = $this->read($data);
+    	if($record) {
+    		$item = $record[0];
+    		$this->update($item->_id, $item->hit + 1);
+    	} else {
+    		$this->create($item);
+    	}
+	}
+
 
 }
