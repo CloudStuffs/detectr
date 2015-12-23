@@ -60,8 +60,15 @@ class FakeReferer extends Admin {
         ));
 		$view = $this->getActionView();
 
+		$page = RequestMethods::get("page", 1);
+		$limit = RequestMethods::get("limit", 10);
+		$count = \Referer::count(array("user_id = ?" => $this->user->id));
+
 		$referers = \Referer::all(array("user_id = ?" => $this->user->id));
 		$view->set("referers", $referers);
+		$view->set("page", $page);
+		$view->set("limit", $limit);
+		$view->set("count", $count);
 	}
 
 	/**
@@ -74,31 +81,103 @@ class FakeReferer extends Admin {
         ));
 		$view = $this->getActionView();
 
-		$referers = \Referer::all();
+		$page = RequestMethods::get("page", 1);
+		$limit = RequestMethods::get("limit", 10);
+		$count = \Referer::count(array());
+
+		$referers = \Referer::all(array());
 		$view->set("referers", $referers);
+		$view->set("page", $page);
+		$view->set("limit", $limit);
+		$view->set("count", $count);
 	}
 
 	/**
-	 * @before _secure, changeLayout, _admin
+	 * @before _secure, changeLayout
 	 */
-	public function approve() {
+	public function edit($ref_id) {
 		$this->seo(array(
             "title" => "Submit Your FakeReferer",
             "view" => $this->getLayoutView()
         ));
 		$view = $this->getActionView();
 
-		$limit = RequestMethods::post("limit", 10);
-		$page = RequestMethods::post("page", 1);
-		$active = RequestMethods::post("active", 0);
-		$count = \Referer::count();
+		$referer = \Referer::first(array("id = ?" => $ref_id));
+		if ((!$referer || $referer->user_id != $this->user->id) && !$this->user->admin) {
+			self::redirect("/member");
+		}
 
-		$results = \Referer::all(array("live = ?" => $active), array("*"), "created", "desc", $limit, $page);
-		$view->set("fakereferers", $results);
-		$view->set("limit", $limit);
-		$view->set("page", $page);
-		$view->set("count", $count);
+		if ($referer->short_url) {
+			self::redirect("/fakereferer/manage");
+		}
+
+		if (RequestMethods::post("action") == "editSubmission") {
+			$referer->title = RequestMethods::post("title");
+			$referer->url = RequestMethods::post("url");
+			$referer->keyword = RequestMethods::post("keyword");
+
+			$referer->save();
+			$view->set("success", "Edited successfully!");
+		}
+
+		$view->set("referer", $referer);
 	}
 
+	/**
+	 * @before _secure
+	 */
+	public function remove($ref_id) {
+		$this->noview();
+		$referer = \Referer::first(array("id = ?" => $ref_id));
+		if (!$referer) {
+			self::redirect("/member");
+		}
+
+		$this->delete("Referer", $ref_id);
+	}
+
+	/**
+	 * @before _secure, changeLayout, _admin
+	 */
+	public function shortUrl($ref_id) {
+		$this->seo(array(
+            "title" => "Shorten the FakeReferer URL",
+            "view" => $this->getLayoutView()
+        ));
+		$view = $this->getActionView();
+
+		$referer = \Referer::first(array("id = ?" => $ref_id));
+		if (!$referer) {
+			self::redirect("/admin");
+		}
+
+		if (RequestMethods::post("action") == "approve") {
+			$long_url = RequestMethods::post("longUrl");
+
+			$parsed = parse_url($long_url);
+			$host = $parsed["host"];
+			$path = $parsed["path"];
+			$parsed_url = $parsed["query"];
+			
+			$params = array();
+			parse_str($parsed_url, $params);
+
+			if (isset($params["q"])) {
+				$params["q"] = urlencode($referer->keyword);
+			}
+			$query = http_build_query($params);
+			$final_url = "http://". $host . $path . "?". $query;
+
+			// just shorten the $final_url and save it in db and work is done
+
+			/*
+			Shorten the url
+			$referer->live = true;
+			$referer->save();
+			*/
+			$view->set("success", "Referer Approved");
+		}
+		$view->set("referer", $referer);
+	}
 	
 }
