@@ -8,7 +8,7 @@
 namespace Shared;
 use Mail\SMTPClient as MailClient;
 
-class CloudMail extends Framework\Base {
+class CloudMail extends \Framework\Base {
 	/**
 	 * Stores the sender email-id
 	 * @readwrite
@@ -39,7 +39,7 @@ class CloudMail extends Framework\Base {
 	protected $_password = "your-password";
 
 	public function __construct($options = array()) {
-		parent::__construct($options);
+		parent::__construct();
 
 		$smtpClient = new MailClient();
 		$smtpClient->setServer($this->server, $this->port, $this->security);
