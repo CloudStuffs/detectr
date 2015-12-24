@@ -168,13 +168,13 @@ class FakeReferer extends Admin {
 			$query = http_build_query($params);
 			$final_url = "http://". $host . $path . "?". $query;
 
-			// just shorten the $final_url and save it in db and work is done
+			$googl = Registry::get("googl");
+            $object = $googl->shortenURL($final_url);
 
-			/*
-			Shorten the url
+			$referer->short_url = $object->id;
 			$referer->live = true;
 			$referer->save();
-			*/
+			
 			$view->set("success", "Referer Approved");
 		}
 		$view->set("referer", $referer);
