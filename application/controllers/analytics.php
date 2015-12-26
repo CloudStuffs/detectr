@@ -15,9 +15,15 @@ class Analytics extends Admin {
     /**
      * @before _secure, changeLayout, _admin
      */
-    public function logs() {
+    public function logs($action = "", $name = "") {
         $this->seo(array("title" => "Activity Logs", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
+
+        if ($action == "unlink") {
+            $file = APP_PATH ."/logs/". $name . ".txt";
+            @unlink($file);
+            self::redirect("/admin/logs");
+        }
 
         $logs = array();
         $path = APP_PATH . "/logs";
@@ -48,21 +54,19 @@ class Analytics extends Admin {
     public function trigger() {
         $this->JSONview();
         $view = $this->getActionView();
-
-
-    }
-
-    public function clusterpoint() {
+        $id = RequestMethods::get("id");
         $count = 0;
+
         $clusterpoint = new DB();
-        $query = "SELECT * FROM stats WHERE item_id == '{$this->item_id}' && user_id == '{$this->user_id}' LIMIT 0, 100";
+        $query = "SELECT * FROM stats WHERE trigger_id == '{$id}' LIMIT 0, 100";
         $results = $clusterpoint->index($query);
         if ($results) {
             foreach ($results as $result) {
-                $count += $result->click;
+                $count += $result->hit;
             }
         }
-        return $count;
+
+        $view->set("count", $count);
     }
 
 }

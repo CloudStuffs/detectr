@@ -167,16 +167,28 @@ $(document).ready(function () {
     $(".googl").click(function(e) {
         e.preventDefault();
         var item = $(this),
-            shortURL = item.data('url'),
-            time = item.data('time'),
-            property = item.data('property');
+            shortURL = item.data('url');
         item.html('<i class="fa fa-spinner fa-pulse"></i>');
         request.read({
             action: "analytics/referer",
             data: {shortURL: shortURL},
             callback: function(data) {
-                console.log(data);
                 item.html('Click : '+ data.googl.analytics.allTime.shortUrlClicks);
+            }
+        });
+
+    });
+
+    $(".trigger").click(function(e) {
+        e.preventDefault();
+        var item = $(this),
+            trigger = item.data('trigger');
+        item.html('<i class="fa fa-spinner fa-pulse"></i>');
+        request.read({
+            action: "analytics/trigger",
+            data: {id: trigger},
+            callback: function(data) {
+                item.html('Hit: '+ data.count);
             }
         });
 

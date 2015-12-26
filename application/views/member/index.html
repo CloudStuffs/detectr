@@ -27,7 +27,7 @@
                         <td>{$referer->title}</td>
                         <td>{$referer->short_url}</td>
                         <td class="googl" data-time="allTime" data-property="shortUrlClicks" data-url="{$referer->short_url}">
-                            <span class="label label-success">Click!</span>
+                            <span class="label label-info">View</span>
                         </td>
                     </tr>
                     {/foreach}
@@ -67,7 +67,9 @@
                                     {script $action = Action::first(array("trigger_id = ?" => $trigger->id))}
                                     <td>{echo $actions["$action->title"]["title"]}</td>
                                     <td>{echo htmlspecialchars($action->inputs)}</td>
-                                    <td>0</td>
+                                    <td class="trigger" data-trigger="{$trigger->id}">
+                                        <span class="label label-info">View</span>
+                                    </td>
                                     <td>
                                         {if($trigger->live)}
                                             <span class="label label-success">Active</span>
@@ -87,7 +89,7 @@
                     </div>
                     {/if}
                     {else}
-                    <p>Hi, you have not added any triggers for this website.</p>
+                    <p class="text-center">Hey, you have not added any triggers for this website.</p>
                     {/else}
                 </div>
                 {/foreach}
