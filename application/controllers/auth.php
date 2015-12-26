@@ -37,10 +37,11 @@ class Auth extends Controller {
         }
         
         if (RequestMethods::post("action") == "login") {
-            $exist = User::first(array("email = ?" => RequestMethods::post("email")), array("id"));
+            $email = RequestMethods::post("email");
+            $exist = User::first(array("email = ?" => $email), array("id"));
             if($exist) {
                 $user = User::first(array(
-                    "email = ?" => RequestMethods::post("email"),
+                    "email = ?" => $email,
                     "password = ?" => sha1(RequestMethods::post("password"))
                 ));
                 if($user) {
@@ -48,10 +49,10 @@ class Auth extends Controller {
                         $this->setUser($user);
                         self::redirect('/member/index.html');
                     } else {
-                        $view->set("message", "User account not verified");
+                        $view->set("message", "Invalid login or user blocked");
                     }
                 } else{
-                    $view->set("message", 'Wrong Password, Try again or <a href="/auth/forgotpassword">Reset Password</a>');
+                    $view->set("message", 'Invalid login credentials, Try again or <a href="/auth/login?action=reset&email='.$email.'">Reset Password</a>');
                 }
             } else {
                 $view->set("message", 'User doesnot exist. Please signup <a href="/auth/register">here</a>');
@@ -105,21 +106,10 @@ class Auth extends Controller {
         ));
         $view = $this->getActionView();
 
-        if (RequestMethods::get("reset")) {
-            $token = RequestMethods::get("id");
-            $id = base64_decode($token);
-            $exist = User::first(array("id = ?" => $id), array("id"));
-            if($exist) {
-                $view->set("token", $token);
-            } else{
-                $view->set("message", 'Something Went Wrong please contact admin');
-            }
-        }
-
         if (RequestMethods::post("action") == "change") {
             $token = RequestMethods::post("token");
             $id = base64_decode($token);
-            $user = User::first(array("id = ?" => $id), array("id"));
+            $user = User::first(array("id = ?" => $id));
             if(RequestMethods::post("password") == RequestMethods::post("cpassword")) {
                 $user->password = sha1(RequestMethods::post("password"));
                 $user->save();
@@ -127,6 +117,16 @@ class Auth extends Controller {
                 self::redirect("/member");
             } else{
                 $view->set("message", 'Password Does not match');
+            }
+        }
+        if (RequestMethods::get("action") == "reset") {
+            $token = RequestMethods::get("token");
+            $id = base64_decode($token);
+            $exist = User::first(array("id = ?" => $id), array("id"));
+            if($exist) {
+                $view->set("token", $token);
+            } else{
+                $view->set("message", 'Something Went Wrong please contact admin');
             }
         }
     }
@@ -152,7 +152,7 @@ class Auth extends Controller {
         $params["to"] = $emails;
         $params["subject"] = $options["subject"];
         $params["body"] = $body;
-
+        
         $mail = new Mail($params);
         
     }

@@ -151,7 +151,7 @@ class SMTPClient {
 			$multiPartMessage .= "\r\n";
 			
 			//Plain Text mail version
-			if ($this->contentType != "text/plain") {
+			if ($this->contentType == "text/plain") {
 				$multiPartMessage .= "--" . $mimeBoundary . "\r\n";
 				$multiPartMessage .= "Content-Type: text/plain; charset=\"" 
 									. $this->charset . "\"" . "\r\n";
@@ -163,17 +163,18 @@ class SMTPClient {
 				$multiPartMessage .= "\r\n";
 			}
 
-			//Raw text mail version
-			$multiPartMessage .= "--" . $mimeBoundary . "\r\n";
-			$multiPartMessage .= "Content-Type: " . $this->contentType 
-								. "; charset=\"" 
-								. $this->charset . "\"" . "\r\n";
-			$multiPartMessage .= "Content-Transfer-Encoding: quoted-printable" 
-								. "\r\n";
-			$multiPartMessage .= "\r\n";
-			$multiPartMessage .= quoted_printable_encode($this->message) 
-								. "\r\n";
-			$multiPartMessage .= "\r\n";
+			if ($this->contentType == "text/html") {
+				$multiPartMessage .= "--" . $mimeBoundary . "\r\n";
+				$multiPartMessage .= "Content-Type: " . $this->contentType 
+									. "; charset=\"" 
+									. $this->charset . "\"" . "\r\n";
+				$multiPartMessage .= "Content-Transfer-Encoding: quoted-printable" 
+									. "\r\n";
+				$multiPartMessage .= "\r\n";
+				$multiPartMessage .= quoted_printable_encode($this->message) 
+									. "\r\n";
+				$multiPartMessage .= "\r\n";
+			}
 
 			//Attached Files
 			if ($this->_attachedFiles) {
