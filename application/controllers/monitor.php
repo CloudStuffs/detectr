@@ -111,13 +111,10 @@ class Monitor extends Detectr {
 		$this->_authority($trigger);
 		$this->delete('Trigger', $trigger_id, false);
 		
-
 		$action = Action::first(array("id = ?" => $action_id));
-		if (($action && $action->user_id == $this->user->id) || $this->user->admin) {
-			$this->delete('Action', $action_id);
-		} else {
-			self::redirect("/member");
-		}	
+		$this->_authority($action);
+		
+		$this->delete('Action', $action_id);
 	}
 
 	/**
