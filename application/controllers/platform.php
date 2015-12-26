@@ -98,4 +98,23 @@ class Platform extends Member {
         }
         $this->delete('Website', $website->id);
     }
+
+    /**
+     * @before _secure, changeLayout, _admin
+     */
+    public function all() {
+        $this->seo(array("title" => "Websites added", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+        
+        $page = RequestMethods::get("page", 1);
+        $limit = RequestMethods::get("limit", 10);
+        
+        $websites = \Website::all(array(), array("title", "url", "id", "created"), "created", "desc", $limit, $page);
+        $count = count($users);
+        
+        $view->set('count', $count);
+        $view->set("websites", $websites);
+        $view->set("limit", $limit);
+        $view->set("page", (int)$page);
+    }
 }

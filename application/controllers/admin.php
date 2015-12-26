@@ -17,15 +17,6 @@ class Admin extends Auth {
     public function index() {
         $this->seo(array("title" => "Dashboard", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
-        
-        $count = array();
-        $count["users"] = User::count();
-        $count["triggers"] = Trigger::count();
-        $count["websites"] = Website::count();
-
-        $count = ArrayMethods::toObject($count);
-        $view->set("data", $count);
-
     }
 
     /**

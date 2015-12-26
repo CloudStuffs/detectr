@@ -19,31 +19,17 @@ class Monitor extends Detectr {
 
         $limit = RequestMethods::get("limit", 10);
         $page = RequestMethods::get("page", 1);
-        $active = RequestMethods::get("active", 0);
-        $websites = \Website::all(array(), array("id", "url"), "created", "desc", $limit, $page);
+        $live = RequestMethods::get("live", 0);
+        
+        $triggers = \Trigger::all(array("live = ?" => $live), array("*"), "created", "desc", $limit, $page);
+        $count = Trigger::count(array("live = ?" => $live));
 
-        $results = array(); $i = 0;
-        foreach ($websites as $w) {
-            $trigs = \Trigger::all(array("website_id = ?" => $w->id, "live = ?" => $active), array("title", "meta", "id", "live", "created"));
-            
-            foreach ($trigs as $t) {
-            	$results[] = array(
-            	    "website_id" => $w->id,
-            	    "domain" => $w->url,
-            	    "title" => $this->triggers[$t->title]["title"],
-            	    "meta" => $t->meta,
-            	    "trigger_id" => $t->id,
-            	    "status" => $t->live,
-            	    "created" => $t->created
-            	);
-            	++$i;
-            }
-        }
-        $results = ArrayMethods::toObject($results);
-        $view->set("count", $i);
+        $view->set("live", $live);
+        $view->set("count", $count);
         $view->set("limit", $limit);
         $view->set("page", $page);
-        $view->set("triggers", $results);
+        $view->set("triggers", $triggers);
+        $view->set("ts", $this->triggers);
     }
 
 	/**
