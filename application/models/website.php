@@ -30,10 +30,11 @@ class Website extends Shared\Model {
      * @column
      * @readwrite
      * @type text
+     * @length 255
      * @index
      * 
      * @validate required
-     * @label url
+     * @label It is the domain only (like playmusic.net)
      */
     protected $_url;
 

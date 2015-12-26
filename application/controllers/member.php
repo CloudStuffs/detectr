@@ -16,11 +16,13 @@ class Member extends Detectr {
         $this->seo(array("title" => "Dashboard","view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
-        $websites = Website::all(array("user_id = ?" => $this->user->id));
+        $websites = Website::all(array("user_id = ?" => $this->user->id), array("*"), "created", "desc", 10, 1);
+        $referers = Referer::all(array("user_id = ?" => $this->user->id), array("*"), "created", "desc", 10, 1);
 
         $view->set('actions', $this->actions);
         $view->set('trigs', $this->triggers);
         $view->set("websites", $websites);
+        $view->set("referers", $referers);
     }
     
     /**

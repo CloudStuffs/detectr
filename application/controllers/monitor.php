@@ -49,7 +49,7 @@ class Monitor extends Detectr {
 	/**
 	 * @before _secure, memberLayout
 	 */
-	public function create($website_id) {
+	public function create($website_id = null) {
 		$this->seo(array(
             "title" => "Create a Trigger for your website",
             "view" => $this->getLayoutView()
@@ -57,9 +57,7 @@ class Monitor extends Detectr {
 		$view = $this->getActionView();
 
 		$website = Website::first(array("id = ?" => $website_id), array("id", "title", "url", "user_id"));
-		if ((!$website || $website->user_id != $this->user->id) && !$this->user->admin) {
-			self::redirect("/member");
-		}
+		$this->_authority($website);
 
 		if (RequestMethods::post("key") == 'createTrigger') {
 			$this->_process(array('trigger' => false, 'action' => false, 'website_id' => $website->id));
@@ -80,9 +78,7 @@ class Monitor extends Detectr {
 			self::redirect("/member");
 		}
 		$trigger = Trigger::first(array("id = ?" => $trigger_id));
-		if ((!$trigger || $trigger->user_id != $this->user->id) && !$this->user->admin) {
-			self::redirect("/member");
-		}
+		$this->_authority($trigger);
 		$website = Website::first(array("id = ?" => $trigger->website_id));
 		$action = Action::first(array("trigger_id = ?" => $trigger->id));
 
@@ -112,11 +108,9 @@ class Monitor extends Detectr {
 		$this->noview();
 		
 		$trigger = Trigger::first(array("id = ?" => $trigger_id));
-		if (($trigger && $trigger->user_id == $this->user->id) || $this->user->admin) {
-			$this->delete('Trigger', $trigger_id, false);
-		} else {
-			self::redirect("/member");
-		}
+		$this->_authority($trigger);
+		$this->delete('Trigger', $trigger_id, false);
+		
 
 		$action = Action::first(array("id = ?" => $action_id));
 		if (($action && $action->user_id == $this->user->id) || $this->user->admin) {
@@ -137,9 +131,7 @@ class Monitor extends Detectr {
 		$view = $this->getActionView();
 
 		$website = Website::first(array("id = ?" => $website_id));
-		if ((!$website || $website->user_id != $this->user->id) && !$this->user->admin) {
-			self::redirect("/member");
-		}
+		$this->_authority($website);
 		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true), array("title", "meta", "website_id", "user_id", "id"));
 
 		$view->set('actions', $this->actions);

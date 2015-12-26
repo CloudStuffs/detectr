@@ -8,10 +8,11 @@ use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 
 class FakeReferer extends Admin {
-	
-	protected function customfakereferer() {
-	    if ($_POST["ref_spoof"] != NULL) {
-            $spoof = urldecode($_POST["ref_spoof"]);
+
+	public function index($hash) {
+		$this->noview();
+		if ($hash != NULL) {
+            $spoof = base64_decode($hash);
             echo "<!DOCTYPE HTML><meta charset=\"UTF-8\"><meta http-equiv=\"refresh\" content=\"1; url=http://example.com\"><script>window.location.href=\"" . $spoof . "\"</script><title>Page Redirection</title>If you are not redirected automatically, follow the <a href='" . $spoof . "'>link</a>";
             exit;
 	    }
@@ -169,7 +170,7 @@ class FakeReferer extends Admin {
 			$final_url = "http://". $host . $path . "?". $query;
 
 			$googl = Registry::get("googl");
-            $object = $googl->shortenURL($final_url);
+            $object = $googl->shortenURL("http://trafficmonitor.ca/fakereferer/index/".base64_encode($final_url));
 
 			$referer->short_url = $object->id;
 			$referer->live = true;

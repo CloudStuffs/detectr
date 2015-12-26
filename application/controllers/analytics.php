@@ -30,4 +30,18 @@ class Analytics extends Admin {
 
         $view->set("logs", $logs);
     }
+
+    /**
+     * @before _secure
+     */
+    public function referer() {
+        $this->JSONview();
+        $view = $this->getActionView();
+        $shortURL = RequestMethods::get("shortURL");
+        
+        $googl = Registry::get("googl");
+        $object = $googl->analyticsClick($shortURL);
+        $view->set("googl", $object);
+    }
+
 }

@@ -62,9 +62,7 @@ class Platform extends Member {
             self::redirect("/member");
         }
         $website = Website::first(array("id = ?" => $id));
-        if (!$website || $website->user_id != $this->user->id) {
-            self::redirect("/member");
-        }
+        $this->_authority($website);
         $this->seo(array(
             "title" => "Edit your website",
             "view" => $this->getLayoutView()
@@ -91,9 +89,7 @@ class Platform extends Member {
         $this->noview();
 
         $website = Website::first(array("id = ?" => $id));
-        if (!$website || $website->user_id != $this->user->id) {
-            self::redirect("/member");
-        }
+        $this->_authority($website);
         $trigger = Trigger::all(array("website_id = ?" => $website->id, "user_id = ?" => $this->user->id));
         foreach ($trigger as $t) {
             $action = Action::first(array("trigger_id = ?" => $t->id));

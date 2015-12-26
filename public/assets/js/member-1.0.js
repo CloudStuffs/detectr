@@ -124,7 +124,7 @@ $(document).ready(function () {
         var self = $(this);
         $('#helpTrigger').html('');
         request.read({
-            action: "detectr/read/trigger/" + this.value,
+            action: "monitor/read/trigger/" + this.value,
             callback: function(data) {
                 var d = $.parseJSON(data);
                 $('#helpTrigger').html(d.help);
@@ -136,7 +136,7 @@ $(document).ready(function () {
         var self = $(this);
         $('#helpAction').html('');
         request.read({
-            action: "detectr/read/action/" + this.value,
+            action: "monitor/read/action/" + this.value,
             callback: function(data) {
                 var d = $.parseJSON(data);
                 $('#helpAction').html(d.help);
@@ -162,6 +162,24 @@ $(document).ready(function () {
         } else {
             $("#tldSelection").attr("disabled", false);
         }
+    });
+
+    $(".googl").click(function(e) {
+        e.preventDefault();
+        var item = $(this),
+            shortURL = item.data('url'),
+            time = item.data('time'),
+            property = item.data('property');
+        item.html('<i class="fa fa-spinner fa-pulse"></i>');
+        request.read({
+            action: "analytics/referer",
+            data: {shortURL: shortURL},
+            callback: function(data) {
+                console.log(data);
+                item.html('Click : '+ data.googl.analytics.allTime.shortUrlClicks);
+            }
+        });
+
     });
 
 });
