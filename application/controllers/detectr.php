@@ -9,6 +9,7 @@ use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 use Framework\ArrayMethods as ArrayMethods;
 use \Curl\Curl;
+use \ClusterPoint\DB as DB;
 
 class Detectr extends Admin {
 	/**
@@ -335,7 +336,7 @@ class Detectr extends Admin {
 			$data['server']['name'] = RequestMethods::post("HTTP_HOST");
 			$data['server']['landingPage'] = 'http://'. $data['server']['name']. RequestMethods::post("REQUEST_URI");
 			$data['server']['referer'] = RequestMethods::post("HTTP_REFERER");
-
+			
 			$website = Website::first(array("url = ?" => $data['server']['name']), array("id", "title", "url"));
 
 			if (!$website) {
@@ -353,7 +354,7 @@ class Detectr extends Admin {
 					if (!call_user_func_array($this->triggers["$key"]["detect"], array($data))) {
 						continue;
 					}
-
+					
 					//$this->googleAnalytics($website, $t, $data['user']['location']);
 					$this->clusterpoint(array(
 						"trigger_id" => $t->id,
@@ -371,7 +372,6 @@ class Detectr extends Admin {
 				}
 			}
 			$code .= $last;
-			$this->log($code);
 
 			echo $code;
 		} else {
@@ -412,15 +412,15 @@ class Detectr extends Admin {
 	    curl_close($curl);
 	}
 
-	protected function clusterpoint($data='') {	
-    	$record = $this->read($data);
+	protected function clusterpoint($data = array()) {
+		$db = new DB();
+    	$record = $db->read($data);
     	if($record) {
     		$item = $record[0];
-    		$this->update($item->_id, $item->hit + 1);
+    		$db->update($item->_id, $item->hit + 1);
     	} else {
-    		$this->create($item);
+    		$db->create($data);
     	}
 	}
-
 
 }

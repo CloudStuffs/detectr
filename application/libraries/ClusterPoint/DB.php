@@ -34,16 +34,8 @@ class DB {
 		curl_close($ch);
 	}
 
-	public function update($id, $doc) {
-		$query = 'UPDATE ' . self::DATABASE . '["' . addslashes($id) . '"] SET ';
-
-		foreach ($doc as $key => $value) {
-			$query .= $key . ' = "' . addslashes($value) . '"';
-			if($count != 1) {
-				$query .= ", ";
-			}
-		}
-
+	public function update($id, $click) {
+		$query = 'UPDATE stats["' . $id . '"] SET hit = "' . $click . '"';
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $this->url() . '/_query');
 		curl_setopt($ch, CURLOPT_USERPWD, self::AUTH);
@@ -76,15 +68,9 @@ class DB {
 		curl_close($ch);
 	}
 
-	public function read($search = '', $field) {
+	public function read($item) {
+		$query = "SELECT * FROM stats WHERE trigger_id == ".$item["trigger_id"]." && user_id == ".$item["user_id"]." LIMIT 1";
 		$ch = curl_init();
-		$query = 'SELECT * FROM '. self::DATABASE .' ORDER BY \'timestamp\' DESC';
-		// search
-		if (isset($search) && $search !== '') {
-		    // We are storing item text in field named "text"
-			$query = 'SELECT * FROM '. self::DATABASE .' WHERE '.$field.'.CONTAINS("*'.addslashes($search).'*") ORDER BY \'timestamp\' DESC';
-			// More info: https://www.clusterpoint.com/docs/?page=Matching_Documents_with_WHERE
-		}
 		curl_setopt($ch, CURLOPT_URL, $this->url() . '/_query'); // We added _query here!
 		curl_setopt($ch, CURLOPT_USERPWD, self::AUTH);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
@@ -93,13 +79,8 @@ class DB {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $query);
 		$response = json_decode(curl_exec($ch));
-		$errorMsg = curl_error($ch);
-		if ($errorMsg) {
-			var_dump($errorMsg);
-		}
 		curl_close($ch);
-
-		return $response->results;
+		return isset($response->results) ? $response->results : NULL;
 	}
 
 	public function index($query='') {

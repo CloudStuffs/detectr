@@ -8,6 +8,7 @@
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 use \Curl\Curl;
+use ClusterPoint\DB as DB;
 
 class Analytics extends Admin {
 
@@ -42,6 +43,26 @@ class Analytics extends Admin {
         $googl = Registry::get("googl");
         $object = $googl->analyticsClick($shortURL);
         $view->set("googl", $object);
+    }
+
+    public function trigger() {
+        $this->JSONview();
+        $view = $this->getActionView();
+
+
+    }
+
+    public function clusterpoint() {
+        $count = 0;
+        $clusterpoint = new DB();
+        $query = "SELECT * FROM stats WHERE item_id == '{$this->item_id}' && user_id == '{$this->user_id}' LIMIT 0, 100";
+        $results = $clusterpoint->index($query);
+        if ($results) {
+            foreach ($results as $result) {
+                $count += $result->click;
+            }
+        }
+        return $count;
     }
 
 }
