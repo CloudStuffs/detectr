@@ -198,13 +198,13 @@ class Detectr extends Admin {
 					$bots = explode(",", $opts['saved']);
 					$response = false;
 					foreach ($bots as $b) {
-						if ($opts['user']['ua'] == $b) {
+						if ($opts['user']['ua'] == trim($b)) {
 							$response = true;
 							break;
 						}
 					}
 
-					if ($opts['saved'] == 'Crawler') {
+					if (strtolower($opts['saved']) == 'crawler') {
 						$response = true;
 					}
 					return $response;

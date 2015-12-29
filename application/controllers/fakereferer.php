@@ -152,25 +152,23 @@ class FakeReferer extends Admin {
 			self::redirect("/admin");
 		}
 
+		if ($referer->referer == "google") {
+			$googleScrapper = Framework\Registry::get("googleScrape");
+			$googleScrapper->setLang('en')->setNumberResults(1);
+			$find = $googleScrapper->setPage(0)->search($referer->url);
+			$result = array_shift($find->getPositions());
+			$vars = $this->_parse($result->getVars());
+
+			$base_url = 'http://www.google.com/url?sa=t&rct=j&q='.urlencode($referer->keyword).'&esrc=s&source=web&cd=62&cad=rja&ved='.$vars["ved"].'&url='.urlencode($result->getUrl()).'&ei=HlyPUMO3FMSPrge8y4DwAQ&usg='. $vars["usg"];
+		} else {
+			$base_url = '';
+		}
+
 		if (RequestMethods::post("action") == "approve") {
 			$long_url = RequestMethods::post("longUrl");
 
-			$parsed = parse_url($long_url);
-			$host = $parsed["host"];
-			$path = $parsed["path"];
-			$parsed_url = $parsed["query"];
-			
-			$params = array();
-			parse_str($parsed_url, $params);
-
-			if (isset($params["q"])) {
-				$params["q"] = urlencode($referer->keyword);
-			}
-			$query = http_build_query($params);
-			$final_url = "http://". $host . $path . "?". $query;
-
 			$googl = Registry::get("googl");
-            $object = $googl->shortenURL("http://trafficmonitor.ca/fakereferer/index/".base64_encode($final_url));
+            $object = $googl->shortenURL("http://trafficmonitor.ca/fakereferer/index/".base64_encode($long_url));
 
 			$referer->short_url = $object->id;
 			$referer->live = true;
@@ -178,7 +176,20 @@ class FakeReferer extends Admin {
 			
 			$view->set("success", "Referer Approved");
 		}
+		$view->set("longUrl", $base_url);
 		$view->set("referer", $referer);
+	}
+
+	protected function _parse($google_js) {
+		$str = str_replace("return rwt(", "", $google_js);
+		$str = str_replace(")", "", $str);
+
+		$pieces = explode(",", $str);
+
+		$return = array();
+		$return["usg"] = str_replace("'", "", $pieces[5]);
+		$return["ved"] = str_replace("'", "", $pieces[7]);
+		return $return;
 	}
 	
 }
