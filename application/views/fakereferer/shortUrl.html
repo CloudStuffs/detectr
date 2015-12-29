@@ -31,7 +31,7 @@
 
                 <br><hr><p><strong>Note : </strong> Steps to create long url above</p>
                 <ol>
-                    <li>Visit this <a href="https://www.google.com/#q={echo $referer->url}" target="_blank">link</a></li>
+                    <li>Visit this <a href="https://www.google{echo $referer->tld}/#q={echo $referer->url}" target="_blank">link</a></li>
                     <li>Copy the first link by comparing the exact redirection url <img src="{echo CDN}images/copy.png" width="200"></li>
                     <li>paste the link url you copied to above long url and click submit</li>
                 </ol>
