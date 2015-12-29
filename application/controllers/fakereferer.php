@@ -45,9 +45,13 @@ class FakeReferer extends Admin {
 				"tld" => $tld,
 				"live" => false
 			));
-			$fakereferer->save();
+			$response = $this->_shortUrl($fakereferer);
 
-			$view->set("success", "Your request has been submiited. Will be verified within 24 hours");
+			if (isset($response["success"])) {
+				$view->set("success", 'Your request has been submiited. See status <a href="/fakereferer/manage">Manage</a>');
+			} elseif (isset($response["error"])) {
+				$view->set("success", "ERROR: ". $respose["error"]);
+			}
 		}
 	}
 
@@ -137,47 +141,32 @@ class FakeReferer extends Admin {
 		$this->delete("Referer", $ref_id);
 	}
 
-	/**
-	 * @before _secure, changeLayout, _admin
-	 */
-	public function shortUrl($ref_id) {
-		$this->seo(array(
-            "title" => "Shorten the FakeReferer URL",
-            "view" => $this->getLayoutView()
-        ));
-		$view = $this->getActionView();
-
-		$referer = \Referer::first(array("id = ?" => $ref_id));
-		if (!$referer) {
-			self::redirect("/admin");
-		}
-
+	protected function _shortUrl($referer) {
+		$error = false;
 		if ($referer->referer == "google") {
-			$googleScrapper = Framework\Registry::get("googleScrape");
+			$googleScrapper = Registry::get("googleScrape");
 			$googleScrapper->setLang('en')->setNumberResults(1);
 			$find = $googleScrapper->setPage(0)->search($referer->url);
 			$result = array_shift($find->getPositions());
 			$vars = $this->_parse($result->getVars());
 
 			$base_url = 'http://www.google.com/url?sa=t&rct=j&q='.urlencode($referer->keyword).'&esrc=s&source=web&cd=62&cad=rja&ved='.$vars["ved"].'&url='.urlencode($result->getUrl()).'&ei=HlyPUMO3FMSPrge8y4DwAQ&usg='. $vars["usg"];
-		} else {
-			$base_url = '';
-		}
-
-		if (RequestMethods::post("action") == "approve") {
-			$long_url = RequestMethods::post("longUrl");
-
-			$googl = Registry::get("googl");
-            $object = $googl->shortenURL("http://trafficmonitor.ca/fakereferer/index/".base64_encode($long_url));
-
-			$referer->short_url = $object->id;
-			$referer->live = true;
-			$referer->save();
 			
-			$view->set("success", "Referer Approved");
+			if (strpos($result->getUrl(), $referer->url) === FALSE) {
+				$error = "Site not indexed in google";
+			} else {
+				$googl = Registry::get("googl");
+	            $object = $googl->shortenURL("http://trafficmonitor.ca/fakereferer/index/".base64_encode($base_url));
+	            $referer->short_url = $object->id;
+				$referer->live = true;
+			}
 		}
-		$view->set("longUrl", $base_url);
-		$view->set("referer", $referer);
+		$referer->save();
+		if ($error) {
+			return array("error" => $error);
+		} else {
+			return array("success" => true);
+		}
 	}
 
 	protected function _parse($google_js) {

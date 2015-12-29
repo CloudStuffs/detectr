@@ -53,8 +53,6 @@
                                 {else}
                                 <a href="/admin/edit/referer/{echo $r->id}/live/1" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Approve</a>
                                 {/else}
-                                {if !$r->short_url}
-                                <a href="/fakereferer/shortUrl/{echo $r->id}" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Create Short URL</a>
                             </td>
                         </tr>
                         {script ++$i} {/foreach}

@@ -47,7 +47,7 @@
                                 {if !$r->live}
                                 <a href="/fakereferer/edit/{echo $r->id}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                 {/if}
-                                <a href="/admin/remove/{echo $r->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>
+                                <a href="/fakereferer/remove/{echo $r->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>
                             </td>
                         </tr>
                         {script ++$i} {/foreach}
