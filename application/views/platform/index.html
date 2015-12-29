@@ -13,7 +13,7 @@
                     </div>
                     {if($websites)}
                     <div class="panel-body">
-                        <p>Download the Code and require that in every page of your website for its working. For example</p>
+                        <p>Download the Code, rename it to detector.php from detector.bak and require that in every page of your website for its working. For example</p>
                         <code>require "/path/to/detector.php"</code>
                         <br>
                     </div>
@@ -34,11 +34,11 @@
                                     <td><a href="{echo 'http://'.urldecode($website->url)}" target="_blank">{echo urldecode($website->url)}</a></td>
                                     <td>{$website->created}</td>
                                     <td>
-                                        <a href="/member/editWebsite/{echo $website->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
+                                        <a href="/platform/edit/{echo $website->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
                                         <a href="/monitor/create/{echo $website->id}" class="btn btn-primary btn-xs"><i class="fa fa-link"></i> Create Trigger</a>
                                         <a href="/monitor/manage/{echo $website->id}" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage Triggers</a>
-                                        <a href="/public/assets/detector.php" class="btn btn-default btn-xs" download="detector.php"><i class="fa fa-download"></i> Code</a>
-                                        <a href="/member/removeWebsite/{echo $website->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
+                                        <a href="/public/assets/detector.bak" class="btn btn-default btn-xs" download="detector.bak"><i class="fa fa-download"></i> Code</a>
+                                        <a href="/platform/removeWebsite/{echo $website->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
                                     </td>
                                 </tr>
                                 {/foreach}
