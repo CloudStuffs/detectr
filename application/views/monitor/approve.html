@@ -34,14 +34,15 @@
                             <th>Domain</th>
                             <th>Status</th>
                             <th>Created</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
                         {foreach $t in $triggers}
-                        {script $website = Website::all(array("id = ?" => $t->website_id), array("url"))}
+                        {script $website = Website::first(array("id = ?" => $t->website_id), array("url"))}
                         <tr>
-                            <td>{echo $ts[$t->id]['title']}</td>
-                            <td>{echo $t->title}</td>
+                            <td>{echo $t->id}</td>
+                            <td>{echo $ts[$t->title]['title']}</td>
                             <td>{echo $t->meta}</td>
                             <td>{echo $website->url}</td>
                             {if $t->live}
