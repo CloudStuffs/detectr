@@ -148,13 +148,14 @@ class Detectr extends Admin {
 		$this->_triggers = array(
 			"1" => array(
 				"title" => "PageView",
-				"help" => "Just used for tracking website, leave the field empty"
+				"help" => "Just used for tracking website, leave the field empty",
+				"detect" => function ($opts) {
+					return true;
+				}
 			),
 			"2" => array(
 				"title" => "Location",
-				"verify" => function ($inputs) {
-					
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
 					return $opts['user']['location'] == $opts['stored'];
 				},
@@ -162,9 +163,7 @@ class Detectr extends Admin {
 			),
 			"3" => array(
 				"title" => "Landing Page",
-				"verify" => function ($inputs) {
-					// see if the $inputs is correct
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
 					$stored = strtolower($opts['saved']);
 					$current = strtolower($opts['server']['landingPage']);
@@ -174,9 +173,7 @@ class Detectr extends Admin {
 			),
 			"4" => array(
 				"title" => "Time of Visit",
-				"verify" => function ($inputs) {
-					
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
 					$range = explode("-", $opts['saved']);
 					
@@ -204,7 +201,7 @@ class Detectr extends Admin {
 						}
 					}
 
-					if (strtolower($opts['saved']) == 'crawler') {
+					if (strtolower($opts['saved']) == 'crawler' && $opts['user']['ua_info']->agent_type == "Crawler") {
 						$response = true;
 					}
 					return $response;
@@ -213,9 +210,7 @@ class Detectr extends Admin {
 			),
 			"6" => array(
 				"title" => "IP Range",
-				"verify" => function ($inputs) {
-					
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
 					if (strpos($opts['saved'], '/') == false) {
 					    $range.= '/32';
@@ -232,9 +227,7 @@ class Detectr extends Admin {
 			),
 			"7" => array(
 				"title" => "User-Agent",
-				"verify" => function ($inputs) {
-					
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
 					return ($opts['user']['ua'] == $opts['saved']);
 				},
@@ -246,25 +239,21 @@ class Detectr extends Admin {
 					
 				},
 				"detect" => function ($opts) {
-					return ($opts['user']['ua_info']->agent_name == $opts['saved']);
+					return (strtolower($opts['user']['ua_info']->agent_name) == strtolower($opts['saved']));
 				},
 				"help" => "Enter the name of browser on which trigger is to be executed. Eg: Chrome, Firefox, Opera etc."
 			),
 			"9" => array(
 				"title" => "Operating System",
-				"verify" => function ($inputs) {
-					
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
-					return ($opts['user']['ua_info']->agent_name == $opts['saved']);
+					return (strtolower($opts['user']['ua_info']->agent_name) == strtolower($opts['saved']));
 				},
 				"help" => "Enter the name of Operating System on which trigger is to be executed. Eg: Linux, Windows etc"
 			),
 			"10" => array(
 				"title" => "Device Type",
-				"verify" => function ($inputs) {
-					
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
 					$saved = strtolower($opts['saved']);
 
@@ -297,9 +286,7 @@ class Detectr extends Admin {
 			),
 			"11" => array(
 				"title" => "Referrer",
-				"verify" => function ($inputs) {
-					
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
 					$response = stristr($opts['server']['referer'], $opts['saved']);
 					return ($response !== FALSE) ? true : false;
@@ -308,13 +295,22 @@ class Detectr extends Admin {
 			),
 			"12" => array(
 				"title" => "Active Login",
-				"verify" => function ($inputs) {
-					
-				},
+				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
 					return false;
 				},
 				"help" => "Enter the session key in which uniquely identifies the user"
+			),
+			"13" => array(
+				"title" => "Repeat Visitor",
+				"verify" => function ($inputs) {},
+				"detect" => function ($opts) {
+					$key = "__trafficMonitor";
+					$cookie = $opts["cookies"];
+					
+					return isset($cookie[$key]) ? true : false;
+				},
+				"help" => "Just leave the field empty. We'll check automatically :)"
 			)
 		);
 	}
@@ -322,21 +318,7 @@ class Detectr extends Admin {
 	public function index() {
 		$this->noview();
 		if (RequestMethods::post('plugin_detector') == 'getTrigger') {
-			
-			$data = array();
-			$data['user']['ip'] = RequestMethods::post("REMOTE_ADDR");
-			$data['user']['ua'] = RequestMethods::post("HTTP_USER_AGENT");
-			
-			$ip_info = Shared\Detector::IPInfo($data['user']['ip']);
-			$user_agent = Shared\Detector::UA($data['user']['ua']);
-			
-			$data['user']['location'] = $ip_info->geoplugin_countryCode;
-			$data['user']['ua_info'] = $user_agent;
-			
-			$data['server']['name'] = RequestMethods::post("HTTP_HOST");
-			$data['server']['landingPage'] = 'http://'. $data['server']['name']. RequestMethods::post("REQUEST_URI");
-			$data['server']['referer'] = RequestMethods::post("HTTP_REFERER");
-			
+			$data = $this->_setOpts();
 			$website = Website::first(array("url = ?" => $data['server']['name']), array("id", "title", "url"));
 
 			if (!$website) {
@@ -377,6 +359,28 @@ class Detectr extends Admin {
 		} else {
 			self::redirect('/404');
 		}
+	}
+
+	protected function _setOpts() {
+		$data = array();
+		$data['user']['ip'] = RequestMethods::post("REMOTE_ADDR");
+		$data['user']['ua'] = RequestMethods::post("HTTP_USER_AGENT");
+		
+		$ip_info = Shared\Detector::IPInfo($data['user']['ip']);
+		$user_agent = Shared\Detector::UA($data['user']['ua']);
+		
+		$data['user']['location'] = $ip_info->geoplugin_countryCode;
+		$data['user']['ua_info'] = $user_agent;
+		
+		$data['server']['name'] = RequestMethods::post("HTTP_HOST");
+		$data['server']['landingPage'] = 'http://'. $data['server']['name']. RequestMethods::post("REQUEST_URI");
+		$data['server']['referer'] = RequestMethods::post("HTTP_REFERER");
+
+		$data["posted"] = RequestMethods::post("p");
+		$data["cookies"] = RequestMethods::post("c");
+		$data["session"] = RequestMethods::post("s");
+
+		return $data;
 	}
 
 	protected function googleAnalytics($website, $trigger, $country) {
