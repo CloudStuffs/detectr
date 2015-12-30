@@ -23,6 +23,7 @@
                                     <th>Meta</th>
                                     <th>Action to be Taken</th>
                                     <th>Action Inputs</th>
+                                    <th>Hits</th>
                                     <th>Tools</th>
                                 </tr>
                             </thead>
@@ -36,6 +37,9 @@
                                     {script $action = Action::first(array("trigger_id = ?" => $trigger->id))}
                                     <td>{echo $actions["$action->title"]["title"]}</td>
                                     <td>{echo htmlspecialchars($action->inputs)}</td>
+                                    <td class="trigger" data-trigger="{$trigger->id}">
+                                        <span class="label label-info">View</span>
+                                    </td>
                                     <td>
                                         <a href="/monitor/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                         <a href="/monitor/remove/{echo $trigger->id}/{echo $action->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
