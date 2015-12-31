@@ -353,7 +353,6 @@ class Detectr extends Admin {
 				}
 			}
 			$code .= $last;
-			$this->log($website->url.':::::::::::::'. $code);
 			echo $code;
 		} else {
 			self::redirect('/404');
