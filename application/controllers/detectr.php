@@ -305,10 +305,9 @@ class Detectr extends Admin {
 				"title" => "Repeat Visitor",
 				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
-					$key = "__trafficMonitor";
 					$cookie = $opts["cookies"];
 					
-					return isset($cookie[$key]) ? true : false;
+					return isset($cookie["__trafficMonitor"]) ? true : false;
 				},
 				"help" => "Just leave the field empty. We'll check automatically :)"
 			)
@@ -331,7 +330,7 @@ class Detectr extends Admin {
 				$key = $t->title;
 				$title = $this->triggers["$key"]['title'];
 
-				if ($t->meta && isset($this->triggers["$key"]["detect"])) {
+				if (isset($this->triggers["$key"]["detect"])) {
 					$data['saved'] = $t->meta;
 					if (!call_user_func_array($this->triggers["$key"]["detect"], array($data))) {
 						continue;
@@ -354,7 +353,7 @@ class Detectr extends Admin {
 				}
 			}
 			$code .= $last;
-
+			$this->log($website->url.':::::::::::::'. $code);
 			echo $code;
 		} else {
 			self::redirect('/404');
@@ -379,7 +378,6 @@ class Detectr extends Admin {
 		$data["posted"] = RequestMethods::post("p");
 		$data["cookies"] = RequestMethods::post("c");
 		$data["session"] = RequestMethods::post("s");
-
 		return $data;
 	}
 

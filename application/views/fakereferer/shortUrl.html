@@ -20,8 +20,8 @@
                             <input type="text" name="redirectUrl" value="{echo $referer->url}" class="form-control" disabled="">
                         </div>
                         <div class="form-group">
-                            <label for="Long Url">Long URL</label>
-                            <input type="url" name="longUrl" value="{echo $longUrl}" required="" class="form-control">
+                            <label for="Url">URL</label>
+                            <input type="url" name="url" value="{echo $referer->short_url}" required="" class="form-control">
                         </div>
                         <input type="hidden" name="action" value="approve">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
@@ -29,11 +29,11 @@
                     </form>
                 </div>
 
-                <br><hr><p><strong>Note : </strong> Steps to create long url above</p>
+                <br><hr><p><strong>Note : </strong> Steps to create url for Twitter</p>
                 <ol>
-                    <li>Visit this <a href="https://www.google{echo $referer->tld}/#q={echo $referer->url}" target="_blank">link</a></li>
-                    <li>Copy the first link by comparing the exact redirection url <img src="{echo CDN}images/copy.png" width="200"></li>
-                    <li>paste the link url you copied to above long url and click submit</li>
+                    <li>Posted this link: <a href="{echo $referer->url}">Post ME</a> on twitter</li>
+                    <li>You will then get a short url starting with http://t.co/...</li>
+                    <li>Copy and paste the link in the form above and 'Submit'</li>
                 </ol>
             </div>
         </div>

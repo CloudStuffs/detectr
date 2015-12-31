@@ -141,6 +141,43 @@ class FakeReferer extends Admin {
 		$this->delete("Referer", $ref_id);
 	}
 
+	/**
+	 * @before _secure, changeLayout, _admin
+	 */
+	public function shortUrl($ref_id) {
+		$this->seo(array(
+            "title" => "Submit Your FakeReferer",
+            "view" => $this->getLayoutView()
+        ));
+		$view = $this->getActionView();
+		$referer = \Referer::first(array("id = ?" => $ref_id));
+		if (!$referer) {
+			self::redirect("/admin");
+		}
+		if (RequestMethods::post("action") == "approve") {
+			$url = RequestMethods::post("url");
+			if (!$url) {
+				return;
+			}
+			switch ($referer->referer) {
+				case 'twitter':	// User will automatically enter short url
+					$referer->short_url = $url;
+					$referer->live = true;
+					break;
+				
+				default:
+					$googl = Registry::get("googl");
+		            $object = $googl->shortenURL("http://trafficmonitor.ca/fakereferer/index/".base64_encode($url));
+					$referer->short_url = $object->id;
+					$referer->live = true;
+					break;
+			}
+			$referer->save();
+			$view->set("success", 'Referer Approved. See <a href="/fakereferer/all">Manage</a>');
+		}
+		$view->set("referer", $referer);
+	}
+
 	protected function _shortUrl($referer) {
 		$error = false;
 		if ($referer->referer == "google") {
