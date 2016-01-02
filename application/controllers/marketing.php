@@ -9,6 +9,7 @@ use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 
 class Marketing extends Admin {
+    
     /**
      * @before _secure, _admin, changeLayout
      */
@@ -76,4 +77,41 @@ class Marketing extends Admin {
         }
     }
 
+    /**
+     * @before _secure, _admin, changeLayout
+     */
+    public function createPackage() {
+        $this->seo(array("title" => "Create Package", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+
+        if (RequestMethods::post("action") == "submitPackage") {
+            $package = new Package();
+            $this->_savePackage($package);
+            $view->set("success", "Package is Saved Successfully");
+        }
+
+        $items = Item::all(array(), array("id", "name"));
+        $view->set("items", $items);
+    }
+
+    /**
+     * @before _secure, _admin, changeLayout
+     */
+    public function managePackage() {
+        $this->seo(array("title" => "Manage Package", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+
+        $packages = Package::all(array());
+        $view->set("packages", $packages);
+    }
+
+    protected function _savePackage($package) {
+        $package->name = RequestMethods::post("name");
+        $package->item = json_encode(RequestMethods::post("items"));
+        $package->price = RequestMethods::post("price");
+        $package->tax = RequestMethods::post("tax");
+
+        $package->save();
+        return $package;
+    }
 }

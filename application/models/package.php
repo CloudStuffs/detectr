@@ -1,11 +1,11 @@
 <?php
 
 /**
- * The Item Model
+ * The Package Model
  *
  * @author Faizan Ayubi
  */
-class Item extends Shared\Model {
+class Package extends Shared\Model {
 
     /**
      * @column
@@ -25,15 +25,6 @@ class Item extends Shared\Model {
      * @label name
      */
     protected $_name;
-
-    /**
-     * @column
-     * @readwrite
-     * @type text
-     * @length 255
-     * @label description
-     */
-    protected $_description;
 
     /**
      * @column
