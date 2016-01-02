@@ -13,4 +13,9 @@ class Home extends Controller {
         $this->getLayoutView()->set("seo", Framework\Registry::get("seo"));
     }
 
+    public function pricing() {
+		$this->seo(array("title" => "Pricing", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+	}
+
 }
