@@ -157,7 +157,7 @@ class Detectr extends Admin {
 				"title" => "Location",
 				"verify" => function ($inputs) {},
 				"detect" => function ($opts) {
-					return $opts['user']['location'] == $opts['stored'];
+					return strtolower($opts['user']['location']) == strtolower($opts['stored']);
 				},
 				"help" => 'Enter the 2-digit country code.. Refer: <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements">Country Codes</a>'
 			),
