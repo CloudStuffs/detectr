@@ -115,7 +115,7 @@ class Monitor extends Detectr {
 
 		$website = Website::first(array("id = ?" => $website_id));
 		$this->_authority($website);
-		$triggers = Trigger::all(array("website_id = ?" => $website_id, "live = ?" => true), array("title", "meta", "website_id", "user_id", "id"));
+		$triggers = Trigger::all(array("website_id = ?" => $website_id), array("title", "meta", "website_id", "user_id", "id", "live"));
 
 		$view->set('actions', $this->actions);
 		$view->set('trigs', $this->triggers);

@@ -23,6 +23,7 @@
                                     <th>Meta</th>
                                     <th>Action to be Taken</th>
                                     <th>Action Inputs</th>
+                                    <th>Status</th>
                                     <th>Hits</th>
                                     <th>Tools</th>
                                 </tr>
@@ -37,10 +38,24 @@
                                     {script $action = Action::first(array("trigger_id = ?" => $trigger->id))}
                                     <td>{echo $actions["$action->title"]["title"]}</td>
                                     <td>{echo htmlspecialchars($action->inputs)}</td>
+                                    <td>
+                                        {if $trigger->live}
+                                        <span class="label label-success">Active</span>
+                                        {/if} {else}
+                                        <span class="label label-danger">Disabled by admin</span>
+                                        {/else}
+                                    </td>
                                     <td class="trigger" data-trigger="{$trigger->id}">
                                         <span class="label label-info">View</span>
                                     </td>
                                     <td>
+                                        {if $user->admin}
+                                            {if $trigger->live}
+                                            <a href="/admin/edit/Trigger/{echo $trigger->id}/live/0" class="btn btn-xs btn-warning"><i class="fa fa-times"></i> Disapprove</a>
+                                            {/if} {else}
+                                            <a href="/admin/edit/Trigger/{echo $trigger->id}/live/1" class="btn btn-xs btn-success"><i class="fa fa-check"></i> Approve</a>
+                                            {/else}
+                                        {/if}
                                         <a href="/monitor/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                         <a href="/monitor/remove/{echo $trigger->id}/{echo $action->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
                                     </td>
