@@ -226,6 +226,13 @@ class Admin extends Auth {
         echo json_encode($object->columns);
     }
 
+    protected function install() {
+        $models = Shared\Markup::models();
+        foreach ($models as $key => $value) {
+            $this->sync($value);
+        }
+    }
+
     public function changeLayout() {
         $this->defaultLayout = "layouts/admin";
         $this->setLayout();
