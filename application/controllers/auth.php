@@ -41,7 +41,7 @@ class Auth extends Controller {
                 ));
                 if($user) {
                     if ($user->live) {
-                        $this->setUser($user);
+                        $this->session($user);
                         self::redirect('/member/index.html');
                     } else {
                         $view->set("message", "Invalid login or user blocked");
@@ -98,7 +98,7 @@ class Auth extends Controller {
             if(RequestMethods::post("password") == RequestMethods::post("cpassword")) {
                 $user->password = sha1(RequestMethods::post("password"));
                 $user->save();
-                $this->setUser($user);
+                $this->session($user);
                 self::redirect("/member");
             } else{
                 $view->set("message", 'Password Does not match');
@@ -114,6 +114,19 @@ class Auth extends Controller {
                 $view->set("message", 'Something Went Wrong please contact admin');
             }
         }
+    }
+
+    protected function session($user) {
+        $this->setUser($user);
+        
+        $tommorow = strftime("%Y-%m-%d", strtotime('+1 day'));
+        $session = Registry::get("session");
+        $subscriptions = array();
+        $subscription = Subscription::all(array("user_id = ?" => $user->id, "live = ?" => true, "expiry < ?" => $tommorow), array("item_id"));
+        foreach ($subscription as $s) {
+            array_push($subscriptions, $s->item_id);
+        }
+        $session->set("subscriptions", $subscriptions);
     }
     
     protected function getBody($options) {
@@ -201,19 +214,20 @@ class Auth extends Controller {
         }
     }
 
-    protected function _authority($model) {
-        if (!$model) {
-            $redirect = true;
+    public function render() {
+        $session = Registry::get("session");
+        $subscriptions = $session->get("subscriptions");
+        if ($this->actionView) {
+            $this->actionView->set("subscriptions", $subscriptions);
         }
-        if ($model->user_id != $this->user->id) {
-            if ($this->user->admin) {
-                $redirect = false;
-            } else {
-                $redirect = true;
-            }
+
+        if ($this->layoutView) {
+            $this->layoutView->set("subscriptions", $subscriptions);
         }
-        if ($redirect) {
-            self::redirect("/member");
-        }
+        parent::render();
+    }
+
+    protected function _subscribed() {
+        get_class($this);
     }
 }

@@ -6,3 +6,5 @@ logs/
 
 # Google API keys
 application/plugins/googl/googl.php
+
+application/configuration/database.ini

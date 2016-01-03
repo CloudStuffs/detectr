@@ -67,7 +67,7 @@ class Serp extends Admin {
 		$view->set("serps", $keywords);
 	}
 
-	public function analytics($keyword_id) {
+	public function stats($keyword_id) {
 		$keyword = \Keyword::first(array("id = ?" => $keyword_id), array("user_id", "id"));
 		$this->_authority($website);
 

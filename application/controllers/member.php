@@ -75,4 +75,15 @@ class Member extends Detectr {
         $websites = Website::all(array("user_id = ?" => $user_id));
         $view->set("websites", $websites);
     }
+
+    /**
+     * @before _secure, changeLayout, _admin
+     */
+    public function subscriptions() {
+        $this->seo(array("title" => "Subscriptions", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+        
+        $subscriptions = Subscription::all(array("user_id = ?" => $user_id));
+        $view->set("subscriptions", $subscriptions);
+    }
 }
