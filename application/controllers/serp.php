@@ -10,20 +10,32 @@ use Framework\ArrayMethods as ArrayMethods;
 
 class Serp extends Admin {
 	/**
+	 * Create a serp for a website
 	 * @before _secure, memberLayout
 	 */
-	public function create($website_id) {
-		$website = \Website::first(array("id = ?" => $website_id), array("user_id", "id", "url"));
-		$this->_authority($website);
-
+	public function create() {
 		$this->seo(array("title" => "Serp | Create","view" => $this->getLayoutView()));
 		$view = $this->getActionView();
 
-		$view->set("website", $website);
+		$websites = \Website::all(array("user_id = ?" => $this->user->id), array("id", "url"));
+		$view->set("websites", $websites);
 		if (RequestMethods::post("action") == "createSerp") {
+			$website_id = RequestMethods::post("website");
+			
+			$found = false;
+			foreach ($websites as $w) {
+				if ($w->id == $website_id) {
+					$found = true;
+					break;
+				}
+			}
+			if (!$found) {
+				$view->set("success", "Invalid request");
+				return;
+			}
 			$q = RequestMethods::post("keyword");
 			
-			$keyword = \Keyword::first(array("website_id = ?" => $website->id, "keyword" => $q));
+			$keyword = \Keyword::first(array("website_id = ?" => $website_id, "keyword" => $q));
 			if ($keyword) {
 				$view->set("success", "Serp Action already registered for this keyword");
 				return;
@@ -44,17 +56,15 @@ class Serp extends Admin {
 	}
 
 	/**
+	 * Manage all serps created by the member
 	 * @before _secure, memberLayout
 	 */
-	public function manage($website_id) {
-		$website = \Website::first(array("id = ?" => $website_id), array("user_id", "id", "url"));
-		$this->_authority($website);
-
+	public function manage() {
 		$this->seo(array("title" => "Serp | Manage","view" => $this->getLayoutView()));
 		$view = $this->getActionView();
 
-		$keywords = \Keyword::all(array("website_id" => $website_id));
-		$view->set("keywords", $keywords);
+		$keywords = \Keyword::all(array("user_id = ?" => $this->user->id));
+		$view->set("serps", $keywords);
 	}
 
 	public function analytics($keyword_id) {
@@ -62,7 +72,7 @@ class Serp extends Admin {
 		$this->_authority($website);
 
 		$end_date = date("Y-m-d");
-		$date_allowed = date("Y-m-d", strtotime($end_date."-7 day"));
+		$start_date = date("Y-m-d", strtotime($end_date."-7 day"));
 
 		$diff = date_diff(date_create($start_date), date_create($end_date));
         for ($i = 0; $i < $diff->format("%a"); $i++) {
