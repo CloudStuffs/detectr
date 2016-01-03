@@ -50,14 +50,7 @@
                                     {script $change = (int) $new_rank->position - (int) $old_rank->position}
                                     <td class="{if $change > 0}text-green{/if}{elseif $change < 0}text-red{/elseif}">$change</td>
                                     <td>
-                                        {if $user->admin}
-                                            {if $serp->live}
-                                            <a href="/admin/edit/Keyword/{echo $serp->id}/live/0" class="btn btn-xs btn-warning"><i class="fa fa-times"></i> Disapprove</a>
-                                            {/if} {else}
-                                            <a href="/admin/edit/Keyword/{echo $serp->id}/live/1" class="btn btn-xs btn-success"><i class="fa fa-check"></i> Approve</a>
-                                            {/else}
-                                        {/if}
-                                        <a href="/serp/analytics/{echo $serp->id}" class="btn btn-primary delete btn-xs"><i class="fa fa-label"></i> View Stats</a>
+                                        <a href="/serp/stats/{echo $serp->id}" class="btn btn-primary btn-xs"><i class="fa fa-label"></i> View Stats</a>
                                         <a href="/serp/remove/{echo $serp->id}/{echo $action->id}" class="btn btn-danger delete btn-xs"><i class="fa fa-trash"></i> Delete</a>
                                     </td>
                                 </tr>

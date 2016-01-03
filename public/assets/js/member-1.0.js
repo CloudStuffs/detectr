@@ -58,7 +58,7 @@ $(document).ready(function () {
         e.preventDefault();
         var data = $(this).serializeArray();
         request.read({
-            action: "admin/dataAnalysis",
+            action: "serp/stats",
             data: data,
             callback: function (data) {
                 $('#stats').html('');

@@ -230,4 +230,20 @@ class Auth extends Controller {
     protected function _subscribed() {
         get_class($this);
     }
+
+    protected function _authority($model) {
+        if (!$model) {
+            $redirect = true;
+        }
+        if ($model->user_id != $this->user->id) {
+            if ($this->user->admin) {
+                $redirect = false;
+            } else {
+                $redirect = true;
+            }
+        }
+        if ($redirect) {
+            self::redirect("/member");
+        }
+    }
 }

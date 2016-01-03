@@ -75,28 +75,6 @@ $(document).ready(function () {
         });
     });
 
-    $('#getstats').submit(function (e) {
-        $('#stats').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-5x"></i></p>');
-        e.preventDefault();
-        var data = $(this).serializeArray();
-        request.read({
-            action: "member/stats",
-            data: data,
-            callback: function (data) {
-                $('#stats').html('');
-                if (data.data) {
-                    Morris.Bar({
-                        element: 'stats',
-                        data: toArray(data.data),
-                        xkey: 'y',
-                        ykeys: ['a'],
-                        labels: ['Total']
-                    });
-                }
-            }
-        });
-    });
-
     // find all the selectors 
     var types = $('#addOptions select');
     types.on("change", function () { // bind the change function
