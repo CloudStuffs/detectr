@@ -11,6 +11,13 @@ RewriteRule ^([^.]+)\.?([a-zA-Z]+)?$ index.php?url=$1&extension=$2 [QSA,L]
     AddOutputFilterByType DEFLATE text/html text/plain text/xml application/xml application/xhtml+xml text/css text/javascript application/javascript application/x-javascript
 </ifModule>
 
+# Protecting Cron.php
+<Files "cron.php">
+    Order deny,allow
+    Allow from 45.79.178.187
+    Deny from all
+</Files>
+
 # BEGIN Expire headers
 <IfModule mod_expires.c>
     ExpiresActive On
