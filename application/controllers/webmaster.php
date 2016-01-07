@@ -28,13 +28,26 @@ class Webmaster extends Admin {
 		if (!$gClient->getAccessToken()) {
 			$url = $gClient->createAuthUrl();
 			$view->set("url", $url);
+		} elseif ($gClient->isAccessTokenExpired()) {
+			self::redirect($gClient->createAuthUrl());
 		} else {
-			$webmaster = new Google_Service_Webmasters($gClient);
-			$sites = $webmaster->sites;
+			$end = RequestMethods::get("endDate", date('Y-m-d'));
+			$start = RequestMethods::get("startDate", date('Y-m-d', strtotime($end."-30 day")));
+			try {
+				$webmaster = new Google_Service_Webmasters($gClient);
+				$analytics = $webmaster->searchanalytics;
 
-			$results = $sites->listSites();
+				$request = new Google_Service_Webmasters_SearchAnalyticsQueryRequest();
+				$request->startDate = $start;
+				$request->endDate = $end;
+				$request->rowLimit = 5;
 
-			$view->set("results", $results->getSiteEntry());
+				$response = $analytics->query("http://swiftintern.com/", $request);
+				$response = $response->getRows();
+				$view->set("response", $response);
+			} catch (\Exception $e) {
+				// something went wrong
+			}
 		}
 
 	}

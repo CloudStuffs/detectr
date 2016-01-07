@@ -34,7 +34,7 @@ class Detector {
 		}
 	}
 
-	public static function IPInfo() {
+	public static function IPInfo($ip) {
 		$url = 'http://www.geoplugin.net/json.gp?ip='.$ip;
         return self::_execute(array(
         	'urls' => array('ip-info' => $url),
