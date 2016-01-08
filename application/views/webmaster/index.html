@@ -12,6 +12,16 @@
             <form class="form-inline text-center" role="form" id="">
                 <div class="form-group">
                     <div class="input-group">
+                        <label class="sr-only">Websites</label>
+                        <select name="website" id="" class="form-control">
+                            {foreach $w in $websites}
+                            <option value="{echo $w->getSiteUrl()}">{echo $w->getSiteUrl()}</option>
+                            {/foreach}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
                         <label class="sr-only">From</label>
                         <span class="add-on input-group-addon"><i class="fa fa-calendar fa-fw"></i> From</span>
                         <input type="date" style="width: 200px" name="startDate" class="form-control" />
@@ -29,7 +39,7 @@
             <br>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <i class="fa fa-bar-chart-o fa-fw"></i> Stats
+                    <i class="fa fa-bar-chart-o fa-fw"></i> Stats - <strong>{echo $current}</strong>
                 </div>
                 {foreach $r in $response}
                 <table class="table table-striped">
