@@ -93,13 +93,19 @@ class Monitor extends Detectr {
 	public function remove($trigger_id, $action_id) {
 		$this->noview();
 		
+		$mongo = Registry::get("MongoDB");
+		$m_trigs = $mongo->selectCollection("triggers");
 		$trigger = Trigger::first(array("id = ?" => $trigger_id));
 		$this->_authority($trigger);
+
+		$m_trigs->remove(array('trigger_id' => $trigger->id), array('justOne' => true));
 		$this->delete('Trigger', $trigger_id, false);
 		
 		$action = Action::first(array("id = ?" => $action_id));
+		$m_actions = $mongo->selectCollection("actions");
 		$this->_authority($action);
 		
+		$m_actions->remove(array('action_id' => $action->id), array('justOne' => true));
 		$this->delete('Action', $action_id);
 	}
 
@@ -175,6 +181,50 @@ class Monitor extends Detectr {
 		$action->inputs = $opts['action']['inputs'];
 		$action->code = $code;
 		$action->save();
+
+		$this->_mongoSave($trigger, $action);
+	}
+
+	/**
+	 * Save the trigger and action in MongoDB
+	 */
+	protected function _mongoSave($trigger, $action) {
+		$mongo = Registry::get("MongoDB");
+		$m_trigs = $mongo->selectCollection("triggers");
+		$m_actions = $mongo->selectCollection("actions");
+
+		$record = $m_trigs->findOne(array('trigger_id' => $trigger->id));
+		$doc = array(
+				'title' => $trigger->title,
+				'meta' => $trigger->meta,
+				'user_id' => $trigger->user_id,
+				'website_id' => $trigger->website_id,
+				'trigger_id' => $trigger->id,
+				'live' => (bool) $trigger->live,
+				'created' => $trigger->created
+		);
+		if (isset($record)) {
+			$m_trigs->update(array('trigger_id' => $trigger->id), array('$set' => $doc));
+		} else {
+			$m_trigs->insert($doc);
+		}
+
+		$record = $m_actions->findOne(array('action_id' => $action->id));
+		$doc = array(
+			'title' => $action->title,
+			'inputs' => $action->inputs,
+			'code' => $action->code,
+			'user_id' => $action->user_id,
+			'trigger_id' => $action->trigger_id,
+			'action_id' => $action->id,
+			'live' => (bool) $action->live,
+			'created' => $action->created
+		);
+		if (isset($record)) {
+			$m_actions->update(array('trigger_id' => $trigger->id, 'action_id' => $action->id), array('$set' => $doc));
+		} else {
+			$m_actions->insert($doc);
+		}
 	}
 
 	public function read($type, $id) {

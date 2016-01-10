@@ -36,19 +36,24 @@ class Platform extends Member {
         if (RequestMethods::post('action') == 'addWebsite') {
             $name = RequestMethods::post('name');
             $url = RequestMethods::post('url');
-            $url = preg_replace('/^http:\/\//', '', $url);
+            $url = preg_replace('/^https?:\/\//', '', $url);
             
             // Check if the domain already exists
             $website = Website::first(array("url = ?" => $url));
             if ($website) {
                 $view->set("message", "Website Already exists");
             } else {
-                $website = new Website(array(
+                $doc = array(
                     "title" => $name,
                     "url" => $url,
-                    "user_id" => $this->user->id
-                ));
+                    "user_id" => $this->user->id,
+                    "live" => true
+                );
+                $website = new Website($doc);
                 $website->save();
+
+                $collection = Registry::get("MongoDB")->selectCollection("website");
+                $collection->insert(array_merge($doc, array('website_id' => $website->id)));
                 $view->set("message", "Website Added Successfully");    
             }
         }
@@ -72,11 +77,17 @@ class Platform extends Member {
         if (RequestMethods::post('action') == 'editWebsite') {
             $title = RequestMethods::post('name');
             $url = RequestMethods::post('url');
-            $url = preg_replace('/^http:\/\//', '', $url);
+            $url = preg_replace('/^https?:\/\//', '', $url);
 
             $website->url = $url;
             $website->title = $title;
             $website->save();
+
+            $collection = Registry::get("MongoDB")->selectCollection("website");
+            $record = $collection->findOne(array('website_id' => $website->id));
+            if (isset($record)) {
+                $collection->update(array('website_id' => $website->id), array('$set' => array("title" => $website->title, "url" => $website->url)));
+            }
             $view->set("message", "Website Changed Successfully");
         }
         $view->set('website', $website);
@@ -91,11 +102,21 @@ class Platform extends Member {
         $website = Website::first(array("id = ?" => $id));
         $this->_authority($website);
         $trigger = Trigger::all(array("website_id = ?" => $website->id, "user_id = ?" => $this->user->id));
+
+        $mongo_db = Registry::get("MongoDB");
+        $mongo_trigger = $mongo_db->selectCollection("triggers");
+        $mongo_action = $mongo_db->selectCollection("actions");
+        
         foreach ($trigger as $t) {
             $action = Action::first(array("trigger_id = ?" => $t->id));
+            $mongo_trigger->remove(array('trigger_id' => $t->id), array('justOne' => true));
+            $mongo_action->remove(array('action_id' => $action->id), array('justOne' => true));
+
             $this->delete('Action', $action->id, false);
             $this->delete('Trigger', $t->id, false);
         }
+
+        $mongo_db->selectCollection("website")->remove(array('website_id' => $website->id), array('justOne' => true));
         $this->delete('Website', $website->id);
     }
 
