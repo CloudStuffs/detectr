@@ -7,6 +7,7 @@
 use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 use Framework\ArrayMethods as ArrayMethods;
+use Framework\StringMethods as StringMethods;
 
 class Webmaster extends Admin {
 	/**
@@ -90,8 +91,8 @@ class Webmaster extends Admin {
 		$opts["platform"] = RequestMethods::get("platform", "web");
 
 		$result = $this->_getCrawlErrors($response["gClient"], $url, $opts);
-		if (!is_object($result)) {
-			// $result = null;
+		if (is_string($result)) {
+			$result = null;
 		}
 
 		$view->set("current", $url);
@@ -114,9 +115,14 @@ class Webmaster extends Admin {
 
 		$websites = $this->_getWebsites($response["gClient"]);
 		$url = RequestMethods::get("website", $websites[0]->getSiteUrl());
+
+		$result = $this->_getSiteMaps($response["gClient"], $url);
+		if (is_string($result)) {
+			$result = null;
+		}
 		$view->set("current", $url);
 		$view->set("websites", $websites);
-		$view->set("response", true);
+		$view->set("response", $result);
 	}
 
 	/**
@@ -173,7 +179,7 @@ class Webmaster extends Admin {
 
 	/**
 	 * Returns an array of objects
-	 * @return array|string objects of class \Google_Service_Webmasters_UrlCrawlErrorCountsPerType
+	 * @return array|string Array of objects of \stdClass on success else return error message
 	 */
 	protected function _getCrawlErrors(&$gClient, $website, $opts) {
 		try {
@@ -190,10 +196,9 @@ class Webmaster extends Admin {
 				
 				$entry = array();
 				foreach ($entries as $e) {
-					preg_match("/(.*)T/", $e->getTimestamp(), $match);
 					$entry[] = array(
 						"count" => $e->getCount(),
-						"timestamp" => $match[1]
+						"timestamp" => array_shift(StringMethods::match($e->getTimestamp(), "(.*)T"))
 					);
 				}
 				$result[] = array(
@@ -209,4 +214,48 @@ class Webmaster extends Admin {
 		
 		return $result;
 	}
+
+	/**
+	 * Returns an array of objects
+	 * @return array|string Array of objects of \stdClass (success), Error Message (failure)
+	 */
+	protected function _getSiteMaps(&$gClient, $website, $opts = array()) {
+		try {
+			$webmaster = new Google_Service_Webmasters($gClient);
+			$sitemaps = $webmaster->sitemaps;
+
+			$response = $sitemaps->listSitemaps($website, $opts);
+			$response = $response->getSitemap();
+			
+			$result = array();
+			foreach ($response as $r) {
+				$contents = $r->getContents();
+				$content = array();
+				foreach ($contents as $c) {
+					$content[] = array(
+						"type" => $c->type,
+						"submitted" => $c->submitted,
+						"indexed" => $c->indexed
+					);
+				}
+
+				$result[] = array(
+					"path" => $r->path,
+					"errors" => $r->errors,
+					"pending" => $r->isPending,
+					"type" => $r->type,
+					"warnings" => $r->warnings,
+					"lastDownloaded" => array_shift(StringMethods::match($r->lastDownloaded, "(.*)T")),
+					"lastSubmitted" => array_shift(StringMethods::match($r->lastSubmitted, "(.*)T")),
+					"contents" => $content
+				);
+			}
+			$result = ArrayMethods::toObject($result);
+		} catch (\Exception $e) {
+			$result = $e->getMessage();
+		}
+
+		return $result;
+	}
+
 }

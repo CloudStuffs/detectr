@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">WebMaster <small>Statistics</small></h1>
+                <h2 class="page-header"><i class="fa fa-map-signs"></i> SiteMap <small>Statistics</small></h2>
             </div>
         </div>
         <div class="row">
@@ -20,20 +20,6 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <label class="sr-only">From</label>
-                        <span class="add-on input-group-addon"><i class="fa fa-calendar fa-fw"></i> From</span>
-                        <input type="date" style="width: 200px" name="startDate" class="form-control" />
-                    </div>
-                </div>
-                <div class="form-group">
-                    <div class="input-group">
-                        <label class="sr-only">To</label>
-                        <span class="add-on input-group-addon"><i class="fa fa-calendar fa-fw"></i> To</span>
-                        <input type="date" style="width: 200px" name="endDate" class="form-control" />
-                    </div>
-                </div>
                 <button type="submit" class="btn btn-primary">Analyze</button>
             </form>
             <br>
@@ -41,7 +27,35 @@
                 <div class="panel-heading">
                     <i class="fa fa-bar-chart-o fa-fw"></i> Stats - <strong>{echo $current}</strong>
                 </div>
-                
+                <table class="panel-body table">
+                    <thead>
+                        <tr>
+                            <th>Path</th>
+                            <th>Warnings</th>
+                            <th>Errors</th>
+                            <th>Pending</th>
+                            <th>Last Downloaded</th>
+                            <th>Last Submitted</th>
+                            <th>Contents</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {foreach $r in $response}
+                        <tr>
+                            <td>{echo $r->path}</td>
+                            <td>{echo $r->warnings}</td>
+                            <td>{echo $r->errors}</td>
+                            <td>{echo ($r->pending) ? "Yes" : "No"}</td>
+                            <td>{echo Framework\StringMethods::only_date($r->lastDownloaded)}</td>
+                            <td>{echo Framework\StringMethods::only_date($r->lastSubmitted)}</td>
+                            {foreach $c in $r->contents}
+                            <td>{echo "Submitted: ". $c->submitted. ", Indexed: ". $c->indexed}</td>
+                            {script break}
+                            {/foreach}
+                        </tr>
+                        {/foreach}
+                    </tbody>
+                </table>
             </div>
             {/elseif} {else}
                 <pre>Something went wrong</pre>
