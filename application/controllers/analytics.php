@@ -22,17 +22,21 @@ class Analytics extends Admin {
         if ($action == "unlink") {
             $file = APP_PATH ."/logs/". $name . ".txt";
             @unlink($file);
-            self::redirect("/admin/logs");
+            self::redirect("/analytics/logs");
         }
 
         $logs = array();
         $path = APP_PATH . "/logs";
-        $iterator = new DirectoryIterator($path);
+        try {
+            $iterator = new DirectoryIterator($path);
 
-        foreach ($iterator as $item) {
-            if (!$item->isDot()) {
-                array_push($logs, $item->getFilename());
+            foreach ($iterator as $item) {
+                if (!$item->isDot()) {
+                    array_push($logs, $item->getFilename());
+                }
             }
+        } catch (\Exception $e) {
+            $logs = array();
         }
 
         $view->set("logs", $logs);

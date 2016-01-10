@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Dashboard <small>Statistics Overview</small></h1>
+                <h3 class="page-header"><a href="/member/all"><i class="fa fa-arrow-left"></i></a> Website Management</small></h3>
             </div>
         </div>
         
@@ -10,14 +10,9 @@
             <div class="col-lg-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><i class="fa fa-globe fa-fw"></i> Active Websites</h3>
+                        <h4 class="panel-title"><i class="fa fa-codepen fa-fw"></i> Registered Websites for the User</h4>
                     </div>
-                    {if($websites)}
-                    <div class="panel-body">
-                        <p>Download the Code and require that in every page of your website for its working. For example</p>
-                        <code>require "/path/to/detector.php"</code>
-                        <br>
-                    </div>
+                    {if ($websites)}
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
@@ -25,6 +20,7 @@
                                     <th>Title</th>
                                     <th>URL</th>
                                     <th>Created</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -33,13 +29,17 @@
                                 <tr>
                                     <td>{$website->title}</td>
                                     <td><a href="{echo 'http://'.urldecode($website->url)}" target="_blank">{echo urldecode($website->url)}</a></td>
-                                    <td>{$website->created}</td>
+                                    <td>{echo Framework\StringMethods::only_date($website->created)}</td>
+                                    {script $live = $website->live}
                                     <td>
-                                        <a href="/member/editWebsite/{echo $website->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
-                                        <a href="/monitor/create/{echo $website->id}" class="btn btn-primary btn-xs"><i class="fa fa-link"></i> Create Trigger</a>
-                                        <a href="/monitor/manage/{echo $website->id}" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage Triggers</a>
-                                        <a href="/public/assets/detector.php" class="btn btn-default btn-xs" download="detector.php"><i class="fa fa-download"></i> Code</a>
-                                        <a href="/platform/removeWebsite/{echo $website->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
+                                        <span class="label {if $live}label-success{/if}{else}label-danger{/else}">{echo $live ? "Active" : "Inactive"}</span>
+                                    </td>
+                                    <td>
+                                        {if $live}
+                                        <a href="/admin/edit/Website/{echo $website->id}/live/0" class="btn btn-warning btn-xs"><i class="fa fa-times"></i> Disapprove</a>
+                                        {/if} {else}
+                                        <a href="/admin/edit/Website/{echo $website->id}/live/1" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Approve</a>
+                                        {/else}
                                     </td>
                                 </tr>
                                 {/foreach}
@@ -47,10 +47,11 @@
                         </table>
                     </div>
                     {/if} {else}
-                    <p>Hi, you have not added any website on platform.</p>
+                    <div class="panel-body">
+                        <p>User has not added any websites.</p>
+                    </div>
                     {/else}
                 </div>
-                <a href="/member/addWebsite" class="btn btn-primary"><i class="fa fa-plus"></i> Add More</a>
             </div>
         </div>
 

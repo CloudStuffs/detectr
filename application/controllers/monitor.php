@@ -26,8 +26,9 @@ class Monitor extends Detectr {
 
         $view->set(array(
         	"live" => $live,
-        	"count" => $count,
-        	"limit" => page,
+        	"count" => (int) $count,
+        	"limit" => $limit,
+        	"page" => $page,
         	"triggers" => $triggers,
         	"ts" => $this->triggers
         ));

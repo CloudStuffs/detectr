@@ -15,6 +15,7 @@
                     <div class="panel-body">
                         <p>Download the Code, rename it to detector.php from detector.bak and require that in every page of your website for its working. For example</p>
                         <code>require "/path/to/detector.php"</code>
+                        <a href="/public/assets/detector.bak" class="btn btn-default btn-xs" download="detector.bak"><i class="fa fa-download"></i> Code</a>
                         <br>
                     </div>
                     <div class="table-responsive">
@@ -24,6 +25,7 @@
                                     <th>Title</th>
                                     <th>URL</th>
                                     <th>Created</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -32,12 +34,15 @@
                                 <tr>
                                     <td>{$website->title}</td>
                                     <td><a href="{echo 'http://'.urldecode($website->url)}" target="_blank">{echo urldecode($website->url)}</a></td>
-                                    <td>{$website->created}</td>
+                                    <td>{echo Framework\StringMethods::only_date($website->created)}</td>
+                                    {script $live = $website->live}
+                                    <td>
+                                        <span class="label {if $live}label-success{/if}{else}label-danger{/else}">{echo $live ? "Active" : "Inactive"}</span>
+                                    </td>
                                     <td>
                                         <a href="/platform/edit/{echo $website->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
                                         <a href="/monitor/create/{echo $website->id}" class="btn btn-primary btn-xs"><i class="fa fa-link"></i> Create Trigger</a>
                                         <a href="/monitor/manage/{echo $website->id}" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage Triggers</a>
-                                        <a href="/public/assets/detector.bak" class="btn btn-default btn-xs" download="detector.bak"><i class="fa fa-download"></i> Code</a>
                                         <a href="/platform/removeWebsite/{echo $website->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
                                     </td>
                                 </tr>
@@ -46,7 +51,9 @@
                         </table>
                     </div>
                     {/if} {else}
-                    <p>Hi, you have not added any website on platform.</p>
+                    <div class="panel-body">
+                        <p>Hi, you have not added any website on platform.</p>
+                    </div>
                     {/else}
                 </div>
                 <a href="/platform/add" class="btn btn-primary"><i class="fa fa-plus"></i> Add More</a>

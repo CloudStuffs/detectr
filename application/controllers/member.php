@@ -19,10 +19,12 @@ class Member extends Detectr {
         $websites = Website::all(array("user_id = ?" => $this->user->id), array("*"), "created", "desc", 10, 1);
         $referers = Referer::all(array("user_id = ?" => $this->user->id), array("*"), "created", "desc", 10, 1);
 
-        $view->set('actions', $this->actions);
-        $view->set('trigs', $this->triggers);
-        $view->set("websites", $websites);
-        $view->set("referers", $referers);
+        $view->set(array(
+            "actions" => $this->actions,
+            "trigs" => $this->triggers,
+            "websites" => $websites,
+            "referers" => $referers
+        ));
     }
     
     /**
@@ -59,10 +61,12 @@ class Member extends Detectr {
         $users = \User::all(array(), array("*"), $orderBy, "desc", $limit, $page);
         $total = \User::count();
         
-        $view->set('count', $total);
-        $view->set("results", $users);
-        $view->set("limit", $limit);
-        $view->set("page", (int)$page);
+        $view->set(array(
+            "count" => $total,
+            "results" => $users,
+            "limit" => $limit,
+            "page" => (int) $page
+        ));
     }
 
     /**

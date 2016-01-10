@@ -34,7 +34,7 @@
                             <td>{echo $website->url}</td>
                             <td>{echo Framework\StringMethods::only_date($website->created)}</td>
                             <td>
-                                <a href="/admin/delete/website/{echo $website->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>
+                                <a href="/platform/removeWebsite/{echo $website->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>
                             </td>
                         </tr>
                         {/foreach}

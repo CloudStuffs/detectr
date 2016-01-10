@@ -36,15 +36,15 @@ class Admin extends Auth {
         $limit = RequestMethods::get("limit", $limit);
         $sign = RequestMethods::get("sign", "equal");
 
-        $view->set("items", array());
-        $view->set("values", array());
-        $view->set("model", $model);
-        $view->set("page", $page);
-        $view->set("limit", $limit);
-        $view->set("property", $property);
-        $view->set("val", $val);
-        $view->set("sign", $sign);
-
+        $view->set(array("items" => array(),
+            "values" => array(),
+            "model" => $model,
+            "page" => $page,
+            "limit" => $limit,
+            "property" => $property,
+            "val" => $val,
+            "sign", $sign
+        ));
         if ($model) {
             if ($sign == "like") {
                 $where = array("{$property} LIKE ?" => "%{$val}%");
@@ -65,11 +65,12 @@ class Admin extends Auth {
                     }
                     $i++;
                 }
-                $view->set("items", $items);
-                $view->set("values", $values[0]);
-                $view->set("count", $count);
-                //echo '<pre>', print_r($values[0]), '</pre>';
-                $view->set("success", "Total Results : {$count}");
+                $view->set(array(
+                    "items" => $items,
+                    "values" => $values[0],
+                    "count" => $count,
+                    "success" => "Total Results : {$count}"
+                ));
             } else {
                 $view->set("success", "No Results Found");
             }
@@ -140,10 +141,12 @@ class Admin extends Auth {
             $view->set("success", true);
         }
 
-        $view->set("vars", $vars);
-        $view->set("array", $array);
-        $view->set("model", $model);
-        $view->set("id", $id);
+        $view->set(array(
+            "vars" => $vars,
+            "array" => $array,
+            "model" => $model,
+            "id" => $id
+        ));
     }
 
     /**
