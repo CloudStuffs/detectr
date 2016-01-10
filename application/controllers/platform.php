@@ -133,9 +133,11 @@ class Platform extends Member {
         $websites = \Website::all(array(), array("title", "url", "id", "created"), "created", "desc", $limit, $page);
         $count = count($users);
         
-        $view->set('count', $count);
-        $view->set("websites", $websites);
-        $view->set("limit", $limit);
-        $view->set("page", (int)$page);
+        $view->set(array(
+            "count" => $count,
+            "websites" => $websites,
+            "limit" => $limit,
+            "page" => (int) $page,
+        ));
     }
 }

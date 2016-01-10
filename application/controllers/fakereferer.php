@@ -70,10 +70,13 @@ class FakeReferer extends Admin {
 		$count = \Referer::count(array("user_id = ?" => $this->user->id));
 
 		$referers = \Referer::all(array("user_id = ?" => $this->user->id));
-		$view->set("referers", $referers);
-		$view->set("page", $page);
-		$view->set("limit", $limit);
-		$view->set("count", $count);
+
+		$view->set(array(
+			"referers" => $referers,
+			"page" => $page,
+			"limit" => $limit,
+			"count" => $count
+		));
 	}
 
 	/**
@@ -91,10 +94,12 @@ class FakeReferer extends Admin {
 		$count = \Referer::count(array());
 
 		$referers = \Referer::all(array());
-		$view->set("referers", $referers);
-		$view->set("page", $page);
-		$view->set("limit", $limit);
-		$view->set("count", $count);
+		$view->set(array(
+			"referers" => $referers,
+			"page" => $page,
+			"limit" => $limit,
+			"count" => $count
+		));
 	}
 
 	/**

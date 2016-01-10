@@ -24,12 +24,13 @@ class Monitor extends Detectr {
         $triggers = \Trigger::all(array("live = ?" => $live), array("*"), "created", "desc", $limit, $page);
         $count = Trigger::count(array("live = ?" => $live));
 
-        $view->set("live", $live);
-        $view->set("count", $count);
-        $view->set("limit", $limit);
-        $view->set("page", $page);
-        $view->set("triggers", $triggers);
-        $view->set("ts", $this->triggers);
+        $view->set(array(
+        	"live" => $live,
+        	"count" => $count,
+        	"limit" => page,
+        	"triggers" => $triggers,
+        	"ts" => $this->triggers
+        ));
     }
 
 	/**
@@ -50,10 +51,11 @@ class Monitor extends Detectr {
 			$view->set('message', 'Trigger created Successfully');
 		}
 
-		$view->set('triggers', $this->triggers);
-		$view->set('actions', $this->actions);
-		$view->set('website', $website);
-
+		$view->set(array(
+			'triggers' => $this->triggers,
+			'actions' => $this->actions,
+			'website' => $website
+		));
 	}
 
 	/**
@@ -79,12 +81,13 @@ class Monitor extends Detectr {
 			$view->set('message', 'Trigger edited Successfully');
 		}
 
-		$view->set('triggers', $this->triggers);
-		$view->set('actions', $this->actions);
-
-		$view->set('trigger', $trigger);
-		$view->set('action', $action);
-		$view->set('website', $website);
+		$view->set(array(
+			'triggers' => $this->triggers,
+			'actions' => $this->actions,
+			'trigger' => $trigger,
+			'action' => $action,
+			'website' => $website
+		));
 	}
 
 	/**
@@ -123,10 +126,12 @@ class Monitor extends Detectr {
 		$this->_authority($website);
 		$triggers = Trigger::all(array("website_id = ?" => $website_id), array("title", "meta", "website_id", "user_id", "id", "live"));
 
-		$view->set('actions', $this->actions);
-		$view->set('trigs', $this->triggers);
-		$view->set("triggers", $triggers);
-		$view->set("website", $website);
+		$view->set(array(
+			'actions' => $this->actions,
+			'trigs' => $this->triggers,
+			'triggers' => $triggers,
+			'website' => $website
+		));
 	}
 
 	protected function _process($opts) {
