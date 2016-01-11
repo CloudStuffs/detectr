@@ -69,8 +69,7 @@ class Marketing extends Admin {
                 "template" => "blank",
                 "subject" => RequestMethods::post("subject"),
                 "message" => RequestMethods::post("message"),
-                "emails" => $emails,
-                "delivery" => "mailgun"
+                "emails" => $emails
             );
             $this->notify($options);
             $view->set("success", TRUE);
