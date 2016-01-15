@@ -12,31 +12,34 @@
                     {/if}
                     <form class="col-lg-offset-3 col-lg-6" action="" method="post">
                         <div class="form-group">
-                            <label for="Name of the Item">Name</label>
-                            <input type="text" name="name" placeholder="Name of the package" maxlength="100" required="" class="form-control">
-                            <span class="help-block">
-                                <pre>Eg: {foreach $i in $items} {echo $i}, {/foreach}</pre>
-                            </span>
+                            <label>Name</label>
+                            <input type="text" name="name" maxlength="100" value="{echo $package->name}" required="" class="form-control">
                             <span class="help-block">{echo Shared\Markup::errors($errors, "name")}</span>
                         </div>
                         <div class="form-group">
-                            <label for="Description of the Item">Description (Optional)</label>
-                            <textarea class="form-control" name="description" rows="5"></textarea>
+                            <label for="Referer">Items</label>
+                            <select name="items[]" class="form-control" multiple="" required="">
+                                {script $stored = json_decode($package->item)}
+                                {foreach $i in $items}
+                                <option value="{echo $i->id}" {if in_array($i->id, $stored) !== FALSE}selected=""{/if}>{echo $i->name}</option>
+                                {/foreach}
+                            </select>
+                            <span class="help-block">{echo Shared\Markup::errors($errors, "item")}</span>
                         </div>
                         <div class="form-group">
                             <label for="keyword">Total Price (USD)</label>
-                            <input type="text" name="price" required="" pattern="[0-9]{1,10}\.?[0-9]{0,2}" class="form-control" value="10.00" placeholder="25.99">
+                            <input type="text" name="price" value="{echo $package->price}" pattern="[0-9]{1,10}\.?[0-9]{0,2}" required="" class="form-control">
                             <span class="help-block">{echo Shared\Markup::errors($errors, "price")}</span>
                         </div>
                         <div class="form-group">
                             <label for="keyword">Tax (USD)</label>
-                            <input type="text" name="tax" required="" pattern="[0-9]{1,4}\.?[0-9]{0,2}" class="form-control" value="0.00" placeholder="1.99">
+                            <input type="text" name="tax" required="" value="{echo $package->tax}" pattern="[0-9]{1,4}\.?[0-9]{0,2}" class="form-control">
                             <span class="help-block">{echo Shared\Markup::errors($errors, "tax")}</span>
                         </div>
-                        <input type="hidden" name="action" value="createItem">
+                        <input type="hidden" name="action" value="submitPackage">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
-                        <a href="/items/manage" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
-                    </form><br>
+                        <a href="/marketing/managePackage" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
+                    </form>
                 </div>
             </div>
         </div>

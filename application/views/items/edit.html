@@ -13,10 +13,11 @@
                     <form class="col-lg-offset-3 col-lg-6" action="" method="post">
                         <div class="form-group">
                             <label for="Name of the Item">Name</label>
-                            <input type="text" name="name" required="" value="{echo $item->name}" class="form-control">
+                            <input type="text" name="name" placeholder="Name of the package" required="" value="{echo $item->name}" class="form-control" maxlength="100">
                             <span class="help-block">
                                 <pre>Eg: {foreach $i in $items} {echo $i}, {/foreach}</pre>
                             </span>
+                            <span class="help-block">{echo Shared\Markup::errors($errors, "name")}</span>
                         </div>
                         <div class="form-group">
                             <label for="Description of the Item">Description (Optional)</label>
@@ -24,11 +25,13 @@
                         </div>
                         <div class="form-group">
                             <label for="keyword">Total Price (USD)</label>
-                            <input type="text" name="price" required="" pattern="[0-9]{1,10}\.?[0-9]{0,2}" class="form-control" value="{echo $item->price}">
+                            <input type="text" name="price" required="" pattern="[0-9]{1,10}\.?[0-9]{0,2}" class="form-control" value="{echo $item->price}" placeholder="99.99">
+                            <span class="help-block">{echo Shared\Markup::errors($errors, "price")}</span>
                         </div>
                         <div class="form-group">
                             <label for="keyword">Tax (USD)</label>
-                            <input type="text" name="tax" required="" pattern="[0-9]{1,4}\.?[0-9]{0,2}" class="form-control" value="{echo $item->tax}">
+                            <input type="text" name="tax" required="" pattern="[0-9]{1,4}\.?[0-9]{0,2}" class="form-control" value="{echo $item->tax}" placeholder="2.99">
+                            <span class="help-block">{echo Shared\Markup::errors($errors, "tax")}</span>
                         </div>
                         <input type="hidden" name="action" value="updateItem">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>

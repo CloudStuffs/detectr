@@ -13,7 +13,8 @@
                     <form class="col-lg-offset-3 col-lg-6" action="" method="post">
                         <div class="form-group">
                             <label>Name</label>
-                            <input type="text" name="title" required="" class="form-control">
+                            <input type="text" name="name" maxlength="100" required="" class="form-control">
+                            <span class="help-block">{echo Shared\Markup::errors($errors, "name")}</span>
                         </div>
                         <div class="form-group">
                             <label for="Referer">Items</label>
@@ -22,18 +23,21 @@
                                 <option value="{echo $i->id}">{echo $i->name}</option>
                                 {/foreach}
                             </select>
+                            <span class="help-block">{echo Shared\Markup::errors($errors, "item")}</span>
                         </div>
                         <div class="form-group">
                             <label for="keyword">Total Price (USD)</label>
-                            <input type="text" name="price" required="" class="form-control">
+                            <input type="text" name="price" pattern="[0-9]{1,10}\.?[0-9]{0,2}" required="" class="form-control">
+                            <span class="help-block">{echo Shared\Markup::errors($errors, "price")}</span>
                         </div>
                         <div class="form-group">
                             <label for="keyword">Tax (USD)</label>
-                            <input type="text" name="tax" required="" class="form-control">
+                            <input type="text" name="tax" required="" pattern="[0-9]{1,4}\.?[0-9]{0,2}" class="form-control">
+                            <span class="help-block">{echo Shared\Markup::errors($errors, "tax")}</span>
                         </div>
                         <input type="hidden" name="action" value="submitPackage">
                         <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
-                        <a href="/admin" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
+                        <a href="/marketing/managePackage" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
                     </form>
                 </div>
             </div>

@@ -24,12 +24,16 @@ class Items extends Admin {
 		$this->seo(array("title" => "Items | Create", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
+        $errors = array();
         if (RequestMethods::post("action") == "createItem") {
         	$response = $this->_saveItem();
         	if ($response["success"]) {
         		$view->set("success", 'Item added. Go to <a href="/items/manage">Manage Items</a>');
+        	} else {
+        		$errors = $response["errors"];
         	}
         }
+        $view->set("errors", $errors);
         $view->set("items", $this->items);
 	}
 
@@ -46,16 +50,17 @@ class Items extends Admin {
 		$this->seo(array("title" => "Items | Edit", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
+        $errors = array();
         if (RequestMethods::post("action") == "updateItem") {
         	$response = $this->_saveItem($item);
         	if ($response["success"]) {
         		$item = $response["item"];
         		$view->set("success", "Item Updated!!");
         	} else {
-        		$view->set("errors", $response["errors"]);
+        		$errors = $response["errors"];
         	}
         }
-        $view->set("errors", array())
+        $view->set("errors", $errors)
         	->set("item", $item)
         	->set("items", $this->items);
 
@@ -70,8 +75,8 @@ class Items extends Admin {
         $view = $this->getActionView();
 
         $count = Item::count();
-        $limit = RequestMethods::post("limit", 20);
-        $page = RequestMethods::post("page", 1);
+        $limit = RequestMethods::get("limit", 20);
+        $page = RequestMethods::get("page", 1);
         $items = Item::all(array(), array("*"), "created", "desc", $limit, $page);
 
         $view->set("count", $count)

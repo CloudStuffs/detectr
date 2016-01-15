@@ -2,27 +2,72 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="page-header">Packages</h2>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Item</th>
-                            <th>Price + Tax</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    {foreach $p in $packages}
-                        <tr>
-                            <td>{$p->name}</td>
-                            <td>{echo implode(", ", json_decode($p->item))}</td>
-                            <td>{echo $p->price} + {echo $p->tax}</td>
-                            <td></td>
-                        </tr>
-                    {/foreach}
-                    </tbody>
-                </table>
+                <h3 class="page-header"><i class="fa fa-list"></i> Manage Packages</h3>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <p class="text-center">Created Packages</p>
+                    </div>
+                    <!-- /.panel-heading -->
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Items</th>
+                                <th>Price (USD)</th>
+                                <th>Tax (USD)</th>
+                                <th>Created</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {script $x = 1} {foreach $p in $packages}
+                            <tr>
+                                <td>{echo $x}</td>
+                                {script $ids = json_decode($p->item)} {script $item_names = array()}
+                                {foreach $id in $ids}
+                                    {script $item_names[] = $items["$id"]->name}
+                                {/foreach}
+                                <td>{echo $p->name}</td>
+                                <td>{echo implode(",", $item_names)}</td>
+                                <td>{echo $p->price}</td>
+                                <td>{echo $p->tax}</td>
+                                <td>{echo Framework\StringMethods::only_date($p->created)}</td>
+                                <td>
+                                    {if $p->live}
+                                    <a href="/admin/edit/Package/{echo $p->id}/live/0" class="btn btn-xs btn-warning"><i class="fa fa-times"></i> Disapprove</a>
+                                    {/if} {else}
+                                    <a href="/admin/edit/Package/{echo $p->id}/live/1" class="btn btn-xs btn-success"><i class="fa fa-check"></i> Approve</a>
+                                    {/else}
+
+                                    <a href="/marketing/editPackage/{echo $p->id}" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i> Edit</a>
+                                </td>
+                            </tr>
+                            {script ++$x} {/foreach}
+                        </tbody>
+                    </table>
+                    
+                    <div class="">
+                        <div class="text-center">
+                        {if ($page != 1)}
+                            <a href="{echo Shared\Markup::pagination($page - 1)}" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Previous</a>
+                        {/if}
+                        {if ($page < $count/$limit)}
+                            <a href="{echo Shared\Markup::pagination($page + 1)}" class="btn btn-primary">Next <i class="fa fa-arrow-right"></i></a>
+                        {/if}
+                        </div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+                <div>
+                    <a href="/marketing/createPackage" class="btn btn-info"><i class="fa fa-plus"></i> Create Package</a>
+                </div>
             </div>
         </div>
     </div>

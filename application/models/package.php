@@ -12,6 +12,7 @@ class Package extends Shared\Model {
      * @readwrite
      * @type integer
      * @index
+     * @validate required, numeric
      */
     protected $_user_id;
 
@@ -19,9 +20,9 @@ class Package extends Shared\Model {
      * @column
      * @readwrite
      * @type text
-     * @length 255
+     * @length 100
      * 
-     * @validate required, alpha, min(3), max(32)
+     * @validate required, min(3), max(100)
      * @label name
      */
     protected $_name;
@@ -32,6 +33,7 @@ class Package extends Shared\Model {
      * @type text
      * @length 255
      * @label json encode of item ids
+     * @validate required
      */
     protected $_item;
 
@@ -40,6 +42,7 @@ class Package extends Shared\Model {
      * @readwrite
      * @type decimal
      * @length 10,2
+     * @validate required
      */
     protected $_price;
 
@@ -48,6 +51,7 @@ class Package extends Shared\Model {
      * @readwrite
      * @type decimal
      * @length 10,2
+     * @validate required
      */
     protected $_tax;
 

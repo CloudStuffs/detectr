@@ -22,7 +22,7 @@ class Item extends Shared\Model {
      * @type text
      * @length 100
      * 
-     * @validate required, alpha, min(3), max(50)
+     * @validate required, alpha, min(3), max(100)
      * @label name
      */
     protected $_name;
@@ -41,7 +41,7 @@ class Item extends Shared\Model {
      * @readwrite
      * @type decimal
      * @length 10,2
-     * @required
+     * @validate required
      */
     protected $_price;
 
@@ -50,7 +50,7 @@ class Item extends Shared\Model {
      * @readwrite
      * @type decimal
      * @length 10,2
-     * @required
+     * @validate required
      */
     protected $_tax;
 
