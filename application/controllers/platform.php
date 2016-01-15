@@ -121,7 +121,7 @@ class Platform extends Member {
     }
 
     /**
-     * @before _secure, changeLayout, _admin
+     * @before _secure, _admin
      */
     public function all() {
         $this->seo(array("title" => "Websites added", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));

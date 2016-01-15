@@ -48,7 +48,7 @@ class Member extends Detectr {
     }
 
     /**
-     * @before _secure, changeLayout, _admin
+     * @before _secure, _admin
      */
     public function all() {
         $this->seo(array("title" => "View Users Stats", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
@@ -70,7 +70,7 @@ class Member extends Detectr {
     }
 
     /**
-     * @before _secure, changeLayout, _admin
+     * @before _secure, _admin
      */
     public function websites($user_id) {
         $this->seo(array("title" => "View Users Websites", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
@@ -81,7 +81,7 @@ class Member extends Detectr {
     }
 
     /**
-     * @before _secure, changeLayout, _admin
+     * @before _secure, _admin
      */
     public function subscriptions() {
         $this->seo(array("title" => "Subscriptions", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));

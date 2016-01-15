@@ -80,7 +80,7 @@ class FakeReferer extends Admin {
 	}
 
 	/**
-	 * @before _secure, changeLayout, _admin
+	 * @before _secure, _admin
 	 */
 	public function all() {
 		$this->seo(array(
@@ -103,7 +103,7 @@ class FakeReferer extends Admin {
 	}
 
 	/**
-	 * @before _secure, changeLayout
+	 * @before _secure, memberLayout
 	 */
 	public function edit($ref_id) {
 		$this->seo(array(
@@ -147,7 +147,7 @@ class FakeReferer extends Admin {
 	}
 
 	/**
-	 * @before _secure, changeLayout, _admin
+	 * @before _secure, _admin
 	 */
 	public function shortUrl($ref_id) {
 		$this->seo(array(

@@ -13,7 +13,7 @@ use ClusterPoint\DB as DB;
 class Analytics extends Admin {
 
     /**
-     * @before _secure, changeLayout, _admin
+     * @before _secure, _admin
      */
     public function logs($action = "", $name = "") {
         $this->seo(array("title" => "Activity Logs", "view" => $this->getLayoutView()));

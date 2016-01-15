@@ -36,6 +36,7 @@ namespace Shared {
                 $this->setUser(false);
                 self::redirect("/404");
             }
+            $this->changeLayout();
         }
 
         /**
