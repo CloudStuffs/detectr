@@ -1,0 +1,68 @@
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header"><i class="fa fa-list"></i> Manage Items</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <p class="text-center">Created Items</p>
+                </div>
+                <!-- /.panel-heading -->
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price (USD)</th>
+                            <th>Tax (USD)</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {script $x = 1} {foreach $i in $items}
+                        <tr>
+                            <td>{echo $x}</td>
+                            <td>{echo $i->name}</td>
+                            <td>{echo substr($i->description, 0, 100)}</td>
+                            <td>{echo $i->price}</td>
+                            <td>{echo $i->tax}</td>
+                            <td>{echo Framework\StringMethods::only_date($i->created)}</td>
+                            <td>
+                                {if $i->live}
+                                <a href="/admin/edit/Item/{echo $i->id}/live/0" class="btn btn-xs btn-warning"><i class="fa fa-times"></i> Disapprove</a>
+                                {/if} {else}
+                                <a href="/admin/edit/Item/{echo $i->id}/live/1" class="btn btn-xs btn-success"><i class="fa fa-check"></i> Approve</a>
+                                {/else}
+
+                                <a href="/items/edit/{echo $i->id}" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i> Edit</a>
+                            </td>
+                        </tr>
+                        {script ++$x} {/foreach}
+                    </tbody>
+                </table>
+                
+                <div class="">
+                    <div class="text-center">
+                    {if ($page != 1)}
+                        <a href="{echo Shared\Markup::pagination($page - 1)}" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Previous</a>
+                    {/if}
+                    {if ($page < $count/$limit)}
+                        <a href="{echo Shared\Markup::pagination($page + 1)}" class="btn btn-primary">Next <i class="fa fa-arrow-right"></i></a>
+                    {/if}
+                    </div>
+                </div>
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+            <div>
+                <a href="/items/create" class="btn btn-info"><i class="fa fa-plus"></i> Create Item</a>
+            </div>
+        </div>
+    </div>
+</div>

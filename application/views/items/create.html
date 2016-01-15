@@ -1,0 +1,41 @@
+<div id="page-wrapper">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h2 class="page-header">Create Package</h2>
+                <div class="row">
+                    {if isset($success)}
+                    <div class="alert alert-info alert-dismissible fade in" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        {echo $success}
+                    </div>
+                    {/if}
+                    <form class="col-lg-offset-3 col-lg-6" action="" method="post">
+                        <div class="form-group">
+                            <label for="Name of the Item">Name</label>
+                            <input type="text" name="name" required="" class="form-control">
+                            <span class="help-block">
+                                <pre>Eg: {foreach $i in $items} {echo $i}, {/foreach}</pre>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <label for="Description of the Item">Description (Optional)</label>
+                            <textarea class="form-control" name="description" rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="keyword">Total Price (USD)</label>
+                            <input type="text" name="price" required="" pattern="[0-9]{1,10}\.?[0-9]{0,2}" class="form-control" value="10.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="keyword">Tax (USD)</label>
+                            <input type="text" name="tax" required="" pattern="[0-9]{1,4}\.?[0-9]{0,2}" class="form-control" value="0.00">
+                        </div>
+                        <input type="hidden" name="action" value="createItem">
+                        <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
+                        <a href="/items/manage" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
+                    </form><br>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

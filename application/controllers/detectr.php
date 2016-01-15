@@ -8,7 +8,6 @@
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 use Framework\ArrayMethods as ArrayMethods;
-use \Curl\Curl;
 use \ClusterPoint\DB as DB;
 
 class Detectr extends Admin {
