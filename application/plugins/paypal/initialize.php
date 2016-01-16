@@ -5,3 +5,5 @@ $apiContext = new \PayPal\Rest\ApiContext(
         '<ClientSecret>'      // ClientSecret
     )
 );
+
+Framework\Registry::set("PayPalApiContext", $apiContext);

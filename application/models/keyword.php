@@ -13,19 +13,20 @@ class Keyword extends Shared\Model {
      * @type integer
      * @index
      *
-     * @validate required
+     * @validate required, numeric
      */
     protected $_user_id;
 
 	/**
      * @column
      * @readwrite
-     * @type integer
+     * @type text
+     * @length 255
      * @index
      *
-     * @validate required
+     * @validate required, max(255)
      */
-    protected $_website_id;
+    protected $_link;
 
     /**
      * @column

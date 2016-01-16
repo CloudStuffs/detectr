@@ -5,7 +5,8 @@
  * 
  * @author Faizan Ayubi
  */
-
+use Framework\Registry as Registry;
+use SEOstats\Services\Google as Google;
 class CRON extends Auth {
 
     public function __construct($options = array()) {
@@ -19,8 +20,10 @@ class CRON extends Auth {
      */
     public function index() {
         $this->log("CRON Started");
-        $this->_newsletters();
+        // $this->_newsletters();
         $this->log("Newsletters Sent");
+        $this->_serpRank();
+        $this->log("Serp Done");
         $this->log("CRON Ended");
     }
 
@@ -59,6 +62,40 @@ class CRON extends Auth {
                 ));
             }
         }
+    }
+
+    /**
+     * Check SERP stats
+     */
+    protected function _serpRank() {
+        $keywords = Keyword::all(array("live = ?" => true));
+
+        $today = date('Y-m-d');
+        $rank = Registry::get("MongoDB")->rank;
+        foreach ($keywords as $k) {
+            $record = $rank->findOne(array('keyword_id' => $k->id, 'created' => $today));
+            if (!isset($record)) {
+                $position = $this->_getRank($k);
+                $doc = array(
+                    'position' => $position,
+                    'keyword_id' => $k->id,
+                    'created' => $today,
+                    'live' => true
+                );
+                $rank->insert($doc);
+            }
+
+        }
+    }
+
+    protected function _getRank($keyword) {
+        $return = false;
+        $response = Google::getSerps($keyword->keyword, 200, $keyword->link);
+        if ($response) {
+            $response = array_shift($response);
+            $return = $response["position"];
+        }
+        return $return;
     }
 
     /**
