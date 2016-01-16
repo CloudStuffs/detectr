@@ -81,13 +81,24 @@ class Member extends Detectr {
     }
 
     /**
-     * @before _secure, _admin
+     * @before _secure, memberLayout
      */
     public function subscriptions() {
         $this->seo(array("title" => "Subscriptions", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
         
-        $subscriptions = Subscription::all(array("user_id = ?" => $user_id));
+        $subscriptions = Subscription::all(array("user_id = ?" => $user_id), array("item_id", "created", "expiry"));
+        $view->set("subscriptions", $subscriptions);
+    }
+
+    /**
+     * @before _secure, _admin
+     */
+    public function subscribed() {
+        $this->seo(array("title" => "Subscriptions", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+        
+        $subscriptions = Subscription::all(array("user_id = ?" => $user_id), array("item_id", "created", "expiry"));
         $view->set("subscriptions", $subscriptions);
     }
 }

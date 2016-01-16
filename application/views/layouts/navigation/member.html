@@ -36,7 +36,7 @@
             <ul class="nav" id="side-menu">
                 <li><a href="/member/index"><i class="fa fa-dashboard fa-fw"></i> Dashboard</a></li>
                 <li><a href="/member/profile"><i class="fa fa-user fa-fw"></i> Profile</a></li>
-                <li><a href="/member/subscriptions"><i class="fa fa-user fa-fw"></i> Subscriptions</a></li>
+                <li><a href="/member/subscriptions"><i class="fa fa-credit-card-alt fa-fw"></i> Subscriptions</a></li>
                 {if(in_array("1", $subscriptions))}
                 <li>
                     <a href="#"><i class="fa fa-codepen fa-fw"></i> Trigger<span class="fa arrow"></span></a>
@@ -77,6 +77,7 @@
                     </ul>
                 </li>
                 {/if}
+                {if(in_array("4", $subscriptions))}
                 <li>
                     <a href="#"><i class="fa fa-bar-chart"></i> Webmaster<span class="fa arrow"></span></a>
                     <ul class="nav nav-second-level">
@@ -85,6 +86,7 @@
                         <li><a href="/webmaster/sitemap">SiteMap</a></li>
                     </ul>
                 </li>
+                {/if}
             </ul>
         </div>
     </div>

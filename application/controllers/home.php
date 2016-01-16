@@ -1,11 +1,11 @@
 <?php
 
 /**
- * The Default Example Controller Class
+ * The Default Home Controller
  *
  * @author Faizan Ayubi
  */
-use Framework\Controller as Controller;
+use Shared\Controller as Controller;
 
 class Home extends Controller {
 
@@ -13,9 +13,12 @@ class Home extends Controller {
         $this->getLayoutView()->set("seo", Framework\Registry::get("seo"));
     }
 
-    public function pricing() {
-		$this->seo(array("title" => "Pricing", "view" => $this->getLayoutView()));
+    public function packages() {
+		$this->seo(array("title" => "Packages", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
+
+        $packages = Package::all(array("live = ?" => 1));
+        $view->set("packages", $packages);
 	}
 
 }
