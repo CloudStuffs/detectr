@@ -14,7 +14,7 @@ class Items extends Admin {
 	 * Stores the list of items for which the package can be made
 	 * @readwrite
 	 */
-	protected $_items = array("FakeReferer", "Serp", "Webmaster", "Detectr");
+	protected $_items = array("Detectr", "FakeReferer", "Monitor", "Serp", "Webmaster");
 
 	/**
 	 * Create an Item

@@ -10,7 +10,7 @@ use Framework\Registry as Registry;
 class Member extends Detectr {
     
     /**
-     * @before _secure, memberLayout
+     * @before _secure, memberLayout, _check
      */
     public function index() {
         $this->seo(array("title" => "Dashboard","view" => $this->getLayoutView()));
@@ -100,5 +100,15 @@ class Member extends Detectr {
         
         $subscriptions = Subscription::all(array("user_id = ?" => $user_id), array("item_id", "created", "expiry"));
         $view->set("subscriptions", $subscriptions);
+    }
+    
+    /**
+     * @protected
+     */
+    public function _check() {
+        $session = Registry::get("session");
+        $session->get("subscriptions");
+
+        var_dump(get_class($this));
     }
 }

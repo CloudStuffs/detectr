@@ -17,12 +17,19 @@
                 </li>
             </ul>
             <ul class="nav navbar-nav pull-right">
+                {if(isset($user))}
+                <li class="nav-item">
+                    <a class="nav-link page-scroll" href="/member.html">{$user->name}</a>
+                </li>
+                {/if}
+                {else}
                 <li class="nav-item">
                     <a class="nav-link page-scroll" href="/auth/login">Login</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link page-scroll" href="/auth/register">Register</a>
                 </li>
+                {/else}
             </ul>
         </div>
     </div>
