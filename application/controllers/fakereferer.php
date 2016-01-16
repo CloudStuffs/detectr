@@ -19,7 +19,7 @@ class FakeReferer extends Admin {
 	}
 
 	/**
-	 * @before _secure, memberLayout
+	 * @before _secure, memberLayout, _check
 	 */
 	public function create() {
 		$this->seo(array(
@@ -56,7 +56,7 @@ class FakeReferer extends Admin {
 	}
 
 	/**
-	 * @before _secure, memberLayout
+	 * @before _secure, memberLayout, _check
 	 */
 	public function manage() {
 		$this->seo(array(

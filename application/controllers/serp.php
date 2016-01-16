@@ -11,7 +11,7 @@ use Framework\ArrayMethods as ArrayMethods;
 class Serp extends Admin {
 	/**
 	 * Create a serp for a website
-	 * @before _secure, memberLayout
+	 * @before _secure, memberLayout, _check
 	 */
 	public function create() {
 		$this->seo(array("title" => "Serp | Create","view" => $this->getLayoutView()));
@@ -57,7 +57,7 @@ class Serp extends Admin {
 
 	/**
 	 * Manage all serps created by the member
-	 * @before _secure, memberLayout
+	 * @before _secure, memberLayout, _check
 	 */
 	public function manage() {
 		$this->seo(array("title" => "Serp | Manage","view" => $this->getLayoutView()));

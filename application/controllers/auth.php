@@ -124,7 +124,8 @@ class Auth extends Controller {
         $subscriptions = array();
         $subscription = Subscription::all(array("user_id = ?" => $user->id, "live = ?" => true, "expiry < ?" => $tommorow), array("item_id"));
         foreach ($subscription as $s) {
-            array_push($subscriptions, $s->item_id);
+            $item = Item::first(array("id = ?" => $s->item_id), array("name"));
+            array_push($subscriptions, $item->name);
         }
         $session->set("subscriptions", $subscriptions);
     }
@@ -227,10 +228,6 @@ class Auth extends Controller {
         parent::render();
     }
 
-    protected function _subscribed() {
-        get_class($this);
-    }
-
     protected function _authority($model) {
         if (!$model) {
             $redirect = true;
@@ -244,6 +241,17 @@ class Auth extends Controller {
         }
         if ($redirect) {
             self::redirect("/member");
+        }
+    }
+
+    /**
+     * @protected
+     */
+    public function _check() {
+        $session = Registry::get("session");
+        $subscriptions = $session->get("subscriptions");
+        if (!in_array(get_class($this), $subscriptions)) {
+            die('Not Subscrbed');
         }
     }
 }

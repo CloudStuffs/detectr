@@ -28,7 +28,7 @@ class Webmaster extends Admin {
 	}
 
 	/**
-	 * @before _secure, memberLayout
+	 * @before _secure, memberLayout, _check
 	 */
 	public function index() {
 		$this->seo(array("title" => "Dashboard | Webmasters","view" => $this->getLayoutView()));
@@ -60,7 +60,7 @@ class Webmaster extends Admin {
 	}
 
 	/**
-	 * @before _secure, memberLayout
+	 * @before _secure, memberLayout, _check
 	 */
 	public function crawlErrors() {
 		$this->seo(array("title" => "Webmasters | Crawl Errors","view" => $this->getLayoutView()));
@@ -101,7 +101,7 @@ class Webmaster extends Admin {
 	}
 
 	/**
-	 * @before _secure, memberLayout
+	 * @before _secure, memberLayout, _check
 	 */
 	public function sitemap() {
 		$this->seo(array("title" => "Webmasters | Crawl Errors","view" => $this->getLayoutView()));

@@ -12,7 +12,7 @@ use \Curl\Curl;
 class Platform extends Member {
 
     /**
-     * @before _secure, memberLayout
+     * @before _secure, memberLayout, _check
      */
     public function index() {
         $this->seo(array("title" => "Dashboard","view" => $this->getLayoutView()));
@@ -24,7 +24,7 @@ class Platform extends Member {
     }
 
     /**
-     * @before _secure, memberLayout
+     * @before _secure, memberLayout, _check
      */
     public function add() {
         $this->seo(array(
