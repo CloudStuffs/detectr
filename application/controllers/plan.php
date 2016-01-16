@@ -9,7 +9,8 @@ use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 use Framework\ArrayMethods as ArrayMethods;
 
-class Items extends Admin {
+class Plan extends Admin {
+	
 	/**
 	 * Stores the list of items for which the package can be made
 	 * @readwrite
@@ -28,7 +29,7 @@ class Items extends Admin {
         if (RequestMethods::post("action") == "createItem") {
         	$response = $this->_saveItem();
         	if ($response["success"]) {
-        		$view->set("success", 'Item added. Go to <a href="/items/manage">Manage Items</a>');
+        		$view->set("success", 'Item added. Go to <a href="/plan/manage">Manage Items</a>');
         	} else {
         		$errors = $response["errors"];
         	}

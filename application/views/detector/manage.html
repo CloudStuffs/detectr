@@ -56,8 +56,8 @@
                                             <a href="/admin/edit/Trigger/{echo $trigger->id}/live/1" class="btn btn-xs btn-success"><i class="fa fa-check"></i> Approve</a>
                                             {/else}
                                         {/if}
-                                        <a href="/monitor/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
-                                        <a href="/monitor/remove/{echo $trigger->id}/{echo $action->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
+                                        <a href="/detector/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
+                                        <a href="/detector/remove/{echo $trigger->id}/{echo $action->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
                                     </td>
                                 </tr>
                                 {script ++$i}
@@ -69,7 +69,7 @@
                     <p>Hi, you have not added any triggers for this website.</p>
                     {/else}
                 </div>
-                <a href="/monitor/create/{echo $website->id}" class="btn btn-info"><i class="fa fa-plus-circle"></i> Add Another Trigger</a>
+                <a href="/detector/create/{echo $website->id}" class="btn btn-info"><i class="fa fa-plus-circle"></i> Add Another Trigger</a>
             </div>
         </div>
 

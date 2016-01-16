@@ -63,7 +63,7 @@
                                 <a href="/admin/edit/trigger/{echo $t->id}/live/1" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Approve</a>
                                 {/else}
                                 {script $action = Action::first(array("trigger_id = ?" => $t->id))}
-                                <a href="/monitor/remove/{echo $t->id}/{echo $action->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>
+                                <a href="/detector/remove/{echo $t->id}/{echo $action->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>
                             </td>
                         </tr>
                         {/foreach}

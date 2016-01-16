@@ -7,7 +7,7 @@
 use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 
-class Member extends Detectr {
+class Member extends Detector {
     
     /**
      * @before _secure, memberLayout, _check
