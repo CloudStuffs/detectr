@@ -1,3 +1,4 @@
+{include marketing/modals/createGroup.html}
 <div id="page-wrapper">
     <div class="row col-lg-12">
         <h1 class="page-header text-center">Create Newsletter</h1>
@@ -9,17 +10,25 @@
         {/if}
         <div class="row">
             <form class="form" method="post" action="">
+                <label>User Group</label>
+                <div class="form-group">
+                    {foreach $g in $groups}
+                    <label class="radio-inline">
+                        <input type="radio" name="user_group" value="{echo $g->id}"> {echo $g->name}
+                    </label>
+                    {/foreach}
+                    <a href="#" data-toggle="modal" class="btn btn-primary btn-xs pull-right" data-target="#createGroup"><i class="fa fa-plus"></i> Create Group</a>
+                </div>
+                <hr>
                 <div class="row">
                     <div class="col-xs-12 col-md-6">
-                        <label>User Group</label>
                         <div class="form-group">
-                            {foreach $g in $groups}
-                            <label class="radio-inline">
-                                <input type="radio" name="user_group" value="{echo $g->id}"> {echo $g->name}
-                            </label>
-                            {/foreach}
+                            <label>Subject</label>
+                            <input type="text" name="subject" class="form-control" maxlength="64" required="">
+                            <small class="help-text">Length less than 64 characters for best practices. see for <a href="http://kb.mailchimp.com/campaigns/previews-and-tests/best-practices-for-email-subject-lines" target="_blank">details</a></small>
                         </div>
                     </div>
+                    
                     <div class="col-xs-12 col-md-6">
                         <div class="form-group">
                             <label>Scheduled Date</label>
@@ -27,12 +36,6 @@
                             <small class="help-text">Format Should be eg. YYYY-MM-DD</small>
                         </div>
                     </div>
-                </div>
-                <hr>
-                <div class="form-group">
-                    <label>Subject</label>
-                    <input type="text" name="subject" class="form-control" maxlength="64" required="">
-                    <small class="help-text">Length less than 64 characters for best practices. see for <a href="http://kb.mailchimp.com/campaigns/previews-and-tests/best-practices-for-email-subject-lines" target="_blank">details</a></small>
                 </div>
                 <div class="form-group">
                     <label>Message Body</label>

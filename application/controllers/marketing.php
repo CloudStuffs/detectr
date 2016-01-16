@@ -7,6 +7,7 @@
  */
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
+use Framework\ArrayMethods as ArrayMethods;
 
 class Marketing extends Admin {
     
@@ -18,6 +19,10 @@ class Marketing extends Admin {
         $view = $this->getActionView();
 
         $groups = \Group::all(array(), array("name", "id"));
+        if (count($groups) == 0) {
+            $this->_createGroup(array("name" => "All", "users" => json_encode(array("*"))));
+            $groups = \Group::all(array(), array("name", "id"));
+        }
 
         if (RequestMethods::post("action") == "createNewsletter") {
             $message = new Template(array(
@@ -45,12 +50,10 @@ class Marketing extends Admin {
         $this->seo(array("title" => "Manage Newsletter", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
-        $page = RequestMethods::get("page", 1);
-        $limit = RequestMethods::get("limit", 10);
-        $newsletters = Newsletter::all(array(), array("*"), "created", "desc", $limit, $page);
+        $page = Shared\Markup::page(array("model" => "Newsletter", "where" => array()));
+        $newsletters = Newsletter::all(array(), array("*"), "created", "desc", $page["limit"], $page["page"]);
 
-        $view->set("limit", $limit);
-        $view->set("page", $page);
+        $view->set($page);
         $view->set("newsletters", $newsletters);
     }
 
@@ -138,17 +141,71 @@ class Marketing extends Admin {
             $setItems["$i->id"] = $i;
         }
 
-        $limit = RequestMethods::get("limit", 20);
-        $page = RequestMethods::get("page", 1);
-        $count = Package::count();
-
-        $packages = Package::all(array(), array("*"), "created", "desc", $limit, $page);
+        $page = Shared\Markup::page(array("model" => "Package", "where" => array()));
+        $packages = Package::all(array(), array("*"), "created", "desc", $page["limit"], $page["page"]);
         
         $view->set("packages", $packages)
             ->set("items", $setItems)
-            ->set("count", $count)
-            ->set("limit", $limit)
-            ->set("page", $page);
+            ->set($page);
+    }
+
+    /**
+     * @before _secure, _admin
+     */
+    public function createGroup() {
+        if (RequestMethods::post("action") == "createGroup") {
+            $opts = array();
+            $opts["name"] = RequestMethods::post("name");
+            $opts["users"] = "";
+            $group = $this->_createGroup($opts);
+            if ($group) {
+                self::redirect("/marketing/groupMembers/{$group->id}");
+            }
+        }
+    }
+
+    /**
+     * @before _secure, _admin
+     */
+    public function groupMembers($group_id) {
+        $group = Group::first(array("id = ?" => $group_id));
+        if (!$group) {
+            self::redirect("/admin");
+        }
+
+        $this->seo(array("title" => "Manage Group Members", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+
+        $count = RequestMethods::get("count", 10);
+        $total = array();
+        for ($i = 0; $i < $count; ++$i) {
+            $total[] = $i;
+        }
+
+        if (RequestMethods::post("action") == "addMembers") {
+            unset($_POST["action"]);
+            $members = ArrayMethods::reArray($_POST);
+
+            $members = json_encode($members);
+            $group->users = $members;
+            $group->save();
+            $view->set("success", "Members were added for the group: $group->name");
+        }
+        $view->set("group", $group);
+        $view->set("count", $total);
+    }
+
+    /**
+     * @before _secure, _admin
+     */
+    public function manageGroups() {
+        $this->seo(array("title" => "Manage Group Members", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+
+        $page = Shared\Markup::page(array("model" => "Group", "where" => array()));
+        $groups = Group::all();
+        $view->set("groups", $groups)
+            ->set($page);
     }
 
     protected function _savePackage($package = null) {
@@ -166,5 +223,17 @@ class Marketing extends Admin {
             return array("success" => true, "package" => $package);       
         }
         return array("success" => false, "errors" => $package->errors);
+    }
+
+    protected function _createGroup($opts = array()) {
+        $group = new Group(array(
+            "name" => $opts["name"],
+            "users" => $opts["users"]
+        ));
+        if ($group->validate()) {
+            $group->save();
+            return $group;
+        }
+        return false;
     }
 }

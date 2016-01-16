@@ -12,6 +12,7 @@ class Group extends Shared\Model {
      * @type text
      * @length 50
      * @index
+     * @validate required, max(50)
      */
     protected $_name;
     
