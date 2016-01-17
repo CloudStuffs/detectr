@@ -8,3 +8,5 @@ logs/
 application/plugins/googl/googl.php
 
 application/configuration/database.ini
+
+application/configuration/payment.ini

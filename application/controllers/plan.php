@@ -176,4 +176,11 @@ class Plan extends Admin {
     	$package = Package::first(array("id = ?" => 1));
     	echo $this->pay($package);
     }
+
+    public function success() {
+    	$paymentId = RequestMethods::get("paymentId");
+    	$payerId = RequestMethods::get("PayerId");
+
+    	
+    }
 }
