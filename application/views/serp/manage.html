@@ -7,6 +7,12 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
+                {if isset($message)}
+                <div class="alert alert-success alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    "Stats are Updated Daily"
+                </div>
+                {/if}
                 <div class="panel panel-default">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped">
@@ -14,10 +20,10 @@
                                 <tr>
                                     <th>S. No.</th>
                                     <th>Keyword</th>
-                                    <th>Domain</th>
+                                    <th>Website</th>
                                     <th>Status</th>
-                                    <th>Old (7 Days)</th>
-                                    <th>Today</th>
+                                    <th>Rank Old (7 Days)</th>
+                                    <th>Rank Today</th>
                                     <th>Change</th>
                                     <th>Action</th>
                                 </tr>

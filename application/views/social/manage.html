@@ -2,22 +2,25 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="page-header text-center"><i class="fa fa-hashtag"></i> Manage Socials</h2>
+                <h2 class="page-header text-center"><i class="fa fa-codiepie"></i> Manage Socials</h2>
             </div>
         </div>
         <div class="row">
             <div class="col-lg-12">
+                {if isset($message)}
+                <div class="alert alert-success alert-dismissible fade in" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    "Stats are Updated Daily"
+                </div>
+                {/if}
                 <div class="panel panel-default">
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
                                 <tr>
                                     <th>S. No.</th>
-                                    <th>Domain</th>
+                                    <th>Link</th>
                                     <th>Status</th>
-                                    <th>Old (7 Days)</th>
-                                    <th>Today</th>
-                                    <th>Change</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -30,18 +33,6 @@
                                         {if $s->live}
                                         <span class="label label-success">Active</span> {/if} {else}
                                         <span class="label label-danger">Disabled</span> {/else}
-                                    </td>
-                                    {script $date_today = date("Y-m-d")} {script $old_date = date("Y-m-d", strtotime($date_today."-7 day"))} {script $old_rank = $social->findOne(array("keyword_id" => $s->id, "created" => $old_date))}
-                                    <td>{echo (($old_rank["position"]) ? $old_rank["position"] : 0)}</td>
-                                    {script $new_rank = $social->findOne(array("keyword_id" => $s->id, "created" => $date_today))}
-                                    <td>{echo (($new_rank["position"]) ? $new_rank["position"] : 0)}</td>
-                                    {script $change = (int) $new_rank["position"] - (int) $old_rank["position"]}
-                                    <td>
-                                        {if $change > 0}
-                                        <span class="label label-success">{echo $change}</span>
-                                        {/if} {else}
-                                        <span class="label label-danger">{echo $change}</span>
-                                        {/else}
                                     </td>
                                     <td>
                                         <a href="/social/stats/{echo $s->id}" class="btn btn-primary btn-xs"><i class="fa fa-label"></i> View Stats</a>

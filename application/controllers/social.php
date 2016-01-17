@@ -8,6 +8,7 @@
 use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 use Framework\ArrayMethods as ArrayMethods;
+use Framework\StringMethods as StringMethods;
 
 class Social extends Serp {
 	/**
@@ -33,6 +34,14 @@ class Social extends Serp {
 
         $socials = \Keyword::all(array('user_id = ?' => $this->user->id, "serp = ?" => false));
         $view->set("socials", $socials);
+
+        $now = strtotime(date('Y-m-d'));
+        $user_registered = strtotime(StringMethods::only_date($this->user->created));
+        $datediff = $now - $user_registered;
+		$datediff = floor($datediff/(60*60*24));
+		if ($datediff < 7) {
+			$view->set("message", true);
+		}
 	}
 
 	/**
@@ -44,6 +53,7 @@ class Social extends Serp {
 
 		$end_date = RequestMethods::get("enddate", date("Y-m-d"));
 		$start_date = RequestMethods::get("startdate", date("Y-m-d", strtotime($end_date."-7 day")));
+		$social_media = RequestMethods::get("media", "facebook");
 
 		$this->seo(array("title" => "Serp | Stats","view" => $this->getLayoutView()));
 		$view = $this->getActionView();
@@ -56,10 +66,15 @@ class Social extends Serp {
         	$start_time = strtotime($start_date . " +{$i} day");
             $date = date('Y-m-d', $start_time);
 
-            $record = $socials->findOne(array('created' => $date, 'keyword_id' => $keyword->id));
+            $record = $socials->findOne(array('created' => $date, 'social_media' => (string) $social_media, 'keyword_id' => $keyword->id));
+            $media = array();
             if (isset($record)) {
             	$position = $record['position'];
+            	$media['count_type'] = $record['count_type'];
+            	$media['social_media'] = $record['social_media'];
             } else {
+            	$media['count_type'] = "stats";
+            	$media['social_media'] = $social_media;
             	$position = 0;
             }
             $obj[] = array('y' => $date, 'a' => $position);
@@ -67,9 +82,10 @@ class Social extends Serp {
             ++$i;
         }
 
-        $view->set("k_id", $keyword->id);
-        $view->set("keyword", $keyword);
-        $view->set("data", ArrayMethods::toObject($obj));
+        $view->set("k_id", $keyword->id)
+			->set("keyword", $keyword)
+			->set("social", array("type" => $media['count_type'], "media" => $media['social_media']))
+        	->set("data", ArrayMethods::toObject($obj));
 	}
 
 	/**

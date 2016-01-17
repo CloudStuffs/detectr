@@ -1,25 +1,39 @@
 <div id="page-wrapper">
     <div class="container-fluid">
         <div class="row">
+            <div class=""></div>
             <div class="col-lg-12">
-                <h2 class="page-header">Create Serp Analytics</h2>
+                <h2 class="page-header">Add Social Trigger</h2>
                 <div class="row">
-                    {if isset($message)}
-                    <div class="alert alert-info alert-dismissible fade in" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
-                        {echo $message}
-                    </div>
-                    {/if}
-                    <form class="" action="" method="post">
-                        <div class="form-group">
-                            <label for="Website">Website</label>
-                            <input type="url" name="link" class="form-control" required="" maxlength="255">
-                            <span class="help-block">{echo Shared\Markup::errors($errors, "link")}</span>
+                    <div class="col-lg-2 col-md-2 col-sm-2"></div>
+                    <div class="col-lg-8 col-md-8 col-sm-8">
+                        {if isset($message)}
+                        <div class="alert alert-info alert-dismissible fade in" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                            {echo $message}
                         </div>
-                        <input type="hidden" name="action" value="socialTracker">
-                        <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
-                        <a href="/social/manage" class="btn btn-warning"><i class="fa fa-times"></i> Cancel</a>
-                    </form>
+                        {/if}
+                        <form class="" action="" method="post">
+                            <div class="form-group">
+                                <label for="Website">Website</label>
+                                <input type="url" name="link" class="form-control" required="" maxlength="255">
+                                <span class="help-block">{echo Shared\Markup::errors($errors, "link")}</span>
+                            </div>
+                            <code>
+                                We monitor tracking for:
+                                <ul>
+                                    <li>Facebook</li>
+                                    <li>Google+</li>
+                                    <li>LinkedIn</li>
+                                    <li>Pinterest</li>
+                                    <li>Reddit</li>
+                                </ul>
+                            </code>
+                            <input type="hidden" name="action" value="socialTracker">
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
+                            <a href="/social/manage" class="btn btn-warning"><i class="fa fa-times"></i> Cancel</a>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

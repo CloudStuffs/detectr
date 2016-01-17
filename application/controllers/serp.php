@@ -7,6 +7,7 @@
 use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 use Framework\ArrayMethods as ArrayMethods;
+use Framework\StringMethods as StringMethods;
 
 class Serp extends Admin {
 	/**
@@ -39,6 +40,14 @@ class Serp extends Admin {
 
 		$keywords = \Keyword::all(array("user_id = ?" => $this->user->id, "serp" => true));
 		$view->set("serps", $keywords);
+
+		$now = strtotime(date('Y-m-d'));
+        $user_registered = strtotime(StringMethods::only_date($this->user->created));
+        $datediff = $now - $user_registered;
+		$datediff = floor($datediff/(60*60*24));
+		if ($datediff < 7) {
+			$view->set("message", true);
+		}
 	}
 
 	/**
@@ -112,28 +121,28 @@ class Serp extends Admin {
 	private function _saveSerp($keyword, $link) {
 		$keyword = RequestMethods::post("keyword");
 		$link = RequestMethods::post("link");
-
 		$regex = $this->_websiteRegex();
 		if (!preg_match("/^$regex$/", $link)) {
 			return "Invalid URL";
 		}
 
-		$keyword = Keyword::first(array("link = ?" => $link, "user_id = ?" => $this->user->id, "keyword = ?" => $keyword, "serp = ?" => true));
-		if ($keyword) {
+		$serp = Keyword::first(array("link = ?" => $link, "user_id = ?" => $this->user->id, "keyword = ?" => $keyword, "serp = ?" => true));
+		if ($serp) {
 			return "SERP Already Registered";
 		}
 
-		$keyword = new Keyword(array(
+		$serp = new Keyword(array(
 			"link" => $link,
 			"user_id" => $this->user->id,
 			"keyword" => $keyword,
 			"serp" => true
 		));
-		if ($keyword->validate()) {
-			$keyword->save();
+		if ($serp->validate()) {
+			$serp->save();
 			return "Serp Action saved succesfully!!";
 		} else {
 			$errors = $keyword->errors;
+			return $errors;
 		}
 	}
 }

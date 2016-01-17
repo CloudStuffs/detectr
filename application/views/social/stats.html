@@ -4,6 +4,19 @@
         <form class="form-inline text-center" method="get" action="social/stats/{echo $k_id}" role="form" id="serp_stats">
             <div class="form-group">
                 <div class="input-group">
+                    <span class="add-on input-group-addon"><i class="fa fa-facebook fa-fw"></i> Social:</span>
+                    <select name="media" class="form-control">
+                        <option value="facebook">Facebook</option>
+                        <option value="google">Google +</option>
+                        <option value="linkedin">Linked In</option>
+                        <option value="pinterest">Pinterest</option>
+                        <option value="reddit">Reddit</option>
+                    </select>
+                </div>
+                
+            </div>
+            <div class="form-group">
+                <div class="input-group">
                     <label class="sr-only">From</label>
                     <span class="add-on input-group-addon"><i class="fa fa-calendar fa-fw"></i> From</span>
                     <input type="date" style="width: 200px" name="startdate" class="form-control" />
@@ -22,7 +35,7 @@
         <hr>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Rank
+                <i class="fa fa-bar-chart-o fa-fw"></i> Stats: <strong id="socialType"></strong>
             </div>
             <div class="panel-body">
                 <div id="stats">Select an opportunity and date range and then click on view stats button to show details.</div>
