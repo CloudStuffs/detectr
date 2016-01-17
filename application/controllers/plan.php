@@ -154,8 +154,8 @@ class Plan extends Shared\Controller {
 
 		$baseUrl = "http://trafficmonitor.ca/";
 		$redirectUrls = new \PayPal\Api\RedirectUrls();
-		$redirectUrls->setReturnUrl($baseUrl."plan?success=true")
-		    ->setCancelUrl($baseUrl."package");
+		$redirectUrls->setReturnUrl($baseUrl."plan/success")
+		    ->setCancelUrl($baseUrl."packages");
 
 		$payment = new \PayPal\Api\Payment();
 		$payment->setIntent("sale")
@@ -189,10 +189,9 @@ class Plan extends Shared\Controller {
 
     public function success() {
     	$paymentId = RequestMethods::get("paymentId");
-    	$payerId = RequestMethods::get("PayerId");
-    	$success = RequestMethods::get("success");
+    	$payerId = RequestMethods::get("PayerID");
     	
-    	if (isset($success, $paymentId, $payerId)) {
+    	if (isset($paymentId)) {
     		$payment = \PayPal\Api\Payment::get($paymentId, $this->paypal());
     		$execute = new \PayPal\Api\PaymentExecution();
     		$execute->setPayerId($payerId);
@@ -201,19 +200,23 @@ class Plan extends Shared\Controller {
     			$result = $payment->execute($execute, $this->paypal());
     			if ($result) {
     				$transaction = Transaction::first(array("payment_id = ?" => $paymentId));
-    				$transaction->live = 1;
-    				$transaction->save();
-    				$this->addSubscription($transaction);
+    				if ($transaction) {
+    					$transaction->live = 1;
+	    				$transaction->save();
+	    				$this->addSubscription($transaction);
+    				}
     			}
     		} catch (Exception $e) {
-    			$data = json_decode($e->getData());
-    			die($data->message);
+    			echo "<pre>", print_r($e), "</pre>";
+    			die();
     		}
+    	} else {
+    		die('Error, Please contact to info@trafficmonitor.ca');
     	}
     }
 
     protected function addSubscription($transaction) {
-        $package = Package::first(array("id = ?" => $transaction->package_id), array("id"), array("item"));
+        $package = Package::first(array("id = ?" => $transaction->package_id));
         $items = json_decode($package->item);
         $user = User::first(array("id = ?" => $transaction->user_id));
         $user->live = 1;

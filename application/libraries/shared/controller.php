@@ -124,12 +124,12 @@ namespace Shared {
         protected function session($user) {
             $this->setUser($user);
             
-            $tommorow = strftime("%Y-%m-%d", strtotime('+1 day'));
+            $now = strftime("%Y-%m-%d", strtotime('now'));
             $session = Registry::get("session");
             $subscriptions = array();
-            $subscription = Subscription::all(array("user_id = ?" => $user->id, "live = ?" => true, "expiry < ?" => $tommorow), array("item_id"));
+            $subscription = \Subscription::all(array("user_id = ?" => $user->id, "live = ?" => true, "expiry > ?" => $now), array("item_id"));
             foreach ($subscription as $s) {
-                $item = Item::first(array("id = ?" => $s->item_id), array("name"));
+                $item = \Item::first(array("id = ?" => $s->item_id), array("name"));
                 array_push($subscriptions, $item->name);
             }
             $session->set("subscriptions", $subscriptions);
