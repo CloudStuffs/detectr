@@ -41,6 +41,14 @@ class Document {
     public function getHttpResponse() {
         return $this->_response_obj;
     }
+
+    /**
+     * getter
+     * @return string
+     */
+    public function getBody() {
+        return $this->_response_obj->getBody();
+    }
     
     /**
      * Test if value/pattern exists in reponse data

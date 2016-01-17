@@ -13,7 +13,12 @@ class SocialLinks {
 	/**
 	 * @readwrite
 	 */
-	protected $_type;
+	protected $_url;
+
+	/**
+	 * @readwrite
+	 */
+	protected $_links;
 
 	/**
 	 * Stores the different social sites 
@@ -24,23 +29,34 @@ class SocialLinks {
 		"google" => "https://plusone.google.com/_/+1/fastbutton?url=",
 		"linkedin" => "https://www.linkedin.com/countserv/count/share?format=json&url=",
 		"pinterest" => "http://api.pinterest.com/v1/urls/count.json?url=",
-		"reddit" => "http://buttons.reddit.com/button_info.json?url=",
-		"twitter" => null
+		"reddit" => "https://www.reddit.com/api/info.json?url="
 	);
 
-	public function __construct($type) {
-		$type = strtolower($type);
-		if (array_key_exists($type, $this->_sites)) {
-			$this->_type = $type;
-		} else {
-			throw new \Exception("Social Type not found");
+	public function __construct($url) {
+		$this->_url = $url;
+
+		$links = array();
+		foreach ($this->_sites as $key => $value) {
+			$links[$key] = $value . $this->_url;
 		}
+		$this->_links = $links;
 	}
 
-	public function getResponse($url) {
-		$method = "_". $this->_type . "Response";
-		$response = $this->$method;
+	public function getResponses() {
+		$responses = array();
+		$documents = $this->_makeRequest();
 
+		foreach ($documents as $doc) {
+			$method = "_". $doc->id . "Response";
+			$response = call_user_func_array(array($this, $method), array($doc));
+
+			$responses[] = array(
+				"social_media" => $doc->id,
+				"count_type" => $response["count_type"],
+				"count" => $response["count"]
+			);
+		}
+		return $responses;
 	}
 
 	private function _formatResponse($type, $val) {
@@ -51,75 +67,55 @@ class SocialLinks {
 		return $response;
 	}
 
-	protected function _facebookResponse($url) {
-		$body = $this->_makeRequest($url);
-
-		$body = array_shift(json_decode($body));
-		return $this->_formatResponse("like", $body["like_count"]);
+	protected function _facebookResponse($doc) {
+		$body = array_shift(json_decode($doc->getBody()));
+		return $this->_formatResponse("like", $body->like_count);
 	}
 
-	protected function _googleResponse($url) {
-		$doc = $this->_makeRequest($url, "returnDoc");
+	protected function _googleResponse($doc) {
 		$el = $doc->query('//*[@id="aggregateCount"]');
 
 		$item =  $el->item(0);
 		return $this->_formatResponse("plusOne", $item->nodeValue);
 	}
 
-	protected function _linkedinResponse($url) {
-		$body = $this->_makeRequest($url);
-		$body = json_decode($body);
+	protected function _linkedinResponse($doc) {
+		$body = json_decode($doc->getBody());
 
-		return $this->_formatResponse("count", $body["count"]);
+		return $this->_formatResponse("count", $body->count);
 	}
 
-	protected function _pinterestResponse($url) {
-		$body = $this->_makeRequest($url);
-		$body = str_replace("receiveCount", "", $body);
+	protected function _pinterestResponse($doc) {
+		$body = str_replace("receiveCount", "", $doc->getBody());
 
 		if (preg_match("/\((.*)\)/", $body, $matches)) {
 			$response = json_decode($matches[1]);
-			return $this->_formatResponse("count", $response["count"]);
+			return $this->_formatResponse("count", $response->count);
 		} else {
 			throw new \Exception("Invalid Response sent by server");
 		}
 	}
 
-	protected function _redditResponse($url) {
-		$body = $this->_makeRequest($url);
-		$body = json_decode($body);
+	protected function _redditResponse($doc) {
+		$body = json_decode($doc->getBody());
 
-		$response = $body["data"]["children"];
+		$response = $body->data->children;
 		$total = 0;
 		if (count($response) > 0) {
 			foreach ($response as $r) {
-				if ($r["kind"] == "t3" && $r["data"]["url"] == $url && $r["data"]["score"] > $total) {
-					$total = $r["data"]["score"];
+				if ($r->kind == "t3" && $r->data->score > $total) {
+					$total = $r->data->score;
 				}
 			}
 		}
 		return $this->_formatResponse("Link Stats", $total);
 	}
 
-	protected function _twitterResponse($url) {
-		throw new \Exception("Twitter no longer gives response");
-	}
-
-	protected function _makeRequest($url, $returnDoc = false) {
-		$type = $this->_type;
-		$url = $this->_sites["type"] . $url;
-		$bot = new Bot(array(
-			"$type" => $url
-		));
+	protected function _makeRequest() {
+		$bot = new Bot($this->_links);
 
 		$bot->execute();
-		$doc = array_shift($bot->getDocuments());
-
-		if ($returnDoc) {
-			return $doc;
-		}
-
-		$body = $doc->getHttpResponse->getBody();
-		return $body;
+		$docs = $bot->getDocuments();
+		return $docs;
 	}
 }
