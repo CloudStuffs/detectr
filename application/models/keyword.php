@@ -38,4 +38,13 @@ class Keyword extends Shared\Model {
      * @validate required, min(3), max(100)
      */
     protected $_keyword;
+
+    /**
+     * @column
+     * @readwrite
+     * @type boolean
+     *
+     * @label If Serp if false then it is used for social media tracking
+     */
+    protected $_serp = true;
 }

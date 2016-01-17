@@ -13,29 +13,27 @@
                             <thead>
                                 <tr>
                                     <th>S. No.</th>
-                                    <th>Keyword</th>
                                     <th>Domain</th>
                                     <th>Status</th>
-                                    <th>Old (7 Days before)</th>
+                                    <th>Old (7 Days)</th>
                                     <th>Today</th>
                                     <th>Change</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {script $rank = Framework\Registry::get("MongoDB")->rank} {script $i = 1} {foreach $serp in $serps}
+                                {script $social = Framework\Registry::get("MongoDB")->socials} {script $i = 1} {foreach $s in $socials}
                                 <tr>
                                     <td>{echo $i}</td>
-                                    <td>{echo $serp->keyword}</td>
-                                    <td>{echo $serp->link}</td>
+                                    <td>{echo $s->link}</td>
                                     <td>
-                                        {if $serp->live}
+                                        {if $s->live}
                                         <span class="label label-success">Active</span> {/if} {else}
                                         <span class="label label-danger">Disabled by admin</span> {/else}
                                     </td>
-                                    {script $date_today = date("Y-m-d")} {script $old_date = date("Y-m-d", strtotime($date_today."-7 day"))} {script $old_rank = $rank->findOne(array("keyword_id" => $serp->id, "created" => $old_date))}
+                                    {script $date_today = date("Y-m-d")} {script $old_date = date("Y-m-d", strtotime($date_today."-7 day"))} {script $old_rank = $social->findOne(array("keyword_id" => $s->id, "created" => $old_date))}
                                     <td>{echo (($old_rank["position"]) ? $old_rank["position"] : 0)}</td>
-                                    {script $new_rank = $rank->findOne(array("keyword_id" => $serp->id, "created" => $date_today))}
+                                    {script $new_rank = $social->findOne(array("keyword_id" => $s->id, "created" => $date_today))}
                                     <td>{echo (($new_rank["position"]) ? $new_rank["position"] : 0)}</td>
                                     {script $change = (int) $new_rank["position"] - (int) $old_rank["position"]}
                                     <td>
@@ -46,8 +44,8 @@
                                         {/else}
                                     </td>
                                     <td>
-                                        <a href="/serp/stats/{echo $serp->id}" class="btn btn-primary btn-xs"><i class="fa fa-label"></i> View Stats</a>
-                                        <a href="/serp/disable/{echo $serp->id}" class="btn btn-warning delete btn-xs"><i class="fa fa-ban"></i> Unregister</a>
+                                        <a href="/social/stats/{echo $s->id}" class="btn btn-primary btn-xs"><i class="fa fa-label"></i> View Stats</a>
+                                        <a href="/social/disable/{echo $s->id}" class="btn btn-warning delete btn-xs"><i class="fa fa-ban"></i> Unregister</a>
                                     </td>
                                 </tr>
                                 {script ++$i} {/foreach}
@@ -55,7 +53,7 @@
                         </table>
                     </div>
                 </div>
-                <a href="/serp/create" class="btn btn-primary"><i class="fa fa-plus"></i> Add Another Serp</a>
+                <a href="/socials/create" class="btn btn-primary"><i class="fa fa-plus"></i> Add Another</a>
             </div>
         </div>
     </div>

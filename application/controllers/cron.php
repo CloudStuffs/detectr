@@ -7,6 +7,8 @@
  */
 use Framework\Registry as Registry;
 use SEOstats\Services\Google as Google;
+use Shared\SocialLinks as SocialLinks;
+
 class CRON extends Auth {
 
     public function __construct($options = array()) {
@@ -20,9 +22,10 @@ class CRON extends Auth {
      */
     public function index() {
         $this->log("CRON Started");
-        // $this->_newsletters();
+        $this->_newsletters();
         $this->log("Newsletters Sent");
         $this->_serpRank();
+        $this->_socialStats();
         $this->log("Serp Done");
         $this->log("CRON Ended");
     }
@@ -68,7 +71,7 @@ class CRON extends Auth {
      * Check SERP stats
      */
     protected function _serpRank() {
-        $keywords = Keyword::all(array("live = ?" => true));
+        $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => true));
 
         $today = date('Y-m-d');
         $rank = Registry::get("MongoDB")->rank;
@@ -96,6 +99,10 @@ class CRON extends Auth {
             $return = $response["position"];
         }
         return $return;
+    }
+
+    protected function _socialStats() {
+        return;
     }
 
     /**

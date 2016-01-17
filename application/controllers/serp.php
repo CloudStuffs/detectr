@@ -19,26 +19,10 @@ class Serp extends Admin {
 
 		$message = null; $errors = array();
 		if (RequestMethods::post("action") == "createSerp") {
-			$website_id = RequestMethods::post("website");
-			
-			$keyword = RequestMethods::post("keyword");
-			$link = RequestMethods::post("link");
-
-			$regex = $this->_websiteRegex();
-			if (preg_match("/^$regex$/", $link)) {
-				$keyword = new Keyword(array(
-					"link" => $link,
-					"user_id" => $this->user->id,
-					"keyword" => $keyword
-				));
-				if ($keyword->validate()) {
-					$keyword->save();
-					$message = "Serp Action registered";
-				} else {
-					$errors = $keyword->errors;
-				}
-			} else {
-				$message = "Invalid URL";
+			$message = $this->_saveSerp();
+			if (is_array($message)) {
+				$errors = $message;
+				$message = null;
 			}
 		}
 		$view->set("message", $message)
@@ -53,7 +37,7 @@ class Serp extends Admin {
 		$this->seo(array("title" => "Serp | Manage","view" => $this->getLayoutView()));
 		$view = $this->getActionView();
 
-		$keywords = \Keyword::all(array("user_id = ?" => $this->user->id));
+		$keywords = \Keyword::all(array("user_id = ?" => $this->user->id, "serp" => true));
 		$view->set("serps", $keywords);
 	}
 
@@ -62,21 +46,23 @@ class Serp extends Admin {
 	 * @before _secure, memberLayout
 	 */
 	public function stats($keyword_id) {
-		$keyword = \Keyword::first(array("id = ?" => $keyword_id), array("user_id", "id"));
+		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => true), array("user_id", "id"));
 		$this->_authority($keyword);
 
-		$end_date = RequestMethods::get("startdate", date("Y-m-d"));
-		$start_date = RequestMethods::get("enddate", date("Y-m-d", strtotime($end_date."-7 day")));
+		$end_date = RequestMethods::get("enddate", date("Y-m-d"));
+		$start_date = RequestMethods::get("startdate", date("Y-m-d", strtotime($end_date."-7 day")));
 
 		$this->seo(array("title" => "Serp | Stats","view" => $this->getLayoutView()));
 		$view = $this->getActionView();
 
-		$mongo_db = Registry::get("MongoDB");
-		$rank = $mongo_db->rank;
-		die('<pre>'.print_r($rank, true). '</pre>');
-		$diff = date_diff(date_create($start_date), date_create($end_date));
-        for ($i = 0; $i < $diff->format("%a"); $i++) {
-            $date = date('Y-m-d', strtotime($start_date . " +{$i} day"));
+		$rank = Registry::get("MongoDB")->rank;
+		
+		$start_time = strtotime($start_date); $end_time = strtotime($end_date); $i = 0;
+
+		$obj = array();
+        while ($start_time < $end_time) {
+        	$start_time = strtotime($start_date . " +{$i} day");
+            $date = date('Y-m-d', $start_time);
             $record = $rank->findOne(array('created' => $date, 'keyword_id' => $keyword->id));
             if (isset($record)) {
             	$position = $record['position'];
@@ -84,25 +70,31 @@ class Serp extends Admin {
             	$position = 0;
             }
             $obj[] = array('y' => $date, 'a' => $position);
+
+            ++$i;
         }
+        $view->set("k_id", $keyword->id);
         $view->set("data", ArrayMethods::toObject($obj));
 	}
 
 	/**
 	 * @before _secure, memberLayout
 	 */
-	public function remove($serp_id) {
-		$serp = Serp::first(array("id = ?" => $serp_id));
-		if ($serp) {
-			$serp->delete();
+	public function disable($keyword_id) {
+		$keyword = Keyword::first(array("id = ?" => $keyword_id));
+		$this->_authority($keyword);
+
+		if ($keyword->serp) {
+			$keyword->live = false;
+			$keyword->save();
 		}
-		self::redirect("/serp/manage");
+		self::redirect($_SERVER['HTTP_REFERER']);
 	}
 
 	/**
 	 * Getter
 	 */
-	private function _websiteRegex() {
+	protected function _websiteRegex() {
 		$regex = "((https?|ftp)\:\/\/)?"; // SCHEME
 	    $regex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?"; // User and Pass
 	    $regex .= "([a-z0-9-.]*)\.([a-z]{2,4})"; // Host or IP
@@ -112,5 +104,36 @@ class Serp extends Admin {
 	    $regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor
 
 	    return $regex;
+	}
+
+	/**
+	 * @return string|array Array on DB validation errors, else string messages
+	 */
+	private function _saveSerp($keyword, $link) {
+		$keyword = RequestMethods::post("keyword");
+		$link = RequestMethods::post("link");
+
+		$regex = $this->_websiteRegex();
+		if (!preg_match("/^$regex$/", $link)) {
+			return "Invalid URL";
+		}
+
+		$keyword = Keyword::first(array("link = ?" => $link, "user_id = ?" => $this->user->id, "keyword = ?" => $keyword, "serp = ?" => true));
+		if ($keyword) {
+			return "SERP Already Registered";
+		}
+
+		$keyword = new Keyword(array(
+			"link" => $link,
+			"user_id" => $this->user->id,
+			"keyword" => $keyword,
+			"serp" => true
+		));
+		if ($keyword->validate()) {
+			$keyword->save();
+			return "Serp Action saved succesfully!!";
+		} else {
+			$errors = $keyword->errors;
+		}
 	}
 }

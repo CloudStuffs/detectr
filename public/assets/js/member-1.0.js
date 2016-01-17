@@ -58,7 +58,7 @@ $(document).ready(function () {
         e.preventDefault();
         var data = $(this).serializeArray();
         request.read({
-            action: "serp/stats",
+            action: $(this).attr("action"),
             data: data,
             callback: function (data) {
                 $('#stats').html('');

@@ -38,4 +38,11 @@ class Website extends Shared\Model {
      */
     protected $_url;
 
+    /**
+     * @column
+     * @readwrite
+     * @type boolean
+     */
+    protected $_owner = false;
+
 }
