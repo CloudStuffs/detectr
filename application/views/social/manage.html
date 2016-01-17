@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h2 class="page-header text-center"><i class="fa fa-hashtag"></i> Manage Serps</h2>
+                <h2 class="page-header text-center"><i class="fa fa-hashtag"></i> Manage Socials</h2>
             </div>
         </div>
         <div class="row">
@@ -29,7 +29,7 @@
                                     <td>
                                         {if $s->live}
                                         <span class="label label-success">Active</span> {/if} {else}
-                                        <span class="label label-danger">Disabled by admin</span> {/else}
+                                        <span class="label label-danger">Disabled</span> {/else}
                                     </td>
                                     {script $date_today = date("Y-m-d")} {script $old_date = date("Y-m-d", strtotime($date_today."-7 day"))} {script $old_rank = $social->findOne(array("keyword_id" => $s->id, "created" => $old_date))}
                                     <td>{echo (($old_rank["position"]) ? $old_rank["position"] : 0)}</td>
@@ -45,7 +45,11 @@
                                     </td>
                                     <td>
                                         <a href="/social/stats/{echo $s->id}" class="btn btn-primary btn-xs"><i class="fa fa-label"></i> View Stats</a>
-                                        <a href="/social/disable/{echo $s->id}" class="btn btn-warning delete btn-xs"><i class="fa fa-ban"></i> Unregister</a>
+                                        {if $s->live}
+                                        <a href="/social/changeState/{echo $s->id}/0" class="btn btn-warning delete btn-xs"><i class="fa fa-ban"></i> Disable</a>
+                                        {/if} {else}
+                                        <a href="/social/changeState/{echo $s->id}/1" class="btn btn-success delete btn-xs"><i class="fa fa-check"></i> Enable</a>
+                                        {/else}
                                     </td>
                                 </tr>
                                 {script ++$i} {/foreach}
@@ -53,7 +57,7 @@
                         </table>
                     </div>
                 </div>
-                <a href="/socials/create" class="btn btn-primary"><i class="fa fa-plus"></i> Add Another</a>
+                <a href="/social/create" class="btn btn-primary"><i class="fa fa-plus"></i> Add Another</a>
             </div>
         </div>
     </div>

@@ -28,7 +28,7 @@ class Social extends Serp {
 	 * @before _secure, memberLayout
 	 */
 	public function manage() {
-		$this->seo(array("title" => "Social | Create", "view" => $this->getLayoutView()));
+		$this->seo(array("title" => "Social | Manage", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
         $socials = \Keyword::all(array('user_id = ?' => $this->user->id, "serp = ?" => false));
@@ -75,12 +75,12 @@ class Social extends Serp {
 	/**
 	 * @before _secure, memberLayout
 	 */
-	public function disable($keyword_id) {
+	public function changeState($keyword_id, $live) {
 		$keyword = Keyword::first(array("id = ?" => $keyword_id));
 		$this->_authority($keyword);
 
 		if (!$keyword->serp) {
-			$keyword->live = false;
+			$keyword->live = $live;
 			$keyword->save();
 		}
 		self::redirect($_SERVER['HTTP_REFERER']);
