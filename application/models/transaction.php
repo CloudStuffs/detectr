@@ -18,13 +18,21 @@ class Transaction extends Shared\Model {
     /**
      * @column
      * @readwrite
+     * @type integer
+     * @index
+     */
+    protected $_package_id;
+
+    /**
+     * @column
+     * @readwrite
      * @type text
      * @length 255
      * 
      * @validate required, alpha, min(3), max(32)
      * @label reference id from paypal
      */
-    protected $_ref_id;
+    protected $_payment_id;
 
     /**
      * @column
@@ -33,7 +41,7 @@ class Transaction extends Shared\Model {
      * @length 10,2
      * 
      * @validate required
-     * @label It is the domain only (like playmusic.net)
+     * @label amount in USD
      */
     protected $_amount;
 

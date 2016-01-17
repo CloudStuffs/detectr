@@ -1,12 +1,7 @@
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
-            <h3 class="page-header"><i class="fa fa-list"></i> Manage Items</h3>
-        </div>
-        <!-- /.col-lg-12 -->
-    </div>
-    <div class="row">
-        <div class="col-lg-12">
+            <h3 class="page-header"><i class="fa fa-list"></i> Manage Plans</h3>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <p class="text-center">Created Items</p>
@@ -35,26 +30,20 @@
                             <td>{echo Framework\StringMethods::only_date($i->created)}</td>
                             <td>
                                 {if $i->live}
-                                <a href="/admin/edit/Item/{echo $i->id}/live/0" class="btn btn-xs btn-warning"><i class="fa fa-times"></i> Disapprove</a>
-                                {/if} {else}
-                                <a href="/admin/edit/Item/{echo $i->id}/live/1" class="btn btn-xs btn-success"><i class="fa fa-check"></i> Approve</a>
-                                {/else}
-
+                                <a href="/admin/edit/Item/{echo $i->id}/live/0" class="btn btn-xs btn-warning"><i class="fa fa-times"></i> Disapprove</a> {/if} {else}
+                                <a href="/admin/edit/Item/{echo $i->id}/live/1" class="btn btn-xs btn-success"><i class="fa fa-check"></i> Approve</a> {/else}
                                 <a href="/plan/edit/{echo $i->id}" class="btn btn-xs btn-primary"><i class="fa fa-edit"></i> Edit</a>
                             </td>
                         </tr>
                         {script ++$x} {/foreach}
                     </tbody>
                 </table>
-                
                 <div class="">
                     <div class="text-center">
-                    {if ($page != 1)}
-                        <a href="{echo Shared\Markup::pagination($page - 1)}" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Previous</a>
-                    {/if}
-                    {if ($page < $count/$limit)}
-                        <a href="{echo Shared\Markup::pagination($page + 1)}" class="btn btn-primary">Next <i class="fa fa-arrow-right"></i></a>
-                    {/if}
+                        {if ($page != 1)}
+                        <a href="{echo Shared\Markup::pagination($page - 1)}" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Previous</a> {/if} {if ($page
+                        < $count/$limit)} <a href="{echo Shared\Markup::pagination($page + 1)}" class="btn btn-primary">Next <i class="fa fa-arrow-right"></i></a>
+                            {/if}
                     </div>
                 </div>
                 <!-- /.panel-body -->

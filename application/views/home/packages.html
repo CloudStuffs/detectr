@@ -8,9 +8,14 @@
                 <div class="card-block">
                     <h4 class="card-title">{echo $p['name']}</h4>
                     <p class="card-text">
-                        {echo $p['item']}
-                        {echo $p['price']}
+                        Price : ${echo $p['price']}
                     </p>
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">{echo $p['item']}</li>
+                </ul>
+                <div class="card-block">
+                    <a href="/auth/register/{echo $p['id']}" class="btn btn-primary">Buy Now</a>
                 </div>
             </div>
             {/foreach}

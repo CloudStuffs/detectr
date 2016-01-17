@@ -9,13 +9,13 @@ use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 use Framework\ArrayMethods as ArrayMethods;
 
-class Plan extends Admin {
+class Plan extends Shared\Controller {
 	
 	/**
 	 * Stores the list of items for which the package can be made
 	 * @readwrite
 	 */
-	protected $_items = array("Detectr", "FakeReferer", "Monitor", "Serp", "Webmaster");
+	protected $_items = array("Detectr", "FakeReferer", "Social", "Serp", "Webmaster");
 
 	/**
 	 * Create an Item
@@ -123,9 +123,10 @@ class Plan extends Admin {
         }
 	}
 
-	protected function pay($package) {
+	protected function initializePay($package, $user) {
 		$payer = new \PayPal\Api\Payer();
 		$payer->setPaymentMethod('paypal');
+		$total = $package->price + $package->tax;
 
         $item = new \PayPal\Api\Item();
         $item->setName($package->name)
@@ -142,7 +143,7 @@ class Plan extends Admin {
 
         $amount = new \PayPal\Api\Amount();
         $amount->setCurrency("USD")
-        ->setTotal($package->price + $package->tax)
+        ->setTotal($total)
         ->setDetails($details);
 
         $transaction = new \PayPal\Api\Transaction();
@@ -154,7 +155,7 @@ class Plan extends Admin {
 		$baseUrl = "http://trafficmonitor.ca/";
 		$redirectUrls = new \PayPal\Api\RedirectUrls();
 		$redirectUrls->setReturnUrl($baseUrl."plan?success=true")
-		    ->setCancelUrl($baseUrl."plan?success=false");
+		    ->setCancelUrl($baseUrl."package");
 
 		$payment = new \PayPal\Api\Payment();
 		$payment->setIntent("sale")
@@ -164,6 +165,13 @@ class Plan extends Admin {
 
 		try {
 		    $payment->create($this->paypal());
+		    $transaction = new Transaction(array(
+		    	"user_id" => $user->id,
+		    	"package_id" => $package->id,
+		    	"payment_id" => $payment->getId(),
+		    	"amount" => $total
+		    ));
+		    $transaction->save();
 		} catch (Exception $e) {
 			die($e);
 		}
@@ -171,16 +179,57 @@ class Plan extends Admin {
 		return $approvalUrl = $payment->getApprovalLink();
     }
 
-    public function test() {
-    	$this->noview();
-    	$package = Package::first(array("id = ?" => 1));
-    	echo $this->pay($package);
+    protected function pay($package_id, $user) {
+    	$package = Package::first(array("id = ?" => $package_id));
+    	if ($package) {
+    		$url = $this->initializePay($package, $user);
+    		self::redirect($url);
+    	}
     }
 
     public function success() {
     	$paymentId = RequestMethods::get("paymentId");
     	$payerId = RequestMethods::get("PayerId");
-
+    	$success = RequestMethods::get("success");
     	
+    	if (isset($success, $paymentId, $payerId)) {
+    		$payment = \PayPal\Api\Payment::get($paymentId, $this->paypal());
+    		$execute = new \PayPal\Api\PaymentExecution();
+    		$execute->setPayerId($payerId);
+
+    		try {
+    			$result = $payment->execute($execute, $this->paypal());
+    			if ($result) {
+    				$transaction = Transaction::first(array("payment_id = ?" => $paymentId));
+    				$transaction->live = 1;
+    				$transaction->save();
+    				$this->addSubscription($transaction);
+    			}
+    		} catch (Exception $e) {
+    			$data = json_decode($e->getData());
+    			die($data->message);
+    		}
+    	}
     }
+
+    protected function addSubscription($transaction) {
+        $package = Package::first(array("id = ?" => $transaction->package_id), array("id"), array("item"));
+        $items = json_decode($package->item);
+        $user = User::first(array("id = ?" => $transaction->user_id));
+        $user->live = 1;
+        $user->save();
+        foreach ($items as $key => $value) {
+            $s = new Subscription(array(
+                "user_id" => $user->id,
+                "item_id" => $value,
+                "period" => 30,
+                "expiry" => strftime("%Y-%m-%d", strtotime('+31 Day')),
+            ));
+            $s->save();
+        }
+
+        $this->session($user);
+        self::redirect('/member/index.html');
+    }
+
 }

@@ -36,7 +36,8 @@ namespace Shared {
                 $this->setUser(false);
                 self::redirect("/404");
             }
-            $this->changeLayout();
+            $this->defaultLayout = "layouts/admin";
+            $this->setLayout();
         }
 
         /**
@@ -79,6 +80,59 @@ namespace Shared {
         public function JSONview() {
             $this->willRenderLayoutView = false;
             $this->defaultExtension = "json";
+        }
+
+        protected function log($message = "") {
+            $logfile = APP_PATH . "/logs/" . date("Y-m-d") . ".txt";
+            $new = file_exists($logfile) ? false : true;
+            if ($handle = fopen($logfile, 'a')) {
+                $timestamp = strftime("%Y-%m-%d %H:%M:%S", time());
+                $content = "[{$timestamp}]{$message}\n";
+                fwrite($handle, $content);
+                fclose($handle);
+                if ($new) {
+                    chmod($logfile, 0755);
+                }
+            } else {
+                echo "Could not open log file for writing";
+            }
+        }
+
+        protected function changeDate($date, $day) {
+            return date_format(date_add(date_create($date),date_interval_create_from_date_string("{$day} day")), 'Y-m-d');;
+        }
+
+        /**
+         * The method checks whether a file has been uploaded. If it has, the method attempts to move the file to a permanent location.
+         * @param string $name
+         * @param string $type files or images
+         */
+        protected function _upload($name, $type = "files") {
+            if (isset($_FILES[$name])) {
+                $file = $_FILES[$name];
+                $path = APP_PATH . "/public/assets/uploads/{$type}/";
+                $extension = pathinfo($file["name"], PATHINFO_EXTENSION);
+                $filename = uniqid() . ".{$extension}";
+                if (move_uploaded_file($file["tmp_name"], $path . $filename)) {
+                    return $filename;
+                } else {
+                    return FALSE;
+                }
+            }
+        }
+
+        protected function session($user) {
+            $this->setUser($user);
+            
+            $tommorow = strftime("%Y-%m-%d", strtotime('+1 day'));
+            $session = Registry::get("session");
+            $subscriptions = array();
+            $subscription = Subscription::all(array("user_id = ?" => $user->id, "live = ?" => true, "expiry < ?" => $tommorow), array("item_id"));
+            foreach ($subscription as $s) {
+                $item = Item::first(array("id = ?" => $s->item_id), array("name"));
+                array_push($subscriptions, $item->name);
+            }
+            $session->set("subscriptions", $subscriptions);
         }
 
         public function setUser($user) {

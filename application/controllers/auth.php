@@ -9,7 +9,7 @@ use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
 use Shared\CloudMail as Mail;
 
-class Auth extends Controller {
+class Auth extends Plan {
     
     /**
      * @before _session
@@ -83,6 +83,7 @@ class Auth extends Controller {
                     "subject" => "Welcome to TrafficMonitor.ca",
                     "user" => $user
                 ));
+                $this->pay($package_id, $user);
                 $view->set("message", "Your account has been created and will be activate within 3 hours after verification.");
             } else {
                 $view->set("message", 'Email exists, login from <a href="/auth/login">here</a>');
@@ -118,20 +119,6 @@ class Auth extends Controller {
             }
         }
     }
-
-    protected function session($user) {
-        $this->setUser($user);
-        
-        $tommorow = strftime("%Y-%m-%d", strtotime('+1 day'));
-        $session = Registry::get("session");
-        $subscriptions = array();
-        $subscription = Subscription::all(array("user_id = ?" => $user->id, "live = ?" => true, "expiry < ?" => $tommorow), array("item_id"));
-        foreach ($subscription as $s) {
-            $item = Item::first(array("id = ?" => $s->item_id), array("name"));
-            array_push($subscriptions, $item->name);
-        }
-        $session->set("subscriptions", $subscriptions);
-    }
     
     protected function getBody($options) {
         $template = $options["template"];
@@ -158,49 +145,10 @@ class Auth extends Controller {
         $mail = new Mail($params);
         
     }
-    
-    protected function log($message = "") {
-        $logfile = APP_PATH . "/logs/" . date("Y-m-d") . ".txt";
-        $new = file_exists($logfile) ? false : true;
-        if ($handle = fopen($logfile, 'a')) {
-            $timestamp = strftime("%Y-%m-%d %H:%M:%S", time());
-            $content = "[{$timestamp}]{$message}\n";
-            fwrite($handle, $content);
-            fclose($handle);
-            if ($new) {
-                chmod($logfile, 0755);
-            }
-        } else {
-            echo "Could not open log file for writing";
-        }
-    }
-
-    protected function changeDate($date, $day) {
-        return date_format(date_add(date_create($date),date_interval_create_from_date_string("{$day} day")), 'Y-m-d');;
-    }
 
     public function memberLayout() {
         $this->defaultLayout = "layouts/member";
         $this->setLayout();
-    }
-    
-    /**
-     * The method checks whether a file has been uploaded. If it has, the method attempts to move the file to a permanent location.
-     * @param string $name
-     * @param string $type files or images
-     */
-    protected function _upload($name, $type = "files") {
-        if (isset($_FILES[$name])) {
-            $file = $_FILES[$name];
-            $path = APP_PATH . "/public/assets/uploads/{$type}/";
-            $extension = pathinfo($file["name"], PATHINFO_EXTENSION);
-            $filename = uniqid() . ".{$extension}";
-            if (move_uploaded_file($file["tmp_name"], $path . $filename)) {
-                return $filename;
-            } else {
-                return FALSE;
-            }
-        }
     }
 
     public function render() {
@@ -239,24 +187,7 @@ class Auth extends Controller {
         $session = Registry::get("session");
         $subscriptions = $session->get("subscriptions");
         if (!in_array(get_class($this), $subscriptions)) {
-            //die('Not Subscrbed');
-        }
-    }
-
-    public function success() {
-        $id = RequestMethods::get("package_id");
-        $user = $this->user;
-        $package = Package::first(array("id = ?" => $id), array("id"), array("item"));
-        $items = json_decode($package->item);
-
-        foreach ($items as $key => $value) {
-            $s = new Subscription(array(
-                "user_id" => $user->id,
-                "item_id" => $value,
-                "period" => 30,
-                "expiry" => strftime("%Y-%m-%d", strtotime('+31 Day')),
-            ));
-            $s->save();
+            die('Not Subscrbed');
         }
     }
 }

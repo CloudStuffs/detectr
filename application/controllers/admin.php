@@ -236,9 +236,4 @@ class Admin extends Auth {
         }
     }
 
-    public function changeLayout() {
-        $this->defaultLayout = "layouts/admin";
-        $this->setLayout();
-    }
-
 }

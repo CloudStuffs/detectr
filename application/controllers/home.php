@@ -29,7 +29,8 @@ class Home extends Controller {
         	array_push($ps, array(
         		"name" => $p->name,
         		"price" => ($p->price + $p->tax),
-        		"item" => implode(",", $is)
+        		"item" => implode(",", $is),
+                "id" => $p->id
         	));
         }
         $view->set("packages", $ps);
