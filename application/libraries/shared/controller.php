@@ -66,6 +66,21 @@ namespace Shared {
             exit();
         }
 
+        public function logout() {
+            $this->setUser(false);
+            self::redirect("/home");
+        }
+        
+        public function noview() {
+            $this->willRenderLayoutView = false;
+            $this->willRenderActionView = false;
+        }
+
+        public function JSONview() {
+            $this->willRenderLayoutView = false;
+            $this->defaultExtension = "json";
+        }
+
         public function setUser($user) {
             $session = Registry::get("session");
             if ($user) {

@@ -15,10 +15,7 @@
 </head>
 
 <body class="bg-faded">
-    
-    {include layouts/navigation/standard.html}
-    {ayield action}
-
+    {include layouts/navigation/standard.html} {ayield action}
     <footer id="footer">
         <div class="container">
             <div class="row">
@@ -32,13 +29,19 @@
                     </ul>
                 </div>
                 <div class="col-xs-6 col-sm-3 column">
-                    <h6 class="text-uppercase">About</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="#">Contact Us</a></li>
-                        <li><a href="#">Delivery Information</a></li>
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms &amp; Conditions</a></li>
-                    </ul>
+                    <h6 class="text-uppercase">Payments</h6>
+                    <!-- PayPal Logo -->
+                    <table border="0" cellpadding="10" cellspacing="0" align="center">
+                        <tr>
+                            <td align="center"></td>
+                        </tr>
+                        <tr>
+                            <td align="center">
+                                <a href="https://www.paypal.com/webapps/mpp/paypal-popup" title="How PayPal Works" onclick="javascript:window.open('https://www.paypal.com/webapps/mpp/paypal-popup','WIPaypal','toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=yes, resizable=yes, width=1060, height=700'); return false;"><img src="https://www.paypalobjects.com/webstatic/mktg/logo/bdg_now_accepting_pp_2line_w.png" border="0" alt="Now Accepting PayPal"></a>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- PayPal Logo -->
                 </div>
                 <div class="col-xs-12 col-sm-3 column">
                     <h6 class="text-uppercase">Stay Posted</h6>
@@ -60,10 +63,10 @@
                 </div>
             </div>
             <br>
+            <span class="text-center"><img src="https://www.paypalobjects.com/webstatic/en_US/i/buttons/cc-badges-ppppcmcvdam.png" alt="Pay with PayPal, PayPal Credit or any major credit card" /></span>
             <span class="pull-right text-muted small">Developed by <a href="http://cloudstuff.tech">www.CloudStuff.Tech</a></span>
         </div>
     </footer>
-    
     <!--scripts loaded here-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>

@@ -58,7 +58,10 @@ class Auth extends Controller {
     /**
      * @before _session
      */
-    public function register() {
+    public function register($package_id = NULL) {
+        if (!$package_id) {
+            self::redirect('/packages');
+        }
         $this->seo(array("title" => "Register", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
         
@@ -175,21 +178,6 @@ class Auth extends Controller {
     protected function changeDate($date, $day) {
         return date_format(date_add(date_create($date),date_interval_create_from_date_string("{$day} day")), 'Y-m-d');;
     }
-    
-    public function logout() {
-        $this->setUser(false);
-        self::redirect("/home");
-    }
-    
-    public function noview() {
-        $this->willRenderLayoutView = false;
-        $this->willRenderActionView = false;
-    }
-
-    public function JSONview() {
-        $this->willRenderLayoutView = false;
-        $this->defaultExtension = "json";
-    }
 
     public function memberLayout() {
         $this->defaultLayout = "layouts/member";
@@ -251,7 +239,24 @@ class Auth extends Controller {
         $session = Registry::get("session");
         $subscriptions = $session->get("subscriptions");
         if (!in_array(get_class($this), $subscriptions)) {
-            die('Not Subscrbed');
+            //die('Not Subscrbed');
+        }
+    }
+
+    public function success() {
+        $id = RequestMethods::get("package_id");
+        $user = $this->user;
+        $package = Package::first(array("id = ?" => $id), array("id"), array("item"));
+        $items = json_decode($package->item);
+
+        foreach ($items as $key => $value) {
+            $s = new Subscription(array(
+                "user_id" => $user->id,
+                "item_id" => $value,
+                "period" => 30,
+                "expiry" => strftime("%Y-%m-%d", strtotime('+31 Day')),
+            ));
+            $s->save();
         }
     }
 }

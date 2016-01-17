@@ -108,4 +108,72 @@ class Plan extends Admin {
 		}
 		return array("success" => false, "errors" => $item->errors);
 	}
+
+	protected function paypal() {
+		$configuration = Registry::get("configuration");
+        $parsed = $configuration->parse("configuration/payment");
+
+        if (!empty($parsed->payment->paypal) && !empty($parsed->payment->paypal->clientid)) {
+            $apiContext = new \PayPal\Rest\ApiContext(
+				new \PayPal\Auth\OAuthTokenCredential(
+					$parsed->payment->paypal->clientid, $parsed->payment->paypal->secret
+				)
+			);
+            return $apiContext;
+        }
+	}
+
+	protected function pay($package) {
+		$payer = new \PayPal\Api\Payer();
+		$payer->setPaymentMethod('paypal');
+
+        $item = new \PayPal\Api\Item();
+        $item->setName($package->name)
+        	->setCurrency('USD')
+        	->setQuantity(1)
+        	->setPrice($package->price);
+
+        $itemList = new \PayPal\Api\ItemList();
+        $itemList->setItems([$item]);
+
+        $details = new \PayPal\Api\Details();
+        $details->setTax($package->tax)
+        	->setSubtotal($package->price);
+
+        $amount = new \PayPal\Api\Amount();
+        $amount->setCurrency("USD")
+        ->setTotal($package->price + $package->tax)
+        ->setDetails($details);
+
+        $transaction = new \PayPal\Api\Transaction();
+        $transaction->setAmount($amount)
+		    ->setItemList($itemList)
+		    ->setDescription($package->name)
+		    ->setInvoiceNumber(uniqid());
+
+		$baseUrl = "http://trafficmonitor.ca/";
+		$redirectUrls = new \PayPal\Api\RedirectUrls();
+		$redirectUrls->setReturnUrl($baseUrl."plan?success=true")
+		    ->setCancelUrl($baseUrl."plan?success=false");
+
+		$payment = new \PayPal\Api\Payment();
+		$payment->setIntent("sale")
+		    ->setPayer($payer)
+		    ->setRedirectUrls($redirectUrls)
+		    ->setTransactions(array($transaction));
+
+		try {
+		    $payment->create($this->paypal());
+		} catch (Exception $e) {
+			die($e);
+		}
+
+		return $approvalUrl = $payment->getApprovalLink();
+    }
+
+    public function test() {
+    	$this->noview();
+    	$package = Package::first(array("id = ?" => 1));
+    	echo $this->pay($package);
+    }
 }
