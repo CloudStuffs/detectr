@@ -36,6 +36,7 @@ class Platform extends Member {
             $name = RequestMethods::post('name');
             $url = RequestMethods::post('url');
             $url = preg_replace('/^https?:\/\//', '', $url);
+            $url = rtrim($url, "/");
             
             // Check if the domain already exists
             $website = Website::first(array("url = ?" => $url));
@@ -77,6 +78,7 @@ class Platform extends Member {
             $title = RequestMethods::post('name');
             $url = RequestMethods::post('url');
             $url = preg_replace('/^https?:\/\//', '', $url);
+            $url = rtrim($url, "/");
 
             $website->url = $url;
             $website->title = $title;
@@ -105,11 +107,13 @@ class Platform extends Member {
         $mongo_db = Registry::get("MongoDB");
         $mongo_trigger = $mongo_db->selectCollection("triggers");
         $mongo_action = $mongo_db->selectCollection("actions");
+        $hits = $mongo_db->selectCollection("hits");
         
         foreach ($trigger as $t) {
             $action = Action::first(array("trigger_id = ?" => $t->id));
             $mongo_trigger->remove(array('trigger_id' => (int) $t->id), array('justOne' => true));
             $mongo_action->remove(array('action_id' => (int) $action->id), array('justOne' => true));
+            $hits->remove(array('trigger_id' => (int) $t->id, 'action_id' => (int) $action->id), array('justOne' => true));
 
             $this->delete('Action', $action->id, false);
             $this->delete('Trigger', $t->id, false);
@@ -126,17 +130,11 @@ class Platform extends Member {
         $this->seo(array("title" => "Websites added", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
         
-        $page = RequestMethods::get("page", 1);
-        $limit = RequestMethods::get("limit", 10);
+        $page = Shared\Markup::page(array("model" => "Website", "where" => array()));
         
-        $websites = \Website::all(array(), array("title", "url", "id", "created"), "created", "desc", $limit, $page);
-        $count = count($users);
+        $websites = \Website::all(array(), array("title", "url", "id", "created"), "created", "desc", $page["limit"], $page["page"]);
         
-        $view->set(array(
-            "count" => $count,
-            "websites" => $websites,
-            "limit" => $limit,
-            "page" => (int) $page,
-        ));
+        $view->set("websites", $websites)
+            ->set($page);
     }
 }

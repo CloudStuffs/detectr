@@ -116,7 +116,7 @@ class CRON extends Auth {
             foreach ($responses as $r) {
                 $doc = array(
                     'count_type' => $r["count_type"],
-                    'count' => $r["count"],
+                    'count' => (string) $r["count"],
                     'social_media' => $r["social_media"],
                     'user_id' => (int) $k->user_id,
                     'live' => true,

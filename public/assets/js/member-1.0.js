@@ -183,13 +183,18 @@ $(document).ready(function () {
     $(".trigger").click(function(e) {
         e.preventDefault();
         var item = $(this),
-            trigger = item.data('trigger');
+            trigger = item.data('trigger'),
+            action = item.data('action');
         item.html('<i class="fa fa-spinner fa-pulse"></i>');
         request.read({
             action: "analytics/trigger",
-            data: {id: trigger},
+            data: {trigger: trigger, action: action},
             callback: function(data) {
-                item.html('Hit: '+ data.count);
+                if (data.success) {
+                    item.html('Hit: '+ data.count);
+                } else {
+                    item.html('Hit: 0');
+                }
             }
         });
 

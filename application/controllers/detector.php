@@ -8,7 +8,6 @@
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 use Framework\ArrayMethods as ArrayMethods;
-use \ClusterPoint\DB as DB;
 
 class Detector extends Admin {
 	/**
@@ -313,17 +312,6 @@ class Detector extends Admin {
 		);
 	}
 
-	protected function clusterpoint($data = array()) {
-		$db = new DB();
-    	$record = $db->read($data);
-    	if($record) {
-    		$item = $record[0];
-    		$db->update($item->_id, $item->hit + 1);
-    	} else {
-    		$db->create($data);
-    	}
-	}
-
 	/**
      * @before _secure, _admin
      */
@@ -422,6 +410,9 @@ class Detector extends Admin {
 		$action = Action::first(array("id = ?" => $action_id));
 		$m_actions = $mongo->selectCollection("actions");
 		$this->_authority($action);
+
+		$hits = $mongo->selectCollection("hits");
+		$hits->remove(array('trigger_id' => (int) $trigger->id, 'action_id' => (int) $action->id), array('justOne' => true));
 		
 		$m_actions->remove(array('action_id' => (int) $action->id), array('justOne' => true));
 		$this->delete('Action', $action_id);

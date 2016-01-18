@@ -7,8 +7,6 @@
  */
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
-use \Curl\Curl;
-use ClusterPoint\DB as DB;
 
 class Analytics extends Admin {
 
@@ -55,22 +53,25 @@ class Analytics extends Admin {
         $view->set("googl", $object);
     }
 
+    /**
+     * @before _secure
+     */
     public function trigger() {
         $this->JSONview();
         $view = $this->getActionView();
-        $id = RequestMethods::get("id");
-        $count = 0;
 
-        $clusterpoint = new DB();
-        $query = "SELECT * FROM stats WHERE trigger_id == '{$id}' LIMIT 0, 100";
-        $results = $clusterpoint->index($query);
-        if ($results) {
-            foreach ($results as $result) {
-                $count += $result->hit;
-            }
+        $trigger_id = RequestMethods::get("trigger");
+        $action_id = RequestMethods::get("action");
+        
+        $count = 0;
+        $hits = Registry::get("MongoDB")->hits;
+        $record = $hits->findOne(array('trigger_id' => (int) $trigger_id, 'action_id' => (int) $action_id));
+        if (isset($record)) {
+            $count += $record['count'];
         }
 
-        $view->set("count", $count);
+        $view->set("count", $count)
+            ->set("success", true);
     }
 
 }

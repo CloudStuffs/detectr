@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Description of markup
+ * Description of Social Links
  *
- * @author Faizan Ayubi
+ * @author Hemant Mann
  */
 namespace Shared;
 use Framework\RequestMethods as RequestMethods;
@@ -76,7 +76,30 @@ class SocialLinks {
 		$el = $doc->query('//*[@id="aggregateCount"]');
 
 		$item =  $el->item(0);
-		return $this->_formatResponse("plusOne", $item->nodeValue);
+		$value = $item->nodeValue;
+		preg_match("/([KMB]$)/i", $value, $matches);
+
+		if (isset($matches[1])) {
+			$count = substr($value, 0, -1);
+			$matches[1] = strtolower($matches[1]);
+
+			switch ($matches[1]) {
+				case 'k':
+					$count = $count * 1000; 
+					break;
+				
+				case 'm':
+					$count = $count * 1000000;
+					break;
+
+				case 'b':
+					$count = $count * 1000000000;
+					break;
+			}
+		} else {
+			$count = $value;
+		}
+		return $this->_formatResponse("plusOne", $count);
 	}
 
 	protected function _linkedinResponse($doc) {
