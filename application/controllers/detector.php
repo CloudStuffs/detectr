@@ -30,14 +30,14 @@ class Detector extends Admin {
 				"func" => function ($inputs = '') {
 					return 'return 0;';
 				},
-				"help" => "This will do Nothing.."
+				"help" => "Can be used to track the traffic on the website"
 			),
 			"2" => array(
 				"title" => "Wait",
 				"func" => function ($inputs) {
 					return 'sleep('. $inputs . ');';
 				},
-				"help" => "For how many seconds user-agent should wait when trigger is detected"
+				"help" => "For how many seconds user should wait when above trigger is detected"
 			),
 			"3" => array(
 				"title" => "Redirect",
@@ -120,27 +120,27 @@ class Detector extends Admin {
 					$header = "From: $email \r\n";
 					
 					$data = explode(";", $inputs);
-					$to = preg_replace("/to=/", '', $data[0]);
-					$subject = preg_replace("/subject=/", '', $data[1]);
-					$body = preg_replace("/body=/", '', $data[2]);
+					$to = preg_replace("/to=/", '', trim($data[0]));
+					$subject = preg_replace("/subject=/", '', trim($data[1]));
+					$body = preg_replace("/body=/", '', trim($data[2]));
 					
 					return "mail($to, $subject, $body, '$header');";
 				},
-				"help" => 'to="Enter the email id of recipient";subject="Add the subject of email";body="Enter the text of email"; Only change the content within the quotes'
+				"help" => 'to="Enter the email id of recipient";subject="Add the subject of email";body="Enter the text of email"; (Only change the content within the quotes)'
 			),
 			"10" => array(
 				"title" => "Run Javascript",
 				"func" => function ($inputs) {
 					return 'echo "<script>'.$inputs.'</script>"';
 				},
-				"help" => "Copy and paste the javascript code in the text box"
+				"help" => "Copy and paste the javascript code in the text box. JS syntax should be valid!"
 			),
 			"11" => array(
 				"title" => "Run PHP",
 				"func" => function ($inputs) {
 					return $inputs;
 				},
-				"help" => "Copy and paste the php code in the text box. Exclude <?php ?> tags"
+				"help" => "Copy and paste the php code in the text box. Exclude <?php ?> tags. Be careful about the syntax!!"
 			)
 		);
 
@@ -168,7 +168,7 @@ class Detector extends Admin {
 					$current = strtolower($opts['server']['landingPage']);
 					return $current == $stored;
 				},
-				"help" => "Enter full url of the page on which trigger is to be executed<br> The page should be on your domain"
+				"help" => "Enter full url of the page on which trigger is to be executed<br> The page should be on your domain for trigger to work"
 			),
 			"4" => array(
 				"title" => "Time of Visit",
@@ -230,7 +230,7 @@ class Detector extends Admin {
 				"detect" => function ($opts) {
 					return ($opts['user']['ua'] == $opts['saved']);
 				},
-				"help" => 'Enter the user agent on which trigger is to be executed. Refer: <a href="http://www.useragentstring.com/pages/useragentstring.php">Differnent User Agents</a>'
+				"help" => 'Enter the user agent on which trigger is to be executed.<br> Refer: <a href="http://www.useragentstring.com/pages/useragentstring.php">Differnent User Agents</a>'
 			),
 			"8" => array(
 				"title" => "Browser",
@@ -240,7 +240,7 @@ class Detector extends Admin {
 				"detect" => function ($opts) {
 					return (strtolower($opts['user']['ua_info']->agent_name) == strtolower($opts['saved']));
 				},
-				"help" => "Enter the name of browser on which trigger is to be executed. Eg: Chrome, Firefox, Opera etc."
+				"help" => "Enter the name of browser on which trigger is to be executed.<br> Eg: Chrome, Firefox, Opera etc."
 			),
 			"9" => array(
 				"title" => "Operating System",
@@ -248,7 +248,7 @@ class Detector extends Admin {
 				"detect" => function ($opts) {
 					return (strtolower($opts['user']['ua_info']->agent_name) == strtolower($opts['saved']));
 				},
-				"help" => "Enter the name of Operating System on which trigger is to be executed. Eg: Linux, Windows etc"
+				"help" => "Enter the name of Operating System on which trigger is to be executed.<br> Eg: Linux, Windows etc"
 			),
 			"10" => array(
 				"title" => "Device Type",
@@ -325,7 +325,7 @@ class Detector extends Admin {
 	}
 
 	/**
-     * @before _secure, _admin, changeLayout
+     * @before _secure, _admin
      */
     public function approve() {
         $this->seo(array("title" => "Approve or Disapprove websites triggers", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
@@ -416,14 +416,14 @@ class Detector extends Admin {
 		$trigger = Trigger::first(array("id = ?" => $trigger_id));
 		$this->_authority($trigger);
 
-		$m_trigs->remove(array('trigger_id' => $trigger->id), array('justOne' => true));
+		$m_trigs->remove(array('trigger_id' => (int) $trigger->id), array('justOne' => true));
 		$this->delete('Trigger', $trigger_id, false);
 		
 		$action = Action::first(array("id = ?" => $action_id));
 		$m_actions = $mongo->selectCollection("actions");
 		$this->_authority($action);
 		
-		$m_actions->remove(array('action_id' => $action->id), array('justOne' => true));
+		$m_actions->remove(array('action_id' => (int) $action->id), array('justOne' => true));
 		$this->delete('Action', $action_id);
 	}
 
@@ -513,35 +513,35 @@ class Detector extends Admin {
 		$m_trigs = $mongo->selectCollection("triggers");
 		$m_actions = $mongo->selectCollection("actions");
 
-		$record = $m_trigs->findOne(array('trigger_id' => $trigger->id));
+		$record = $m_trigs->findOne(array('trigger_id' => (int) $trigger->id));
 		$doc = array(
-				'title' => $trigger->title,
+				'title' => (int) $trigger->title,
 				'meta' => $trigger->meta,
-				'user_id' => $trigger->user_id,
-				'website_id' => $trigger->website_id,
-				'trigger_id' => $trigger->id,
+				'user_id' => (int) $trigger->user_id,
+				'website_id' => (int) $trigger->website_id,
+				'trigger_id' => (int) $trigger->id,
 				'live' => (bool) $trigger->live,
 				'created' => $trigger->created
 		);
 		if (isset($record)) {
-			$m_trigs->update(array('trigger_id' => $trigger->id), array('$set' => $doc));
+			$m_trigs->update(array('trigger_id' => (int) $trigger->id), array('$set' => $doc));
 		} else {
 			$m_trigs->insert($doc);
 		}
 
-		$record = $m_actions->findOne(array('action_id' => $action->id));
+		$record = $m_actions->findOne(array('action_id' => (int) $action->id));
 		$doc = array(
-			'title' => $action->title,
+			'title' => (int) $action->title,
 			'inputs' => $action->inputs,
 			'code' => $action->code,
-			'user_id' => $action->user_id,
-			'trigger_id' => $action->trigger_id,
-			'action_id' => $action->id,
+			'user_id' => (int) $action->user_id,
+			'trigger_id' => (int) $action->trigger_id,
+			'action_id' => (int) $action->id,
 			'live' => (bool) $action->live,
 			'created' => $action->created
 		);
 		if (isset($record)) {
-			$m_actions->update(array('trigger_id' => $trigger->id, 'action_id' => $action->id), array('$set' => $doc));
+			$m_actions->update(array('trigger_id' => (int) $trigger->id, 'action_id' => (int) $action->id), array('$set' => $doc));
 		} else {
 			$m_actions->insert($doc);
 		}

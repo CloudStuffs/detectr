@@ -125,7 +125,7 @@ $(document).ready(function () {
         var self = $(this);
         $('#helpTrigger').html('');
         request.read({
-            action: "monitor/read/trigger/" + this.value,
+            action: "detector/read/trigger/" + this.value,
             callback: function(data) {
                 var d = $.parseJSON(data);
                 $('#helpTrigger').html(d.help);
@@ -137,7 +137,7 @@ $(document).ready(function () {
         var self = $(this);
         $('#helpAction').html('');
         request.read({
-            action: "monitor/read/action/" + this.value,
+            action: "detector/read/action/" + this.value,
             callback: function(data) {
                 var d = $.parseJSON(data);
                 $('#helpAction').html(d.help);
