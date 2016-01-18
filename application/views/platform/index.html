@@ -13,9 +13,12 @@
                     </div>
                     {if($websites)}
                     <div class="panel-body">
-                        <p>Download the Code, rename it to detector.php from detector.bak and require that in every page of your website for its working. For example</p>
+                        <ul>
+                            <li><a href="/public/assets/detector.bak" class="btn btn-default btn-xs" download="detector.bak"><i class="fa fa-download"></i> Download Code</a></li>
+                            <li>Rename 'detector.bak' => 'detector.php'</li>
+                            <li>require that in every page of your website</li>
+                        </ul>
                         <code>require "/path/to/detector.php"</code>
-                        <a href="/public/assets/detector.bak" class="btn btn-default btn-xs" download="detector.bak"><i class="fa fa-download"></i> Code</a>
                         <br>
                     </div>
                     <div class="table-responsive">

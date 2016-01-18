@@ -31,7 +31,7 @@
                             <td>{echo $i}</td>
                             <td>{echo $r->title}</td>
                             <td>{echo $r->url}</td>
-                            <td>{echo $r->short_url}</td>
+                            <td><a href="{echo $r->short_url}" target="_blank">{echo $r->short_url}</a></td>
                             <td>{echo $r->referer}</td>
                             {if $r->live}
                             <td>
