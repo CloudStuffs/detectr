@@ -66,10 +66,11 @@ class Social extends Serp {
         	$start_time = strtotime($start_date . " +{$i} day");
             $date = date('Y-m-d', $start_time);
 
-            $record = $socials->findOne(array('created' => $date, 'social_media' => (string) $social_media, 'keyword_id' => $keyword->id));
+            $record = $socials->findOne(array('created' => $date, 'social_media' => (string) $social_media, 'keyword_id' => (int) $keyword->id));
+
             $media = array();
             if (isset($record)) {
-            	$position = $record['position'];
+            	$position = $record['count'];
             	$media['count_type'] = $record['count_type'];
             	$media['social_media'] = $record['social_media'];
             } else {

@@ -7,7 +7,6 @@
  */
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
-use \Curl\Curl;
 
 class Platform extends Member {
 
@@ -46,14 +45,14 @@ class Platform extends Member {
                 $doc = array(
                     "title" => $name,
                     "url" => $url,
-                    "user_id" => $this->user->id,
+                    "user_id" => (int) $this->user->id,
                     "live" => true
                 );
                 $website = new Website($doc);
                 $website->save();
 
                 $collection = Registry::get("MongoDB")->selectCollection("website");
-                $collection->insert(array_merge($doc, array('website_id' => $website->id)));
+                $collection->insert(array_merge($doc, array('website_id' => (int) $website->id)));
                 $view->set("message", "Website Added Successfully");    
             }
         }
@@ -84,9 +83,9 @@ class Platform extends Member {
             $website->save();
 
             $collection = Registry::get("MongoDB")->selectCollection("website");
-            $record = $collection->findOne(array('website_id' => $website->id));
+            $record = $collection->findOne(array('website_id' => (int) $website->id));
             if (isset($record)) {
-                $collection->update(array('website_id' => $website->id), array('$set' => array("title" => $website->title, "url" => $website->url)));
+                $collection->update(array('website_id' => (int) $website->id), array('$set' => array("title" => $website->title, "url" => $website->url)));
             }
             $view->set("message", "Website Changed Successfully");
         }
@@ -109,14 +108,14 @@ class Platform extends Member {
         
         foreach ($trigger as $t) {
             $action = Action::first(array("trigger_id = ?" => $t->id));
-            $mongo_trigger->remove(array('trigger_id' => $t->id), array('justOne' => true));
-            $mongo_action->remove(array('action_id' => $action->id), array('justOne' => true));
+            $mongo_trigger->remove(array('trigger_id' => (int) $t->id), array('justOne' => true));
+            $mongo_action->remove(array('action_id' => (int) $action->id), array('justOne' => true));
 
             $this->delete('Action', $action->id, false);
             $this->delete('Trigger', $t->id, false);
         }
 
-        $mongo_db->selectCollection("website")->remove(array('website_id' => $website->id), array('justOne' => true));
+        $mongo_db->selectCollection("website")->remove(array('website_id' => (int) $website->id), array('justOne' => true));
         $this->delete('Website', $website->id);
     }
 

@@ -72,7 +72,7 @@ class Serp extends Admin {
         while ($start_time < $end_time) {
         	$start_time = strtotime($start_date . " +{$i} day");
             $date = date('Y-m-d', $start_time);
-            $record = $rank->findOne(array('created' => $date, 'keyword_id' => $keyword->id));
+            $record = $rank->findOne(array('created' => $date, 'keyword_id' => (int) $keyword->id));
             if (isset($record)) {
             	$position = $record['position'];
             } else {
