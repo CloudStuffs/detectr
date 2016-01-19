@@ -55,4 +55,11 @@ class Package extends Shared\Model {
      */
     protected $_tax;
 
+    /**
+     * @column
+     * @readwrite
+     * @type integer
+     * @label period in days
+     */
+    protected $_period = 30;
 }

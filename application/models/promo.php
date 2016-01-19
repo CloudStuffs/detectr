@@ -1,11 +1,11 @@
 <?php
 
 /**
- * The Subscription Model
+ * The Promo Model
  *
  * @author Faizan Ayubi
  */
-class Subscription extends Shared\Model {
+class Promo extends Shared\Model {
 
     /**
      * @column
@@ -21,7 +21,7 @@ class Subscription extends Shared\Model {
      * @type integer
      * @index
      */
-    protected $_item_id;
+    protected $_package_id;
 
     /**
      * @column
@@ -34,9 +34,8 @@ class Subscription extends Shared\Model {
     /**
      * @column
      * @readwrite
-     * @type boolean
-     * @label is promo code used in this
+     * @type integer
+     * @label limit of use
      */
-    protected $_is_promo = false;
-
+    protected $_limit;
 }
