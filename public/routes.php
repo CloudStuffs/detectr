@@ -27,6 +27,11 @@ $routes = array(
         "pattern" => "packages",
         "controller" => "home",
         "action" => "packages"
+    ),
+    array(
+        "pattern" => "contact",
+        "controller" => "home",
+        "action" => "contact"
     )
 );
 

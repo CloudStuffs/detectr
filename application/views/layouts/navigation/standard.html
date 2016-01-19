@@ -3,31 +3,31 @@
         <button class="navbar-toggler hidden-md-up pull-right" type="button" data-toggle="collapse" data-target="#collapsingNavbar">
             ☰
         </button>
-        <a class="navbar-brand page-scroll" href="/">TrafficMonitor</a>
+        <a class="navbar-brand page-scroll" href="/"><i class="ion-arrow-graph-up-right"></i> TrafficMonitor</a>
         <div class="collapse navbar-toggleable-sm" id="collapsingNavbar">
             <ul class="nav navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link page-scroll" href="#two">Features</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link page-scroll" href="#last">Contact</a>
+                    <a class="nav-link page-scroll" href="/contact.html">Contact</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link page-scroll" href="/packages">Packages</a>
+                    <a class="nav-link page-scroll" href="/packages.html">Packages</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav pull-right">
                 {if(isset($user))}
                 <li class="nav-item">
-                    <a class="nav-link page-scroll" href="/member.html">{$user->name}</a>
+                    <a class="nav-link page-scroll" href="/member/index.html">{$user->name}</a>
                 </li>
                 {/if}
                 {else}
                 <li class="nav-item">
-                    <a class="nav-link page-scroll" href="/auth/login">Login</a>
+                    <a class="nav-link page-scroll" href="/auth/login.html">Login</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link page-scroll" href="/auth/register">Register</a>
+                    <a class="nav-link page-scroll" href="/auth/register.html">Register</a>
                 </li>
                 {/else}
             </ul>

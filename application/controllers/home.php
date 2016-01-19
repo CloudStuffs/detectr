@@ -36,4 +36,9 @@ class Home extends Controller {
         $view->set("packages", $ps);
 	}
 
+    public function contact() {
+        $this->seo(array("title" => "Contact Us", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+    }
+
 }
