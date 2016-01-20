@@ -76,28 +76,31 @@ class Webmaster extends Admin {
 		$result = true;
 		
 		$url = RequestMethods::get("website", $websites[0]->getSiteUrl());
-		$opts = array();
+		$opts = $this->_setCrawlParams();
 
-		$opts["category"] = RequestMethods::get("category", "notFound");
-		if ($opts["category"] == "all") {
-			unset($opts["category"]);
-		}
-		$opts["latestCountsOnly"] = RequestMethods::get("latest", true);
-		if ($opts["latestCountsOnly"] == "true" || $opts["latestCountsOnly"] === true) {
-			$opts["latestCountsOnly"] = true;
-		} else {
-			$opts["latestCountsOnly"] = false;
-		}
-		$opts["platform"] = RequestMethods::get("platform", "web");
+		$params = array();
+		$params["category"] = RequestMethods::get("category", $opts["category"][0]);
+		$params["latestCountsOnly"] = (bool) RequestMethods::get("latest", $opts["latestCountsOnly"][0]);
+		$params["platform"] = RequestMethods::get("platform", $opts["platform"][0]);
 
-		$result = $this->_getCrawlErrors($response["gClient"], $url, $opts);
+		$result = array_shift($this->_getCrawlErrors($response["gClient"], $url, $params));
 		if (is_string($result)) {
+			$message = $result;
 			$result = null;
+		} else {
+			$obj = array();
+			foreach ($result->entries as $r) {
+				$obj[] = array('x' => $r->timestamp, 'y' => $r->count);
+			}
+			$obj = ArrayMethods::toObject($obj);
 		}
 
-		$view->set("current", $url);
-		$view->set("websites", $websites);
-		$view->set("response", $result);
+		$view->set("current", $url)
+			->set("params", $params)
+			->set("opts", $opts)
+			->set("websites", $websites)
+			->set("response", $obj)
+			->set("message", isset($message) ? $message : null);
 	}
 
 	/**
@@ -201,13 +204,15 @@ class Webmaster extends Admin {
 						"timestamp" => array_shift(StringMethods::match($e->getTimestamp(), "(.*)T"))
 					);
 				}
-				$result[] = array(
+
+				$data = array(
 					"platform" => $r->platform,
 					"category" => $r->category,
 					"entries" => $entry
 				);
+				$data = ArrayMethods::toObject($data);
+				$result[] = $data;
 			}
-			$result = ArrayMethods::toObject($result);
 		} catch (\Exception $e) {
 			$result = $e->getMessage();
 		}
@@ -256,6 +261,16 @@ class Webmaster extends Admin {
 		}
 
 		return $result;
+	}
+
+	private function _setCrawlParams() {
+		$opts = array();
+
+		$opts["category"] = array("authPermissions","manyToOneRedirect","notFollowed","notFound","other","roboted","serverError","soft404");
+		$opts["latestCountsOnly"] = array(0, 1);
+		$opts["platform"] = array("web", "smartphoneOnly", "mobile");
+
+		return $opts;
 	}
 
 }

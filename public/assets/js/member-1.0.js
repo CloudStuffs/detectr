@@ -78,6 +78,33 @@ $(document).ready(function () {
         });
     });
 
+    $("#crawlErrorForm").submit(function (e) {
+        $('#stats').html('<p class="text-center"><i class="fa fa-spinner fa-spin fa-5x"></i></p>');
+        e.preventDefault();
+        var data = $(this).serializeArray();
+
+        request.read({
+            action: $(this).attr("action"),
+            data: data,
+            callback: function (data) {
+                $('#stats').html('');
+                if (data.response.length > 0) {
+                    Morris.Bar({
+                        element: 'stats',
+                        data: toArray(data.response),
+                        xkey: 'x',
+                        ykeys: ['y'],
+                        labels: ['Total']
+                    });
+                }
+
+                if (data.params) {
+                    $("#updateCat").html('<p>Category: <strong>'+ data.params.category + '</strong></p><p>Platform: <strong>'+ data.params.platform +'</strong></p>');
+                }
+            }
+        });
+    })
+
     // find all the selectors 
     var types = $('#addOptions select');
     types.on("change", function () { // bind the change function
