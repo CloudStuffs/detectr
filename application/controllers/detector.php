@@ -146,167 +146,64 @@ class Detector extends Admin {
 		$this->_triggers = array(
 			"1" => array(
 				"title" => "PageView",
-				"help" => "Just used for tracking website, leave the field empty",
-				"detect" => function ($opts) {
-					return true;
-				}
+				"help" => "Just used for tracking website, leave the field empty"
 			),
 			"2" => array(
 				"title" => "Location",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					return strtolower($opts['user']['location']) == strtolower($opts['stored']);
-				},
 				"help" => 'Enter the 2-digit country code.. Refer: <a href="https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2#Officially_assigned_code_elements">Country Codes</a>'
 			),
 			"3" => array(
 				"title" => "Landing Page",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					$stored = strtolower($opts['saved']);
-					$current = strtolower($opts['server']['landingPage']);
-					return $current == $stored;
-				},
 				"help" => "Enter full url of the page on which trigger is to be executed<br> The page should be on your domain for trigger to work"
 			),
 			"4" => array(
 				"title" => "Time of Visit",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					$range = explode("-", $opts['saved']);
-					
-					$start = $range[0];
-					$current = date('G:i');
-					$end = $range[1];
-
-					$start_time = strtotime($start);
-					$current_time = strtotime($current);
-					$end_time = strtotime($end);
-
-					return ($current_time > $start_time && $current_time < $end_time);
-				},
 				"help" => "Enter the range of time. For eg. 10:30-14:50 (Time in 24 hours)"
 			),
 			"5" => array(
 				"title" => "Bots",
-				"detect" => function ($opts) {
-					$bots = explode(",", $opts['saved']);
-					$response = false;
-					foreach ($bots as $b) {
-						if ($opts['user']['ua'] == trim($b)) {
-							$response = true;
-							break;
-						}
-					}
-
-					if (strtolower($opts['saved']) == 'crawler' && $opts['user']['ua_info']->agent_type == "Crawler") {
-						$response = true;
-					}
-					return $response;
-				},
 				"help" => 'This trigger will be executed for the all the Bots- User Agent. Eg: Google Bot, Baidu Spider etc. <br>Refer: <a href="http://www.useragentstring.com/pages/Crawlerlist/">Crawlers List</a><br>Enter Crawler-User agent string "," separated. Or for all bots just enter "Crawler"'
 			),
 			"6" => array(
 				"title" => "IP Range",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					if (strpos($opts['saved'], '/') == false) {
-					    $range.= '/32';
-					}
-					// $range is in IP/CIDR format eg 127.0.0.1/24
-					list($opts['saved'], $netmask) = explode('/', $opts['saved'], 2);
-					$range_decimal = ip2long($opts['saved']);
-					$ip_decimal = ip2long($opts['user']['ip']);
-					$wildcard_decimal = pow(2, (32 - $netmask)) - 1;
-					$netmask_decimal = ~ $wildcard_decimal;
-					return (($ip_decimal & $netmask_decimal) == ($range_decimal & $netmask_decimal));
-				},
 				"help" => "Range of IP eg: 168.240.10.10/168.241.10.10"
 			),
 			"7" => array(
 				"title" => "User-Agent",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					return ($opts['user']['ua'] == $opts['saved']);
-				},
 				"help" => 'Enter the user agent on which trigger is to be executed.<br> Refer: <a href="http://www.useragentstring.com/pages/useragentstring.php">Differnent User Agents</a>'
 			),
 			"8" => array(
 				"title" => "Browser",
-				"verify" => function ($inputs) {
-					
-				},
-				"detect" => function ($opts) {
-					return (strtolower($opts['user']['ua_info']->agent_name) == strtolower($opts['saved']));
-				},
 				"help" => "Enter the name of browser on which trigger is to be executed.<br> Eg: Chrome, IE, Firefox, Opera etc."
 			),
 			"9" => array(
 				"title" => "Operating System",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					return (strtolower($opts['user']['ua_info']->agent_name) == strtolower($opts['saved']));
-				},
 				"help" => "Enter the name of Operating System on which trigger is to be executed.<br> Eg: Linux, Windows etc"
 			),
 			"10" => array(
 				"title" => "Device Type",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					$saved = strtolower($opts['saved']);
-
-					$check = strtolower($opts['user']['ua_info']->os_name);
-					switch ($check) {
-						case 'linux':
-							$result = 'desktop';
-							break;
-						
-						case 'windows nt':
-							$result = 'desktop';
-							break;
-
-						case 'os x':
-							$result = 'desktop';
-							break;
-
-						case 'unknown':
-							$result = 'desktop';
-							break;
-
-						default:
-							$result = 'mobile';
-							break;
-					}
-
-					return ($saved == $result);
-				},
 				"help" => "Device Type: mobile or desktop"
 			),
 			"11" => array(
 				"title" => "Referrer",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					$response = stristr($opts['server']['referer'], $opts['saved']);
-					return ($response !== FALSE) ? true : false;
-				},
 				"help" => "URL from which the visit was done"
 			),
 			"12" => array(
 				"title" => "Active Login",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					return false;
-				},
 				"help" => "Enter the session key in which uniquely identifies the user"
 			),
 			"13" => array(
 				"title" => "Repeat Visitor",
 				"verify" => function ($inputs) {},
-				"detect" => function ($opts) {
-					$cookie = $opts["cookies"];
-					
-					return isset($cookie["__trafficMonitor"]) ? true : false;
-				},
 				"help" => "Just leave the field empty. We'll check automatically :)"
 			)
 		);
