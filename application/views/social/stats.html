@@ -1,7 +1,10 @@
 <div id="page-wrapper">
     <div class="row col-lg-12">
-        <h1 class="page-header text-center">Serp Analysis</h1>
-        <form class="form-inline text-center" method="get" action="social/stats/{echo $k_id}" role="form" id="serp_stats">
+        <h1 class="page-header text-center text-success">Social Stats</h1>
+        <p class="text-center">
+            Site: <a href="{echo $keyword->link}" target="_blank"><strong>{echo $keyword->link}</strong></a>
+        </p>
+        <form class="form-inline text-center" method="get" action="social/stats/{echo $keyword->id}" role="form" id="serp_stats">
             <div class="form-group">
                 <div class="input-group">
                     <span class="add-on input-group-addon"><i class="fa fa-facebook fa-fw"></i> Social:</span>

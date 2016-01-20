@@ -239,7 +239,7 @@ class Detector extends Admin {
 				"detect" => function ($opts) {
 					return (strtolower($opts['user']['ua_info']->agent_name) == strtolower($opts['saved']));
 				},
-				"help" => "Enter the name of browser on which trigger is to be executed.<br> Eg: Chrome, Firefox, Opera etc."
+				"help" => "Enter the name of browser on which trigger is to be executed.<br> Eg: Chrome, IE, Firefox, Opera etc."
 			),
 			"9" => array(
 				"title" => "Operating System",

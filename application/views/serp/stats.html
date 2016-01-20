@@ -1,7 +1,10 @@
 <div id="page-wrapper">
     <div class="row col-lg-12">
-        <h1 class="page-header text-center">Serp Analysis</h1>
-        <form class="form-inline text-center" method="get" action="serp/stats/{echo $k_id}" role="form" id="serp_stats">
+        <h1 class="page-header text-center text-warning">Serp Analysis</h1>
+        <p class="text-center">
+            Site: <a href="{echo $keyword->link}" target="_blank"><strong>{echo $keyword->link}</strong></a>
+        </p>
+        <form class="form-inline text-center" method="get" action="serp/stats/{echo $keyword->id}" role="form" id="serp_stats">
             <div class="form-group">
                 <div class="input-group">
                     <label class="sr-only">From</label>
@@ -22,7 +25,7 @@
         <hr>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <i class="fa fa-bar-chart-o fa-fw"></i> Rank
+                <i class="fa fa-bar-chart-o fa-fw"></i> Rank for Keyword: <strong>"{echo $keyword->keyword}"</strong>
             </div>
             <div class="panel-body">
                 <div id="stats">Select an opportunity and date range and then click on view stats button to show details.</div>

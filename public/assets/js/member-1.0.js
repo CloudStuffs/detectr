@@ -62,7 +62,9 @@ $(document).ready(function () {
             data: data,
             callback: function (data) {
                 $('#stats').html('');
-                $('#socialType').html(data.social.type + " of " + data.social.media);
+                if ($('#socialType').length !== 0) {
+                    $('#socialType').html(data.social.type + " of " + data.social.media);
+                }
                 if (data.data) {
                     Morris.Bar({
                         element: 'stats',

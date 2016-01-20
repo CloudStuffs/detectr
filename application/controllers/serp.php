@@ -55,7 +55,7 @@ class Serp extends Admin {
 	 * @before _secure, memberLayout
 	 */
 	public function stats($keyword_id) {
-		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => true), array("user_id", "id"));
+		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => true), array("keyword", "link", "user_id", "id"));
 		$this->_authority($keyword);
 
 		$end_date = RequestMethods::get("enddate", date("Y-m-d"));
@@ -82,7 +82,7 @@ class Serp extends Admin {
 
             ++$i;
         }
-        $view->set("k_id", $keyword->id);
+        $view->set("keyword", $keyword);
         $view->set("data", ArrayMethods::toObject($obj));
 	}
 

@@ -48,7 +48,7 @@ class Social extends Serp {
 	 * @before _secure, memberLayout
 	 */
 	public function stats($keyword_id) {
-		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => false), array("user_id", "id"));
+		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => false), array("link", "user_id", "id"));
 		$this->_authority($keyword);
 
 		$end_date = RequestMethods::get("enddate", date("Y-m-d"));
@@ -83,8 +83,7 @@ class Social extends Serp {
             ++$i;
         }
 
-        $view->set("k_id", $keyword->id)
-			->set("keyword", $keyword)
+        $view->set("keyword", $keyword)
 			->set("social", array("type" => $media['count_type'], "media" => $media['social_media']))
         	->set("data", ArrayMethods::toObject($obj));
 	}

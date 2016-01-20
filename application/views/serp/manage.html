@@ -39,16 +39,25 @@
                                         <span class="label label-success">Active</span> {/if} {else}
                                         <span class="label label-danger">Disabled</span> {/else}
                                     </td>
-                                    {script $date_today = date("Y-m-d")} {script $old_date = date("Y-m-d", strtotime($date_today."-7 day"))} {script $old_rank = $rank->findOne(array("keyword_id" => $serp->id, "created" => $old_date))}
+                                    {script $date_today = date("Y-m-d")} {script $old_date = date("Y-m-d", strtotime($date_today."-7 day"))} 
+
+                                    {script $old_rank = $rank->findOne(array("keyword_id" => (int) $serp->id, "created" => $old_date))}
                                     <td>{echo (($old_rank["position"]) ? $old_rank["position"] : 0)}</td>
-                                    {script $new_rank = $rank->findOne(array("keyword_id" => $serp->id, "created" => $date_today))}
+                                    {script $new_rank = $rank->findOne(array("keyword_id" => (int) $serp->id, "created" => $date_today))}
                                     <td>{echo (($new_rank["position"]) ? $new_rank["position"] : 0)}</td>
-                                    {script $change = (int) $new_rank["position"] - (int) $old_rank["position"]}
+
+                                    {if ((int) $old_rank["position"] == 0)}
+                                        {script $change = 0 - (int) $new_rank["position"]}
+                                    {/if} {else}
+                                        {script $change = (int) $new_rank["position"] - (int) $old_rank["position"]}
+                                    {/else}
                                     <td>
-                                        {if $change > 0}
-                                        <span class="label label-success">{echo $change}</span>
-                                        {/if} {else}
-                                        <span class="label label-danger">{echo $change}</span>
+                                        {if $change < 0}
+                                        <span class="label label-success"><i class="fa fa-arrow-up"></i> {echo abs($change)}</span>
+                                        {/if} {elseif $change == 0}
+                                        <span class="label label-info">No change</span>
+                                        {/elseif} {else}
+                                        <span class="label label-danger"><i class="fa fa-arrow-down"></i> {echo abs($change)}</span>
                                         {/else}
                                     </td>
                                     <td>
@@ -65,6 +74,7 @@
                         </table>
                     </div>
                 </div>
+                <p><code>* Only top 100 results of Google are considered</code></p>
                 <a href="/serp/create" class="btn btn-primary"><i class="fa fa-plus"></i> Add Another Serp</a>
             </div>
         </div>

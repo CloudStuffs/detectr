@@ -25,9 +25,9 @@
                     {foreach $referer in $referers}
                     <tr>
                         <td>{$referer->title}</td>
-                        <td>{$referer->short_url}</td>
+                        <td><a href="{echo $referer->short_url}" target="_blank">{$referer->short_url}</a></td>
                         <td class="googl" data-time="allTime" data-property="shortUrlClicks" data-url="{$referer->short_url}">
-                            <span class="label label-info">View</span>
+                            <span class="label label-info">Click ME !!</span>
                         </td>
                     </tr>
                     {/foreach}
@@ -38,7 +38,7 @@
                 {foreach $website in $websites}
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        {$website->title} (<a href="{echo 'http://'.urldecode($website->url)}">{echo 'http://'.urldecode($website->url)}</a>)
+                        {$website->title} (<a href="{echo 'http://'.urldecode($website->url)}" target="_blank">{echo 'http://'.urldecode($website->url)}</a>)
                         <span class="pull-right">
                             <a href="/detector/create/{echo $website->id}" class="btn btn-primary btn-xs"><i class="fa fa-link"></i> Create Trigger</a>
                             <a href="/detector/manage/{echo $website->id}" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage Triggers</a>
@@ -54,8 +54,8 @@
                                     <th>Meta</th>
                                     <th>Action</th>
                                     <th>Inputs</th>
-                                    <th>Hits</th>
                                     <th>Status</th>
+                                    <th>Hits</th>
                                     <th>Tools</th>
                                 </tr>
                             </thead>
@@ -67,9 +67,6 @@
                                     {script $action = Action::first(array("trigger_id = ?" => $trigger->id))}
                                     <td>{echo $actions["$action->title"]["title"]}</td>
                                     <td>{echo htmlspecialchars($action->inputs)}</td>
-                                    <td class="trigger" data-trigger="{$trigger->id}">
-                                        <span class="label label-info">View</span>
-                                    </td>
                                     <td>
                                         {if($trigger->live)}
                                             <span class="label label-success">Active</span>
@@ -78,9 +75,12 @@
                                             <span class="label label-warning">InActive</span>
                                         {/else}
                                     </td>
+                                    <td class="trigger" data-trigger="{$trigger->id}" data-action="{echo $action->id}">
+                                        <span class="label label-info">Click ME !!</span>
+                                    </td>
                                     <td>
                                         <a href="/detector/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
-                                        <a href="/detector/remove/{echo $trigger->id}/{echo $action->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
+                                        <a href="/detector/remove/{echo $trigger->id}/{echo $action->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
                                 {/foreach}

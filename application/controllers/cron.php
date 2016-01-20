@@ -6,7 +6,7 @@
  * @author Faizan Ayubi
  */
 use Framework\Registry as Registry;
-use SEOstats\Services\Google as Google;
+use \SEOstats\Services\Google as Google;
 use Shared\SocialLinks as SocialLinks;
 
 class CRON extends Auth {
@@ -94,7 +94,7 @@ class CRON extends Auth {
 
     protected function _getRank($keyword) {
         $return = false;
-        $response = Google::getSerps($keyword->keyword, 200, $keyword->link);
+        $response = Google::getSerps($keyword->keyword, 100, $keyword->link);
         if ($response) {
             $response = array_shift($response);
             $return = $response["position"];
@@ -103,7 +103,12 @@ class CRON extends Auth {
     }
 
     protected function _social() {
-        $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => false));
+        try {
+            $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => false));
+        } catch (\Exception $e) {
+            return;
+        }
+        
 
         $today = date('Y-m-d');
         $socials = Registry::get("MongoDB")->socials;
