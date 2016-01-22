@@ -50,7 +50,7 @@ class FakeReferer extends Admin {
 			if (isset($response["success"])) {
 				$view->set("success", 'Your request has been submiited. See status <a href="/fakereferer/manage">Manage</a>');
 			} elseif (isset($response["error"])) {
-				$view->set("success", "ERROR: ". $respose["error"]);
+				$view->set("success", "ERROR: ". $response["error"]);
 			}
 		}
 	}
@@ -185,29 +185,34 @@ class FakeReferer extends Admin {
 
 	protected function _shortUrl($referer) {
 		$error = false;
-		if ($referer->referer == "google") {
-			$googleScrapper = Registry::get("googleScrape");
-			$googleScrapper->setLang('en')->setNumberResults(1);
-			$find = $googleScrapper->setPage(0)->search($referer->url);
-			$result = array_shift($find->getPositions());
-			$vars = $this->_parse($result->getVars());
+		try {
+			if ($referer->referer == "google") {
+				$googleScrapper = Registry::get("googleScrape");
+				$googleScrapper->setLang('en')->setNumberResults(1);
+				$find = $googleScrapper->setPage(0)->search($referer->url);
+				$result = array_shift($find->getPositions());
+				$vars = $this->_parse($result->getVars());
 
-			$base_url = 'http://www.google.com/url?sa=t&rct=j&q='.urlencode($referer->keyword).'&esrc=s&source=web&cd=62&cad=rja&ved='.$vars["ved"].'&url='.urlencode($result->getUrl()).'&ei=HlyPUMO3FMSPrge8y4DwAQ&usg='. $vars["usg"];
-			
-			if (strpos($result->getUrl(), $referer->url) === FALSE) {
-				$error = "Site not indexed in google";
-			} else {
-				$googl = Registry::get("googl");
-	            $object = $googl->shortenURL("http://trafficmonitor.ca/fakereferer/index/".base64_encode($base_url));
-	            $referer->short_url = $object->id;
-				$referer->live = true;
+				$base_url = 'http://www.google.com/url?sa=t&rct=j&q='.urlencode($referer->keyword).'&esrc=s&source=web&cd=62&cad=rja&ved='.$vars["ved"].'&url='.urlencode($result->getUrl()).'&ei=HlyPUMO3FMSPrge8y4DwAQ&usg='. $vars["usg"];
+				
+				if (strpos($result->getUrl(), $referer->url) === FALSE) {
+					$error = "Site not indexed in google";
+				} else {
+					$googl = Registry::get("googl");
+		            $object = $googl->shortenURL("http://trafficmonitor.ca/fakereferer/index/".base64_encode($base_url));
+		            $referer->short_url = $object->id;
+					$referer->live = true;
+				}
 			}
-		}
-		$referer->save();
-		if ($error) {
-			return array("error" => $error);
-		} else {
-			return array("success" => true);
+			$referer->save();
+			if ($error) {
+				return array("error" => $error);
+			} else {
+				return array("success" => true);
+			}
+		} catch (\Exception $e) {
+			// var_dump($e);
+			return array("error" => "Something went wrong! Please try again later");
 		}
 	}
 

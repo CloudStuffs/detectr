@@ -92,7 +92,6 @@ class Webmaster extends Admin {
 			foreach ($result->entries as $r) {
 				$obj[] = array('x' => $r->timestamp, 'y' => $r->count);
 			}
-			$obj = ArrayMethods::toObject($obj);
 		}
 
 		$view->set("current", $url)

@@ -88,7 +88,7 @@ $(document).ready(function () {
             data: data,
             callback: function (data) {
                 $('#stats').html('');
-                if (data.response.length > 0) {
+                if (data.response) {
                     Morris.Bar({
                         element: 'stats',
                         data: toArray(data.response),
