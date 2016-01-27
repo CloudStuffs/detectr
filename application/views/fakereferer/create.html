@@ -25,14 +25,12 @@
                         </div>
                         <div class="form-group">
                             <label for="Referer">Referer</label>
-                            <select name="referer" class="form-control" id="referer">
-                                <option value="">Select Referer</option>
+                            <select name="referer" class="form-control" id="referer" required="">
                                 <option value="google">Google</option>
-                                <option value="twitter">Twitter</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="tld">Tld</label>
+                            <label for="tld">TLD (Top Level Domain)</label>
                             <select name="tld" class="form-control" id="tldSelection">
                                 {include fakereferer/includes/tld.html}
                             </select>

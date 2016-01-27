@@ -73,8 +73,23 @@ class CRON extends Auth {
     protected function _serpRank() {
         $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => true));
 
+        $arr = array();
+        foreach ($keywords as $k) {
+            $arr[] = array(
+                "keyword_id" => (int) $k->id,
+                "user_id" => (int) $k->user_id,
+                "keyword" => $k->keyword,
+                "link" => $k->link
+            );
+        }
+        file_put_contents(APP_PATH.'/logs/serpRank.json', json_encode($arr));
+
+        // This will take care of serp stats
+        // exec('node '. APP_PATH.'/application/libraries/NodeSEO/index.js');
         $today = date('Y-m-d');
         $rank = Registry::get("MongoDB")->rank;
+
+        /*
         foreach ($keywords as $k) {
             $record = $rank->findOne(array('keyword_id' => (int) $k->id, 'user_id' => (int) $k->user_id, 'created' => $today));
             if (!isset($record)) {
@@ -89,7 +104,7 @@ class CRON extends Auth {
                 $rank->insert($doc);
             }
 
-        }
+        }*/
     }
 
     protected function _getRank($keyword) {

@@ -1,0 +1,30 @@
+{
+  "name": "seostats",
+  "version": "1.0.0",
+  "description": "Simple module to do seo related tasks",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hemant-Mann/SEOstats.git"
+  },
+  "keywords": [
+    "seo",
+    "node",
+    "google",
+    "scrape"
+  ],
+  "dependencies": {
+    "cheerio": "0.19.x",
+    "mongoose": "^4.3.7",
+    "request": "2.67.x"
+  },
+  "author": "Hemant Mann <hemant.mann121@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hemant-Mann/SEOstats/issues"
+  },
+  "homepage": "https://github.com/Hemant-Mann/SEOstats#readme"
+}
