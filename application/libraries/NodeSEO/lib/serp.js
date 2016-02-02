@@ -5,6 +5,23 @@ var scraper = require('./scraper'),
 var Serp = (function (Rank, scraper, mongoose) {
     'use strict';
     var Serp = (function () {
+        var fmtDate = function () {
+            var date = new Date(),
+                day = Number(date.getDate()),
+                month = Number(date.getMonth()) + 1,
+                today;
+
+            if (day < 9) {
+                day = "0" + String(day);
+            }
+            if (month < 9) {
+                month = "0" + String(month);
+            }
+
+            today = date.getFullYear() + '-' + month + '-' + day;
+            today = String(today);
+            return today;
+        }
         function Serp() {
             this.options = {
                 language: "en",
@@ -14,10 +31,7 @@ var Serp = (function (Rank, scraper, mongoose) {
             this.scraper = new scraper.Scraper(this.options);
             this.total = 0;
             this.counter = 0;
-
-            var date = new Date();
-            this.today = date.getFullYear() + '-' + date.getMonth() + 1 + '-' + date.getDate();
-            this.today = String(this.today);
+            this.today = fmtDate();
         }
 
         Serp.prototype = {
@@ -38,7 +52,7 @@ var Serp = (function (Rank, scraper, mongoose) {
 
                         // no record found for today
                         if (rank.length === 0) {
-                            // self._findRank(el);
+                            self._findRank(el);
                             console.log("No record for " + el.keyword + " on date => " + self.today);
                         } else {
                             self.counter++;

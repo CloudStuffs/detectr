@@ -85,7 +85,7 @@ class CRON extends Auth {
         file_put_contents(APP_PATH.'/logs/serpRank.json', json_encode($arr));
 
         // This will take care of serp stats
-        // exec('node '. APP_PATH.'/application/libraries/NodeSEO/index.js');
+        exec('node '. APP_PATH.'/application/libraries/NodeSEO/index.js');
         $today = date('Y-m-d');
         $rank = Registry::get("MongoDB")->rank;
 
