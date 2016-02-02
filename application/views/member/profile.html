@@ -15,13 +15,43 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label class="col-sm-3 control-label">Email</label>
+                    <div class="col-sm-9">
+                        <input type="email" name="email" class="form-control" placeholder="Enter email" value="{$user->email}" required="">
+                    </div>
+                </div>
+                <div class="form-group">
                     <label class="col-sm-3 control-label">Phone</label>
                     <div class="col-sm-9">
                         <input type="tel" name="phone" class="form-control" placeholder="Enter phone number" value="{$user->phone}">
                         <small class="help-block">For easy contact</small>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Paypal Email</label>
+                    <div class="col-sm-9">
+                        <input type="email" name="paypal" class="form-control" placeholder="Enter Paypal email" value="{$user->paypal}" required="">
+                    </div>
+                </div>
                 <input type="hidden" name="action" value="saveUser">
+                <button type="submit" class="btn btn-success pull-right">Save <i class="fa fa-check-circle fa-fw"></i></button>
+            </form>
+
+            <h3 class="page-header">Change Password</h3>
+            <form class="form-horizontal" method="post" action="">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Old Password</label>
+                    <div class="col-sm-9">
+                        <input type="password" name="oldpass" class="form-control" placeholder="Enter old Password" required="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">New Password</label>
+                    <div class="col-sm-9">
+                        <input type="password" name="newpass" class="form-control" placeholder="Enter new Password" required="">
+                    </div>
+                </div>
+                <input type="hidden" name="action" value="changePass">
                 <button type="submit" class="btn btn-success pull-right">Save <i class="fa fa-check-circle fa-fw"></i></button>
             </form>
         </div>

@@ -78,7 +78,7 @@ class Plan extends Shared\Controller {
         $count = Item::count();
         $limit = RequestMethods::get("limit", 20);
         $page = RequestMethods::get("page", 1);
-        $items = Item::all(array(), array("*"), "created", "desc", $limit, $page);
+        $items = Item::all(array(), array("id", "name", "price", "tax", "period", "created", "live"), "created", "desc", $limit, $page);
 
         $view->set("count", $count)
         	->set("page", $page)
@@ -101,6 +101,7 @@ class Plan extends Shared\Controller {
 		$item->price = RequestMethods::post("price");
 		$item->tax = RequestMethods::post("tax", 0.00);
 		$item->user_id = $this->user->id;
+        $item->period = RequestMethods::post("period", 30);
 
 		if ($item->validate()) {
 			$item->save();

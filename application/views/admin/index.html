@@ -3,98 +3,39 @@
         <div class="row">
             <div class="col-lg-12">
                 <h1 class="page-header">Dashboard</h1>
-                <!-- /.row -->
                 <div class="row">
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-users fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">{echo User::count()}</div>
-                                        <div>Users!</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="/member/all">
-                                <div class="panel-footer">
-                                    <span class="pull-left">View Details</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
+
+                    <div class="col-lg-4 col-md-4">
+                        <div class="list-group">
+                            <a class="list-group-item active text-center">
+                                <i class="fa fa-line-chart"></i> Data
                             </a>
+                            <a href="/member/all" class="list-group-item"><i class="fa fa-users fa-2x"></i>  Users <span class="badge">{echo Shared\Markup::nice_number(User::count())}</span></a>
+                            <a href="/detector/approve" class="list-group-item"><i class="fa fa-tasks fa-2x"></i>  Triggers <span class="badge">{echo Shared\Markup::nice_number(Trigger::count())}</span></a>
+                            <a href="/platform/all" class="list-group-item"><i class="fa fa-globe fa-2x"></i>  Websites <span class="badge">{echo Shared\Markup::nice_number(Website::count())}</span></a>
+                            <a href="/fakereferer/all" class="list-group-item"><i class="fa fa-link fa-2x"></i>  FakeReferer <span class="badge">{echo Shared\Markup::nice_number(Referer::count())}</span></a>
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-green">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-tasks fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">{echo Trigger::count()}</div>
-                                        <div>Triggers Created</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="/detector/approve">
-                                <div class="panel-footer">
-                                    <span class="pull-left">View Details</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
+
+                    <div class="col-lg-4 col-md-4">
+                        <div class="list-group">
+                            <a class="list-group-item active text-center">
+                                <i class="fa fa-pie-chart"></i> Total Statistics
                             </a>
+
                         </div>
                     </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-yellow">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-globe fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">{echo Website::count()}</div>
-                                        <div>Websites Saved</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="/platform/all">
-                                <div class="panel-footer">
-                                    <span class="pull-left">View Details</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
+
+                    <div class="col-lg-4 col-md-4">
+                        <div class="list-group">
+                            <a class="list-group-item active text-center">
+                                <i class="fa fa-pie-chart"></i> Monitor
                             </a>
+                            <a href="/admin/search?model=user&key=live&sign=equal&value=1" class="list-group-item"><i class="fa fa-user-secret fa-2x"></i>  Admins <span class="badge">{echo Shared\Markup::nice_number(User::count(array("admin = ?" => true)))}</span></a>
                         </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6">
-                        <div class="panel panel-red">
-                            <div class="panel-heading">
-                                <div class="row">
-                                    <div class="col-xs-3">
-                                        <i class="fa fa-link fa-5x"></i>
-                                    </div>
-                                    <div class="col-xs-9 text-right">
-                                        <div class="huge">{echo Referer::count()}</div>
-                                        <div>FakeReferer</div>
-                                    </div>
-                                </div>
-                            </div>
-                            <a href="/fakereferer/all">
-                                <div class="panel-footer">
-                                    <span class="pull-left">View Details</span>
-                                    <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                                    <div class="clearfix"></div>
-                                </div>
-                            </a>
-                        </div>
-                    </div>
+                    </div>                    
+
                 </div>
-                <!-- /.row -->
             </div>
         </div>
     </div>

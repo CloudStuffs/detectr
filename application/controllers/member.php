@@ -36,15 +36,25 @@ class Member extends Detector {
             "view" => $this->getLayoutView()
         ));
         $view = $this->getActionView();
-        
-        if (RequestMethods::post('action') == 'saveUser') {
-            $user = User::first(array("id = ?" => $this->user->id));
-            $user->phone = RequestMethods::post('phone');
-            $user->name = RequestMethods::post('name');
-            $user->save();
-            $view->set("success", true);
-            $this->setUser($user);
+        $user = User::first(array("id = ?" => $this->user->id));
+
+        switch (RequestMethods::post("action")) {
+            case 'saveUser':
+                $user->phone = RequestMethods::post('phone');
+                $user->name = RequestMethods::post('name');
+                $user->save();
+                $view->set("success", true);
+                break;
+
+            case 'changePass':
+                if (sha1(RequestMethods::post('oldpass')) == $user->password) {
+                    $user->password = sha1(RequestMethods::post('newpass'));
+                    $user->save();
+                    $view->set("success", true);
+                }
+                break;
         }
+        $this->setUser($user);
     }
 
     /**
