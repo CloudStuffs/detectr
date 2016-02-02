@@ -1,8 +1,8 @@
 <div id="page-wrapper">
-    <div class="container-fluid">
+    <div class="container-fluid clearfix">
         <div class="row">
             <div class="col-lg-12">
-                <h3 class="page-header"><i class="fa fa-list"></i> Group => {echo $group->name}</h3>
+                <h3 class="page-header"><i class="fa fa-list"></i> Group: {echo $group->name}</h3>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -11,10 +11,10 @@
                 <form action="" method="get" class="form-inline">
                     <div class="form-group">
                         <label for="No of users">Count</label>
-                        <input type="text" name="count" required="" class="form-control">    
+                        <input type="text" name="count" required="" placeholder="No of users you want to save in the group" class="form-control">
                     </div>
-                    
                     <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
+                    <br><code>* No of users you want to save in this group</code>
                 </form>
             </div>
             <!-- /.col-lg-12 -->
@@ -34,23 +34,24 @@
                             <th>Name</th>
                             <th>Email</th>
                         </tr>
-                        {foreach $c in $count}
+                        {script $users = $group->users}
+                        {script $i = 0} {foreach $c in $count}
                         <tr>
                             <td>{echo $c + 1}</td>
                             <td>
-                                <input type="text" name="name[]" class="form-control" required="" placeholder="Name">
+                                <input type="text" name="name[]" class="form-control" required="" placeholder="Name" value="{echo $users[$i]->name}">
                             </td>
                             <td>
-                                <input type="text" name="email[]" class="form-control" required="" placeholder="Email of the user" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$">
+                                <input type="text" name="email[]" class="form-control" required="" placeholder="Email of the user" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" value="{echo $users[$i]->email}">
                             </td>
                         </tr>
-                        {/foreach}
+                        {script ++$i} {/foreach}
                     </table>
                 </div>
                 <input type="hidden" name="action" value="addMembers">
                 <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
-                <a href="/admin" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
+                <a href="/marketing/manageGroups" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
             </form>
-        </div>
+        </div><br><br>
     </div>
 </div>

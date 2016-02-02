@@ -28,9 +28,17 @@
                             <tr>
                                 <td>{echo $x}</td>
                                 <td>{echo $g->name}</td>
+                                {if $g->name === "All"}
+                                <td>{echo User::count()}</td>
+                                {/if} {else}
                                 <td>{echo count(json_decode($g->users))}</td>
+                                {/else}
                                 <td>
+                                    {if $g->name !== "All"}
                                     <a href="/marketing/groupMembers/{echo $g->id}" class="btn btn-xs btn-success"><i class="fa fa-edit"></i> Edit</a>
+                                    {/if} {else}
+                                    <span class="label label-primary">Default Group</span>
+                                    {/else}
                                 </td>
                             </tr>
                             {script ++$x} {/foreach}

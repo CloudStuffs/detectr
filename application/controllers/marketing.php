@@ -44,7 +44,7 @@ class Marketing extends Admin {
     }
 
     /**
-     * @before _secure, changeLayout
+     * @before _secure, _admin
      */
     public function manageNewsletter() {
         $this->seo(array("title" => "Manage Newsletter", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
@@ -169,7 +169,7 @@ class Marketing extends Admin {
      */
     public function groupMembers($group_id) {
         $group = Group::first(array("id = ?" => $group_id));
-        if (!$group) {
+        if (!$group || $group->name == "All") {
             self::redirect("/admin");
         }
 
@@ -177,6 +177,10 @@ class Marketing extends Admin {
         $view = $this->getActionView();
 
         $count = RequestMethods::get("count", 10);
+        $group->users = json_decode($group->users);
+        if ($count < count($group->users)) {
+            $count = count($group->users) + 1;
+        }
         $total = array();
         for ($i = 0; $i < $count; ++$i) {
             $total[] = $i;

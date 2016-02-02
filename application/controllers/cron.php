@@ -48,8 +48,8 @@ class CRON extends Auth {
                     array_push($emails, $user->email);
                 }
             } else {
-                foreach ($results as $key => $value) {
-                    array_push($emails, $value);
+                foreach ($results as $r) {
+                    array_push($emails, $r->email);
                 }
             }
 
