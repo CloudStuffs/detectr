@@ -221,6 +221,7 @@ class Marketing extends Admin {
         $package->price = RequestMethods::post("price");
         $package->tax = RequestMethods::post("tax");
         $package->user_id = $this->user->id;
+        $package->period = RequestMethods::post("period", 30);
 
         if ($package->validate()) {
             $package->save();
