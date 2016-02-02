@@ -337,6 +337,46 @@ class Detector extends Admin {
 		));
 	}
 
+	/**
+	 * @before _secure, memberLayout
+	 */
+	public function logs($website_id) {
+		$this->seo(array(
+            "title" => "Logs for your website",
+            "view" => $this->getLayoutView()
+        ));
+		$view = $this->getActionView();
+
+		$mongo = Registry::get("MongoDB");
+		$website = $mongo->website;
+		$record = $website->findOne(array("website_id" => (int) $website_id));
+		if (!$record || $record['user_id'] != $this->user->id) {
+			self::redirect("/404");
+		}
+
+		$logs = $mongo->logs;
+		$where = array('website_id' => (int) $website_id);
+		$page = RequestMethods::get("page", 1);
+        $limit = RequestMethods::get("limit", 30);
+        $count = $logs->count($where);
+
+		$cursor = $logs->find($where, array('_id' => false));
+		$cursor->skip($limit * ($page - 1));
+		$cursor->limit($limit);
+
+		$results = array();
+		foreach ($cursor as $c) {
+			$c = ArrayMethods::toObject($c);
+			$results[] = $c;
+		}
+		$view->set("logs", $results)
+			->set("page", $page)
+			->set("limit", $limit)
+			->set("actions", $this->actions)
+			->set("ts", $this->triggers)
+			->set("count", $count);
+	}
+
 	protected function _process($opts) {
 		$trigger_title = RequestMethods::post("trigger");
 		$action_title = RequestMethods::post("action");
