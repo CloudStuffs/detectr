@@ -32,6 +32,7 @@
                                 <i class="fa fa-pie-chart"></i> Monitor
                             </a>
                             <a href="/admin/search?model=user&key=live&sign=equal&value=1" class="list-group-item"><i class="fa fa-user-secret fa-2x"></i>  Admins <span class="badge">{echo Shared\Markup::nice_number(User::count(array("admin = ?" => true)))}</span></a>
+                            <a href="/application/libraries/MongoDB/admin.php" class="list-group-item"><i class="fa fa-database fa-2x"></i>  Database </a>
                         </div>
                     </div>                    
 

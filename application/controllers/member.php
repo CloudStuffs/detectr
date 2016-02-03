@@ -20,8 +20,6 @@ class Member extends Detector {
         $referers = Referer::all(array("user_id = ?" => $this->user->id), array("*"), "created", "desc", 10, 1);
 
         $view->set(array(
-            "actions" => $this->actions,
-            "trigs" => $this->triggers,
             "websites" => $websites,
             "referers" => $referers
         ));

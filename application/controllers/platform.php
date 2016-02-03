@@ -19,7 +19,11 @@ class Platform extends Member {
 
         $websites = Website::all(array("user_id = ?" => $this->user->id));
 
-        $view->set("websites", $websites);
+        $view->set(array(
+            "actions" => $this->actions,
+            "trigs" => $this->triggers,
+            "websites" => $websites
+        ));
     }
 
     /**

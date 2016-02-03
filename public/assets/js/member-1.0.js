@@ -209,15 +209,15 @@ $(document).ready(function () {
 
     });
 
-    $(".trigger").click(function(e) {
+    $(".website").click(function(e) {
         e.preventDefault();
         var item = $(this),
-            trigger = item.data('trigger'),
+            website = item.data('website'),
             action = item.data('action');
         item.html('<i class="fa fa-spinner fa-pulse"></i>');
         request.read({
-            action: "analytics/trigger",
-            data: {trigger: trigger, action: action},
+            action: "analytics/website",
+            data: {website: website, action: action},
             callback: function(data) {
                 if (data.success) {
                     item.html('Hit: '+ data.count);
