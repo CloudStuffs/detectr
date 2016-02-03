@@ -8,7 +8,7 @@
                     <div class="col-lg-4 col-md-4">
                         <div class="list-group">
                             <a class="list-group-item active text-center">
-                                <i class="fa fa-line-chart"></i> Data
+                                <i class="fa fa-line-chart"></i> Management
                             </a>
                             <a href="/member/all" class="list-group-item"><i class="fa fa-users fa-2x"></i>  Users <span class="badge">{echo Shared\Markup::nice_number(User::count())}</span></a>
                             <a href="/detector/approve" class="list-group-item"><i class="fa fa-tasks fa-2x"></i>  Triggers <span class="badge">{echo Shared\Markup::nice_number(Trigger::count())}</span></a>
@@ -22,7 +22,10 @@
                             <a class="list-group-item active text-center">
                                 <i class="fa fa-pie-chart"></i> Total Statistics
                             </a>
-
+                            <a href="/admin/search?model=action&key=live&sign=equal&value=1" class="list-group-item"><i class="fa fa-search fa-2x"></i>  Keywords <span class="badge">{echo Shared\Markup::nice_number(Keyword::count())}</span></a>
+                            <a href="/admin/search?model=action&key=live&sign=equal&value=1" class="list-group-item"><i class="fa fa-tags fa-2x"></i>  Subscriptions <span class="badge">{echo Shared\Markup::nice_number(Subscription::count())}</span></a>
+                            <a href="/plan/transactions" class="list-group-item"><i class="fa fa-money fa-2x"></i>  Transactions <span class="badge">{echo Shared\Markup::nice_number(Transaction::count())}</span></a>
+                            <a href="/plan/transactions" class="list-group-item"><i class="fa fa-credit-card fa-2x"></i>  Earnings <span class="badge">{echo Shared\Markup::nice_number($earn)}</span></a>
                         </div>
                     </div>
 
@@ -31,8 +34,10 @@
                             <a class="list-group-item active text-center">
                                 <i class="fa fa-pie-chart"></i> Monitor
                             </a>
+                            <a href="/admin/search?model=action&key=live&sign=equal&value=1" class="list-group-item"><i class="fa fa-asterisk fa-2x"></i>  Actions <span class="badge">{echo Shared\Markup::nice_number(Action::count())}</span></a>
                             <a href="/admin/search?model=user&key=live&sign=equal&value=1" class="list-group-item"><i class="fa fa-user-secret fa-2x"></i>  Admins <span class="badge">{echo Shared\Markup::nice_number(User::count(array("admin = ?" => true)))}</span></a>
-                            <a href="/application/libraries/MongoDB/admin.php" class="list-group-item"><i class="fa fa-database fa-2x"></i>  Database </a>
+                            <a href="/admin/search?model=newsletter&key=live&sign=equal&value=1" class="list-group-item"><i class="fa fa-newspaper-o fa-2x"></i>  Newsletter <span class="badge">{echo Shared\Markup::nice_number(Newsletter::count())}</span></a>
+                            <a href="/marketing/managePackage.html" class="list-group-item"><i class="fa fa-archive fa-2x"></i>  Packages <span class="badge">{echo Shared\Markup::nice_number(Package::count())}</span></a>
                         </div>
                     </div>                    
 

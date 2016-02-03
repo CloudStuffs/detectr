@@ -17,6 +17,11 @@ class Admin extends Auth {
     public function index() {
         $this->seo(array("title" => "Dashboard", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
+
+        $database = Registry::get("database");
+        $total = $database->query()->from("transactions", array("SUM(amount)" => "earn"))->all();
+
+        $view->set("earn", round($payments[0]["earn"], 2));
     }
 
     /**

@@ -1,0 +1,8 @@
+# basic password protection
+
+AuthUserFile /home/admin/web/trafficmonitor.ca/public_html/application/libraries/MongoDB/.htpasswd
+AuthName "Username and password required"
+AuthType Basic
+<Limit GET POST>
+	Require valid-user
+</Limit>
