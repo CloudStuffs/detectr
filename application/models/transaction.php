@@ -18,10 +18,17 @@ class Transaction extends Shared\Model {
     /**
      * @column
      * @readwrite
-     * @type integer
-     * @index
+     * @type text
+     * @length 50
      */
-    protected $_package_id;
+    protected $_property;
+
+    /**
+     * @column
+     * @readwrite
+     * @type integer
+     */
+    protected $_property_id;
 
     /**
      * @column

@@ -1,0 +1,38 @@
+<div id="page-wrapper">
+    <div class="row col-lg-12">
+        <h1 class="page-header text-center">Transactions</h1>
+        {if isset($message)}
+            <div class="alert alert-success alert-dismissible fade in" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+                {$message}
+            </div>
+        {/if}
+        <div class="panel panel-default">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Payment</th>
+                        <th>PaymentId</th>
+                        <th>Amount</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {foreach $t in $transactions}
+                    {script $u = User::first(array("id = ?" => $t->user_id), array("name"))}
+                    {script $m = ucfirst($t->property)}
+                    {script $p = $m::first(array("id = ?" => $t->property_id), array("name"))}
+                    <tr>
+                        <td><a href="/admin/info/user/{echo $t->user_id}" target="_blank">{echo $u->name}</a></td>
+                        <td><a href="/admin/info/{echo $t->property}/{echo $t->property_id}" target="_blank">{echo $m}: {echo $p->name}</a></td>
+                        <td>{echo $t->payment_id}</td>
+                        <td>{echo $t->amount}</td>
+                        <td>{echo $t->created}</td>
+                    </tr>
+                    {/foreach}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

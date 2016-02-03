@@ -168,7 +168,8 @@ class Plan extends Shared\Controller {
 		    $payment->create($this->paypal());
 		    $transaction = new Transaction(array(
 		    	"user_id" => $user->id,
-		    	"package_id" => $package->id,
+                "property" => "package",
+		    	"property_id" => $package->id,
 		    	"payment_id" => $payment->getId(),
 		    	"amount" => $total
 		    ));
@@ -234,6 +235,23 @@ class Plan extends Shared\Controller {
 
         $this->session($user);
         self::redirect('/member/index.html');
+    }
+
+    /**
+     * @before _secure, _admin
+     */
+    public function transactions() {
+        $this->seo(array("title" => "Transactions", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+        $page = RequestMethods::get("page", $page);
+        $limit = RequestMethods::get("limit", $limit);
+
+        $transactions = Transaction::all(array(), array("user_id", "property", "property_id", "payment_id", "amount", "created"), "created", "desc", $limit, $page);
+
+        $view->set("transactions", $transactions);
+        $view->set("page", $page);
+        $view->set("limit", $limit);
+        $view->set("count", Transaction::count());
     }
 
 }
