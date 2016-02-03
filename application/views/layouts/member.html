@@ -26,6 +26,9 @@
 
         <!-- Core Scripts - Include with every page -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+        {if isset($logs)}
+        <script src="{echo CDN}js/dataTable.bootstrap.min.js"></script>
+        {/if}
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.4.0/bootbox.min.js"></script>
         <script src="{echo CDN}js/metisMenu.min.js"></script>
         <script src="{echo CDN}js/model.js"></script>

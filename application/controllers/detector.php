@@ -72,7 +72,7 @@ class Detector extends Admin {
 					curl_exec($ch);
 					';
 				},
-				"help" => "Enter {key} => {value} pairs separated with semicolon and url of the page must be set using url='something' URL should be the the first key. <br/>Eg: url=http://somepage.com/something;name=Darrin;country=Canada"
+				"help" => "Enter {key} => {value} pairs separated with semicolon and url of the page must be set using url='something' URL should be the the first key. <br/>Eg: url=http://somepage.com/something;name=Tom;country=Canada"
 			),
 			"5" => array(
 				"title" => "Overlay Iframe",
@@ -346,6 +346,7 @@ class Detector extends Admin {
             "view" => $this->getLayoutView()
         ));
 		$view = $this->getActionView();
+		$this->getLayoutView()->set("logs", true);
 
 		$mongo = Registry::get("MongoDB");
 		$website = $mongo->website;
@@ -363,6 +364,7 @@ class Detector extends Admin {
 		$cursor = $logs->find($where, array('_id' => false));
 		$cursor->skip($limit * ($page - 1));
 		$cursor->limit($limit);
+		$cursor->sort(array('created' => -1));
 
 		$results = array();
 		foreach ($cursor as $c) {

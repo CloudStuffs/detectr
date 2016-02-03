@@ -1,3 +1,6 @@
+<link rel="stylesheet" type="text/css" href="{echo CDN}css/dataTable.css">
+<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.10/css/jquery.dataTables.css">
+<script src="https://cdn.datatables.net/1.10.10/js/jquery.dataTables.min.js"></script>
 <div id="page-wrapper">
     <div class="row">
         <div class="col-lg-12">
@@ -7,8 +10,20 @@
     </div>
     <div class="row">
         <form action="" class="text-center form-inline">
-            
-            <!-- <button type="submit" class="btn btn-primary"><i class="fa fa-send"></i> Go</button> -->
+            <div class="form-group">
+                <label for="Limit">Limit</label>
+                <select name="limit" class="form-control">
+                    {script $limits = array("10", "100", "300", "500")}
+                    {foreach $l in $limits}
+                    <option value="{echo $l}" {if $l == $limit}selected=""{/if}>{echo $l}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="Page">Go To Page</label>
+                <input type="text" name="page" class="form-control" placeholder="Pages: {echo (int) ((int) $count / (int) $limit)}" value="{echo $page}" size="4">
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fa fa-send"></i> Go</button>
         </form>
     </div>
     <br>
@@ -19,49 +34,50 @@
                     <p class="text-center">Logs, Total: <strong>{echo $count}</strong></p>
                 </div>
                 <!-- /.panel-heading -->
-                <div class="table-responsive">
-                    <table class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th>S.No</th>
-                                <th>User IP</th>
-                                <th>Country</th>
-                                <th>Visting Page</th>
-                                <th>User Agent</th>
-                                <th>Type</th>
-                                <th>Triggers Executed</th>
-                                <th>Referer</th>
-                                <th>Created</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {script $i = 1} {foreach $log in $logs}
-                            <tr>
-                                <td>{echo $i}</td>
-                                <td>{echo $log->user_ip}</td>
-                                <td>{echo $log->user_location}</td>
-                                <td><a href="{echo $log->landing_page}" target="_blank">{echo $log->landing_page}</a></td>
-                                <td>{echo $log->user_agent}</td>
-                                {script $type = $log->user_type}
-                                {if $type == "Bot"}
-                                    <td><span class="label label-info">{echo $type}</span></td>
-                                {/if} {else}
-                                    <td><span class="label label-success">{echo $type}</span></td>
-                                {/else}
-                                <td>
-                                    {foreach $t in $log->triggers}
-                                    <span class="label label-primary">{echo $ts[$t]['title']}</span>
-                                    {/foreach}
-                                </td>
-                                <td>{echo $log->referer}</td>
-                                <td>{echo Framework\StringMethods::datetime_to_text(date('Y-m-d H:i:s', $log->created->sec))}</td>
-                                
-                            </tr>
-                            {script ++$i} {/foreach}
-                        </tbody>
-                    </table>
+                <div class="panel-body">
+                    <div class="table-responsive dataTable_wrapper">
+                        <table width="100%" class="table table-striped table-hover" id="logsTable">
+                            <thead>
+                                <tr>
+                                    <th>S.No</th>
+                                    <th>User IP</th>
+                                    <th>Country</th>
+                                    <th>Visting Page</th>
+                                    <th>User Agent</th>
+                                    <th>Type</th>
+                                    <th>Triggers Executed</th>
+                                    <th>Referer</th>
+                                    <th>Created</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {script $i = 1} {foreach $log in $logs}
+                                <tr>
+                                    <td>{echo $i}</td>
+                                    <td><a class="text-success" href="http://www.geoplugin.net/json.gp?ip={echo $log->user_ip}" target="_blank">{echo $log->user_ip}</a></td>
+                                    <td>{echo $log->user_location}</td>
+                                    <td><a href="{echo $log->landing_page}" target="_blank">{echo $log->landing_page}</a></td>
+                                    <td><a class="text-warning" href="https://udger.com/resources/online-parser?Fuas={echo urlencode($log->user_agent)}&amp;test=&amp;action=analyze" target="_blank">{echo $log->user_agent}</a></td>
+                                    {script $type = $log->user_type}
+                                    {if $type == "Bot"}
+                                        <td><span class="label label-info">{echo $type}</span></td>
+                                    {/if} {else}
+                                        <td><span class="label label-success">{echo $type}</span></td>
+                                    {/else}
+                                    <td>
+                                        {foreach $t in $log->triggers}
+                                        <span class="label label-primary">{echo $ts[$t]['title']}</span>
+                                        {/foreach}
+                                    </td>
+                                    <td>{echo $log->referer}</td>
+                                    <td>{echo Framework\StringMethods::datetime_to_text(date('Y-m-d H:i:s', $log->created->sec))}</td>
+                                    
+                                </tr>
+                                {script ++$i} {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-                
                 <!-- /.panel-body -->
             </div>
             <!-- /.panel -->
@@ -78,3 +94,8 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#logsTable').DataTable();
+    });
+</script>
