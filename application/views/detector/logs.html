@@ -46,6 +46,7 @@
                                     <th>User Agent</th>
                                     <th>Type</th>
                                     <th>Triggers Executed</th>
+                                    <th>Actions</th>
                                     <th>Referer</th>
                                     <th>Created</th>
                                 </tr>
@@ -67,6 +68,11 @@
                                     <td>
                                         {foreach $t in $log->triggers}
                                         <span class="label label-primary">{echo $ts[$t]['title']}</span>
+                                        {/foreach}
+                                    </td>
+                                    <td>
+                                        {foreach $a in $log->actions}
+                                        <span class="label label-primary" style="background-color: purple;">{echo $actions[$a]['title']}</span>
                                         {/foreach}
                                     </td>
                                     <td>{echo $log->referer}</td>

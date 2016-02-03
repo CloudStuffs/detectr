@@ -56,19 +56,16 @@ class Analytics extends Admin {
     /**
      * @before _secure
      */
-    public function trigger() {
+    public function website() {
         $this->JSONview();
         $view = $this->getActionView();
 
-        $trigger_id = RequestMethods::get("trigger");
-        $action_id = RequestMethods::get("action");
+        $website = RequestMethods::get("website");
         
         $count = 0;
-        $hits = Registry::get("MongoDB")->hits;
-        $record = $hits->findOne(array('trigger_id' => (int) $trigger_id, 'action_id' => (int) $action_id));
-        if (isset($record)) {
-            $count += $record['count'];
-        }
+        $logs = Registry::get("MongoDB")->logs;
+        $c = $logs->count(array('website_id' => (int) $website));
+        $count += $c;
 
         $view->set("count", $count)
             ->set("success", true);
