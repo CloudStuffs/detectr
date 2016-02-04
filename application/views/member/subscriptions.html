@@ -43,6 +43,41 @@
                     </div>
                     {/else}
                 </div>
+
+                <h3 class="page-header">Transactions</h3>
+                <div class="panel panel-default">
+                    {if ($transactions)}
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Amount</th>
+                                    <th>Created</th>
+                                    <th>Payment Id</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {foreach $t in $transactions}
+                                {script $m = ucfirst($t->property)}
+                                {script $p = $m::first(array("id = ?" => $t->property_id), array("name"))}
+                                <tr>
+                                    <td>{echo $m}: {echo $p->name}</td>
+                                    <td>{echo $t->amount} $</td>
+                                    <td>{echo Framework\StringMethods::only_date($t->created)}</td>
+                                    <td>{echo $t->payment_id}</td>
+                                </tr>
+                            {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                    {/if}
+                    {else}
+                    <div class="panel-body">
+                        <p>You are not subscribed to any product.</p>
+                    </div>
+                    {/else}
+                </div>
             </div>
         </div>
     </div>

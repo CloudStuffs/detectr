@@ -5,7 +5,7 @@
  *
  * @author Faizan Ayubi
  */
-class Promo extends Shared\Model {
+class PromoCode extends Shared\Model {
 
     /**
      * @column
@@ -14,6 +14,15 @@ class Promo extends Shared\Model {
      * @index
      */
     protected $_user_id;
+
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 20
+     * @index
+     */
+    protected $_code;
 
     /**
      * @column
