@@ -95,7 +95,7 @@ class Member extends Detector {
         $this->seo(array("title" => "Subscriptions", "keywords" => "admin", "description" => "admin", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
         
-        $subscriptions = Subscription::all(array("user_id = ?" => $this->user->id), array("item_id", "created", "expiry", "period"));
+        $subscriptions = Subscription::all(array("user_id = ?" => $this->user->id), array("item_id", "created", "expiry"));
         $transactions = Transaction::all(array("user_id = ?" => $this->user->id), array("property", "property_id", "payment_id", "amount", "created"), "created", "desc");
         
         $view->set("subs", $subscriptions);

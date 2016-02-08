@@ -10,7 +10,6 @@
                             <thead>
                                 <tr>
                                     <th>Item</th>
-                                    <th>Period</th>
                                     <th>Created</th>
                                     <th>Expiry</th>
                                     <th>Action</th>
@@ -21,7 +20,6 @@
                                 {script $item = Item::first(array("id = ?" => $s->item_id), array("name"))}
                                 <tr>
                                     <td>{$item->name}</td>
-                                    <td>{$s->period} Days</td>
                                     <td>{echo Framework\StringMethods::only_date($s->created)}</td>
                                     <td>{echo Framework\StringMethods::only_date($s->expiry)}</td>
                                     <td>
@@ -74,7 +72,7 @@
                     {/if}
                     {else}
                     <div class="panel-body">
-                        <p>You are not subscribed to any product.</p>
+                        <p>No Transactions till now</p>
                     </div>
                     {/else}
                 </div>
