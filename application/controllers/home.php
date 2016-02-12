@@ -41,4 +41,9 @@ class Home extends Controller {
         $view = $this->getActionView();
     }
 
+    public function features() {
+        $this->seo(array("title" => "Features", "view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+    }
+
 }
