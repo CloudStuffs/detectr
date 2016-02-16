@@ -327,14 +327,42 @@ class Detector extends Admin {
 
 		$website = Website::first(array("id = ?" => $website_id));
 		$this->_authority($website);
-		$triggers = Trigger::all(array("website_id = ?" => $website_id), array("title", "meta", "website_id", "user_id", "id", "live"));
+		$triggers = Trigger::all(array("website_id = ?" => $website_id), array("*"), "priority", "asc");
+		$count = count($triggers);
+
+		$priorities = array();
+		for ($i = 0; $i <= $count; ++$i) {
+			$priorities[] = $i;
+		}
 
 		$view->set(array(
 			'actions' => $this->actions,
 			'trigs' => $this->triggers,
 			'triggers' => $triggers,
-			'website' => $website
+			'website' => $website,
+			'priorities' => $priorities
 		));
+	}
+
+	/**
+	 * @before _secure
+	 */
+	public function updatePriority() {
+		if (RequestMethods::post("action") == "changePriority") {
+			$view = $this->getActionView();
+			$t = Trigger::first(array("id = ?" => RequestMethods::post("trigger")));
+			if (!$t || $t->user_id != $this->user->id) {
+				return;
+			}
+			$t->priority = RequestMethods::post("priority");
+			$t->save();
+
+			$trig = Registry::get("MongoDB")->triggers;
+			$trig->update(array('trigger_id' => (int) $t->id), array('$set' => array('priority' => (int) $t->priority)));
+			$view->set("success", true);
+		} else {
+			self::redirect("/404");
+		}
 	}
 
 	/**
@@ -436,6 +464,7 @@ class Detector extends Admin {
 	protected function _save($opts) {
 		if (!$opts['trigger']['saved']) {
 			$trigger = new Trigger();
+			$trigger->priority = 0;
 		} else {
 			$trigger = $opts['trigger']['saved'];
 		}
@@ -476,37 +505,34 @@ class Detector extends Admin {
 		$m_trigs = $mongo->selectCollection("triggers");
 		$m_actions = $mongo->selectCollection("actions");
 
-		$record = $m_trigs->findOne(array('trigger_id' => (int) $trigger->id));
+		$where = array('trigger_id' => (int) $trigger->id, 'user_id' => (int) $trigger->user_id, 'website_id' => (int) $trigger->website_id);
+		$record = $m_trigs->findOne($where);
 		$doc = array(
 				'title' => (int) $trigger->title,
 				'meta' => $trigger->meta,
-				'user_id' => (int) $trigger->user_id,
-				'website_id' => (int) $trigger->website_id,
-				'trigger_id' => (int) $trigger->id,
 				'live' => (bool) $trigger->live,
-				'created' => $trigger->created
+				'created' => $trigger->created,
+				'priority' => (int) $trigger->priority
 		);
 		if (isset($record)) {
-			$m_trigs->update(array('trigger_id' => (int) $trigger->id), array('$set' => $doc));
+			$m_trigs->update($where, array('$set' => $doc));
 		} else {
-			$m_trigs->insert($doc);
+			$m_trigs->insert(array_merge($doc, $where));
 		}
 
-		$record = $m_actions->findOne(array('action_id' => (int) $action->id));
+		$where = array('action_id' => (int) $action->id, 'user_id' => (int) $action->user_id, 'trigger_id' => (int) $action->trigger_id);
+		$record = $m_actions->findOne($where);
 		$doc = array(
 			'title' => (int) $action->title,
 			'inputs' => $action->inputs,
 			'code' => $action->code,
-			'user_id' => (int) $action->user_id,
-			'trigger_id' => (int) $action->trigger_id,
-			'action_id' => (int) $action->id,
 			'live' => (bool) $action->live,
 			'created' => $action->created
 		);
 		if (isset($record)) {
-			$m_actions->update(array('trigger_id' => (int) $trigger->id, 'action_id' => (int) $action->id), array('$set' => $doc));
+			$m_actions->update($where, array('$set' => $doc));
 		} else {
-			$m_actions->insert($doc);
+			$m_actions->insert(array_merge($doc, $where));
 		}
 	}
 

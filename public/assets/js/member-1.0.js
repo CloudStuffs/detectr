@@ -226,7 +226,45 @@ $(document).ready(function () {
                 }
             }
         });
+    });
 
+    $('.priority').on('change', function (e) {
+        e.preventDefault();
+        var data = {
+            trigger: $(this).data('trigger'),
+            priority: $(this).val(),
+            action: 'changePriority'
+        },
+        self = $(this),
+        total = $('#totalPriorities').html();
+
+        if (window.lastPriority == data.priority) {
+            return false;
+        }
+        window.lastPriority = data.priority;
+
+        self.html('<i class="fa fa-spinner fa-spin"></i> Wait');
+        request.create({
+            action: 'detector/updatePriority',
+            data: data,
+            callback: function (d) {
+                var html = '';
+                if (!d.success) {
+                    alert('Something went wrong!!');
+                    return false;
+                }
+                $('#triggerPriority_' + data.trigger).html(data.priority);
+
+                for (var i = 0; i < total; ++i) {
+                    html += '<option value="' + i + '"';
+                    if (i == data.priority) {
+                        html += 'selected=""';
+                    }
+                    html += '>' + i + '</option>'
+                }
+                self.html(html);
+            }
+        })
     });
 
 });

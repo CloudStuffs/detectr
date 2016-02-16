@@ -22,8 +22,7 @@ class Platform extends Member {
         $view->set(array(
             "actions" => $this->actions,
             "trigs" => $this->triggers,
-            "websites" => $websites,
-            "txt" => $txt
+            "websites" => $websites
         ));
     }
 

@@ -41,4 +41,11 @@ class Trigger extends Shared\Model {
      * @label meta
      */
     protected $_meta;
+
+    /**
+     * @column
+     * @readwrite
+     * @type integer
+     */
+    protected $_priority;
 }

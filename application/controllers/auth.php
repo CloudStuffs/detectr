@@ -151,6 +151,9 @@ class Auth extends Plan {
         $this->setLayout();
     }
 
+    /**
+     * @protected
+     */
     public function render() {
         $session = Registry::get("session");
         $subscriptions = $session->get("subscriptions");
@@ -165,6 +168,7 @@ class Auth extends Plan {
     }
 
     protected function _authority($model) {
+        $redirect = false;
         if (!$model) {
             $redirect = true;
         }

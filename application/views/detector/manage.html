@@ -14,25 +14,29 @@
                         <h3 class="panel-title"><i class="fa fa-modx fa-fw"></i> Active Triggers</h3>
                     </div>
                     {if ($triggers)}
+                    <span class="hide" id="totalPriorities">{echo count($priorities)}</span>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover table-striped">
                             <thead>
                                 <tr>
-                                	<th>S. No.</th>
+                                	<th>ID</th>
+                                    <th>Execution order</th>
                                     <th>Title</th>
                                     <th>Meta</th>
                                     <th>Action to be Taken</th>
                                     <th>Action Inputs</th>
                                     <th>Status</th>
-                                    <th>Hits</th>
+                                    <th>Set Position</th>
                                     <th>Tools</th>
                                 </tr>
                             </thead>
                             <tbody>
-                            	{script $i = 1}
                                 {foreach $trigger in $triggers}
                                 <tr>
-                                	<td>{$i}</td>
+                                	<td>#{$trigger->id}</td>
+                                    <td class="text-center">
+                                        <span class="label label-info" id="triggerPriority_{echo $trigger->id}">{echo $trigger->priority}</span>
+                                    </td>
                                     <td>{echo $trigs["$trigger->title"]["title"]}</td>
                                     <td>{$trigger->meta}</td>
                                     {script $action = Action::first(array("trigger_id = ?" => $trigger->id))}
@@ -45,15 +49,18 @@
                                         <span class="label label-danger">Disabled</span>
                                         {/else}
                                     </td>
-                                    <td class="trigger" data-trigger="{$trigger->id}" data-action="{echo $action->id}">
-                                        <span class="label label-info">Click ME !!</span>
+                                    <td class="text-center">
+                                        <select class="priority" data-trigger="{echo $trigger->id}">
+                                            {foreach $p in $priorities}
+                                            <option value="{echo $p}" {if $p == $trigger->priority}selected=""{/if}>{echo $p}</option>
+                                            {/foreach}
+                                        </select>
                                     </td>
                                     <td>
                                         <a href="/detector/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
                                         <a href="/detector/remove/{echo $trigger->id}/{echo $action->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
                                     </td>
                                 </tr>
-                                {script ++$i}
                                 {/foreach}
                             </tbody>
                         </table>
