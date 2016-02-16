@@ -1,0 +1,27 @@
+<!-- Modal -->
+<div class="modal fade" id="clearLogs" tabindex="-1" role="dialog" aria-labelledby="Clear Detector Logs">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Clear Detector Logs</h4>
+            </div>
+            <form action="" method="post" class="modal-body">
+                <div class="form-group">
+                    <label for="From Date">From</label>
+                    <i class="fa fa-calendar fa-fw"></i> <input type="date" class="form-control" name="from" max="{echo date('Y-m-d')}">
+                </div>
+                <div class="form-group">
+                    <label for="End Date">To</label>
+                    <i class="fa fa-calendar fa-fw"></i> <input type="date" class="form-control" name="to" max="{echo date('Y-m-d')}">
+                </div>
+                <code>If Dates are not specified then logs for last week will be removed!</code>
+                <input type="hidden" name="action" value="clearLogs">
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

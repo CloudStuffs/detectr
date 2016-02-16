@@ -25,8 +25,11 @@ class CRON extends Auth {
         $this->_newsletters();
         $this->log("Newsletters Sent");
         $this->_serpRank();
-        $this->_social();
         $this->log("Serp Done");
+        $this->_social();
+        $this->log("Social Stats Done");
+        $this->_removeLogs();
+        $this->log("Removed older Logs");
         $this->log("CRON Ended");
     }
 
@@ -123,7 +126,6 @@ class CRON extends Auth {
         } catch (\Exception $e) {
             return;
         }
-        
 
         $today = date('Y-m-d');
         $socials = Registry::get("MongoDB")->socials;
@@ -157,6 +159,15 @@ class CRON extends Auth {
         } catch (\Exception $e) {
             die($e->getMessage());
         }
+    }
+
+    protected function _removeLogs() {
+        $logs = Registry::get("MongoDB")->logs;
+
+        $date = strtotime("-30 day");
+        $logs->remove(array(
+            'created' => array('$lte' => $date)
+        ));
     }
 
     /**

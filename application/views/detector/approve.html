@@ -57,10 +57,10 @@
                             <td>{echo Framework\StringMethods::only_date($t->created)}</td>
                             <td>
                                 {if $t->live}
-                                <a href="/admin/edit/trigger/{echo $t->id}/live/0" class="btn btn-warning btn-xs"><i class="fa fa-times"></i> Disapprove</a>
+                                <a href="/detector/status/{echo $t->id}/0" class="btn btn-warning btn-xs"><i class="fa fa-times"></i> Disapprove</a>
                                 {/if}
                                 {else}
-                                <a href="/admin/edit/trigger/{echo $t->id}/live/1" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Approve</a>
+                                <a href="/detector/status/{echo $t->id}/1" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Approve</a>
                                 {/else}
                                 {script $action = Action::first(array("trigger_id = ?" => $t->id))}
                                 <a href="/detector/remove/{echo $t->id}/{echo $action->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>

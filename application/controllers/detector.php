@@ -3,7 +3,7 @@
 /**
  * Manages Triggers and Action
  *
- * @author Faizan Ayubi
+ * @author Faizan Ayubi, Hemant Mann
  */
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
@@ -338,6 +338,18 @@ class Detector extends Admin {
 	}
 
 	/**
+	 * @before _secure, _admin
+	 */
+	public function status($id, $value) {
+		$m = strtolower($model);
+
+		$trigger = Registry::get("MongoDB")->triggers;
+		$live = (bool) ((int) $value);
+		$trigger->update(array('trigger_id' => (int) $id), array('$set' => array('live' => $live)));
+		parent::edit('trigger', $id, 'live', $value);
+	}
+
+	/**
 	 * @before _secure, memberLayout
 	 */
 	public function logs($website_id) {
@@ -354,6 +366,7 @@ class Detector extends Admin {
 		if (!$record || $record['user_id'] != $this->user->id) {
 			self::redirect("/404");
 		}
+		$this->_clearLogs($website_id);
 
 		$logs = $mongo->logs;
 		$where = array('website_id' => (int) $website_id);
@@ -377,6 +390,26 @@ class Detector extends Admin {
 			->set("actions", $this->actions)
 			->set("ts", $this->triggers)
 			->set("count", $count);
+	}
+
+	protected function _clearLogs($website_id) {
+		$logs = Registry::get("MongoDB")->logs;
+		if (RequestMethods::post("action") == "clearLogs") {
+			$from_default = (date('Y-m-d', strtotime("-15 day")));
+			$to_default = (date('Y-m-d', strtotime("-7 day")));
+
+			$from = RequestMethods::post("from", $from_default);
+			$to = RequestMethods::post("to", $to_default);
+			
+			$from = new MongoDate(strtotime($from));
+			$to = new MongoDate(strtotime($to));
+
+			$logs->remove(array(
+				'user_id' => (int) $this->user->id, 
+				'website_id' => (int) $website_id, 
+				'created' => array('$gte' => $from, '$lte' => $to)
+			));
+		}
 	}
 
 	protected function _process($opts) {
@@ -478,8 +511,7 @@ class Detector extends Admin {
 	}
 
 	public function read($type, $id) {
-		$this->noview();
-		$arr = array();
+		$this->noview(); $arr = array();
 		switch ($type) {
 			case 'trigger':
 				$triggers = $this->_triggers;
@@ -491,8 +523,6 @@ class Detector extends Admin {
 				$arr = $actions[$id];
 				break;
 		}
-
 		echo json_encode($arr);
 	}
-
 }
