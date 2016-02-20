@@ -192,7 +192,6 @@ class FakeReferer extends Admin {
 				$find = $googleScrapper->setPage(0)->search($referer->url);
 				$result = array_shift($find->getPositions());
 				$vars = $this->_parse($result->getVars());
-
 				$base_url = 'http://www.google.com/url?sa=t&rct=j&q='.urlencode($referer->keyword).'&esrc=s&source=web&cd=62&cad=rja&ved='.$vars["ved"].'&url='.urlencode($result->getUrl()).'&ei=HlyPUMO3FMSPrge8y4DwAQ&usg='. $vars["usg"];
 				
 				if (strpos($result->getUrl(), $referer->url) === FALSE) {

@@ -82,12 +82,12 @@
                                     {/else}
                                     <td>
                                         {foreach $t in $log->triggers}
-                                        <span class="label label-primary">{echo $ts[$t]['title']}</span>
+                                        <span class="label label-primary">#{echo $t->id} {echo $ts[$t->title]['title']}</span>
                                         {/foreach}
                                     </td>
                                     <td>
                                         {foreach $a in $log->actions}
-                                        <span class="label label-primary" style="background-color: purple;">{echo $actions[$a]['title']}</span>
+                                        <span class="label label-primary" style="background-color: purple;">{echo $actions[$a->title]['title']}</span>
                                         {/foreach}
                                     </td>
                                     <td>{echo $log->referer}</td>
