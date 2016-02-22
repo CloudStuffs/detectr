@@ -2,14 +2,13 @@
 
 namespace Shared\Service;
 
-use Framework\Base as Base;
 use Framework\Registry as Registry;
 use Shared\SocialLinks as SocialLinks;
 
 /**
  * Static class to save social link stats in mongodb
  */
-class Social extends Base {
+class Social {
 	public static function record($k) {
 		$socials = Registry::get("MongoDB")->socials;
 

@@ -73,7 +73,7 @@ var Serp = (function (Rank, scraper, mongoose) {
                     self.scraper.getSerps(keyword.link, function (results) {
                         self.counter++;
                         if (results.length === 0) {
-                            self._saveRank(0, keyword);
+                            self._saveRank(-1, keyword);
                             return;
                         }
 
@@ -81,6 +81,8 @@ var Serp = (function (Rank, scraper, mongoose) {
                         self._saveRank(top.position, keyword);
                     });
                 } catch (ex) {
+                    self.counter++;
+                    self._saveRank(-2, keyword);
                     console(ex);
                 }
             },
