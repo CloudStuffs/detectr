@@ -70,6 +70,14 @@
                                         <a href="/detector/logs/{echo $website->id}" class="btn btn-default btn-xs"><i class="fa fa-file-code-o"></i> Logs</a>
                                         <a href="/detector/create/{echo $website->id}" class="btn btn-primary btn-xs"><i class="fa fa-link"></i> Create Trigger</a>
                                         <a href="/detector/manage/{echo $website->id}" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage Triggers</a>
+                                        {if !$website->ping_live}
+                                        <a class="btn btn-primary btn-xs" href="/ping/create/{echo $website->id}"><i class="fa fa-link"></i> Create Ping</a>
+                                        {/if}
+                                        {else}
+                                        <a class="btn btn-primary btn-xs" href="/ping/edit/{echo $website->id}"><i class="fa fa-link"></i> Edit Ping</a>
+                                        <a class="btn btn-primary btn-xs" href="/ping/remove/{echo $website->id}"><i class="fa fa-link"></i> Remove Ping</a>
+                                        
+                                        {/else}
                                         <a href="/platform/removeWebsite/{echo $website->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
                                     </td>
                                 </tr>
@@ -83,3 +91,10 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+    
+    function value(id, web_id){
+
+        document.getElementById(id).value = web_id;
+    }
+</script>

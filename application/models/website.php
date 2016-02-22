@@ -42,6 +42,25 @@ class Website extends Shared\Model {
      * @column
      * @readwrite
      * @type boolean
+     * 
+     * @label 
+     */
+    protected $_ping_live = false;
+
+
+    /**
+     * @column
+     * @readwrite
+     * @type boolean
+     * 
+     * @label time interval in minutes
+     */
+    protected $_ping_interval = NULL;
+
+    /**
+     * @column
+     * @readwrite
+     * @type boolean
      */
     protected $_owner = false;
 
