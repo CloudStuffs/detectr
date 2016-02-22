@@ -115,7 +115,8 @@ class SocialLinks {
 			$response = json_decode($matches[1]);
 			return $this->_formatResponse("count", $response->count);
 		} else {
-			throw new \Exception("Invalid Response sent by server");
+			// throw new \Exception("Invalid Response sent by server");
+			return $this->_formatResponse("count", "0");
 		}
 	}
 

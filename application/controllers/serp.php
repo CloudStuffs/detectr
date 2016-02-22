@@ -55,9 +55,9 @@ class Serp extends Admin {
 	 * @before _secure, memberLayout
 	 */
 	public function stats($keyword_id) {
-		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => true), array("keyword", "link", "user_id", "id"));
+		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => true));
 		$this->_authority($keyword);
-
+		Shared\Service\Serp::record(array($keyword));
 		$end_date = RequestMethods::get("enddate", date("Y-m-d"));
 		$start_date = RequestMethods::get("startdate", date("Y-m-d", strtotime($end_date."-7 day")));
 

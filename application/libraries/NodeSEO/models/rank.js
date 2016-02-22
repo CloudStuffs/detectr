@@ -3,7 +3,7 @@ var Schema = mongoose.Schema;
 
 // create a schema
 var rankSchema = new Schema({
-  position: String,
+  position: Number,
   keyword_id: {type: Number, index: true},
   created: {type: String, index: true},
   user_id: {type: Number, index: true},

@@ -50,6 +50,7 @@ class Social extends Serp {
 	public function stats($keyword_id) {
 		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => false), array("link", "user_id", "id"));
 		$this->_authority($keyword);
+		Shared\Service\Social::record($keyword);
 
 		$end_date = RequestMethods::get("enddate", date("Y-m-d"));
 		$start_date = RequestMethods::get("startdate", date("Y-m-d", strtotime($end_date."-7 day")));
@@ -59,29 +60,23 @@ class Social extends Serp {
 		$view = $this->getActionView();
 
 		$socials = Registry::get("MongoDB")->socials;
+		$start_time = strtotime($start_date); $end_time = strtotime($end_date);
+		$i = 1; $obj = array();
 
-		$start_time = strtotime($start_date); $end_time = strtotime($end_date); $i = 1;
+		$records = $socials->find(array(
+			'created' => array('$gte' => new MongoDate($start_time), '$lte' => new MongoDate($end_time)),
+			'social_media' => (string) $social_media,
+			'keyword_id' => (int) $keyword->id
+		));
 
-        while ($start_time < $end_time) {
-        	$start_time = strtotime($start_date . " +{$i} day");
-            $date = date('Y-m-d', $start_time);
+		foreach ($records as $r) {
+			$position = $r['count'];
+			$media = array();
+			$media['count_type'] = $r['count_type'];
+			$media['social_media'] = $r['social_media'];
 
-            $record = $socials->findOne(array('created' => $date, 'social_media' => (string) $social_media, 'keyword_id' => (int) $keyword->id));
-
-            $media = array();
-            if (isset($record)) {
-            	$position = $record['count'];
-            	$media['count_type'] = $record['count_type'];
-            	$media['social_media'] = $record['social_media'];
-            } else {
-            	$media['count_type'] = "stats";
-            	$media['social_media'] = $social_media;
-            	$position = 0;
-            }
-            $obj[] = array('y' => $date, 'a' => $position);
-
-            ++$i;
-        }
+			$obj[] = array('y' => date('Y-m-d', $r['created']->sec), 'a' => $position);
+		}
 
         $view->set("keyword", $keyword)
 			->set("social", array("type" => $media['count_type'], "media" => $media['social_media']))
@@ -99,7 +94,7 @@ class Social extends Serp {
 			$keyword->live = $live;
 			$keyword->save();
 		}
-		self::redirect($_SERVER['HTTP_REFERER']);
+		self::redirect(RequestMethods::server('HTTP_REFERER', '/member'));
 	}
 
 	/**
@@ -127,5 +122,4 @@ class Social extends Serp {
 		$tracker->save();
 		return "Social Tracker Added";
 	}
-
 }
