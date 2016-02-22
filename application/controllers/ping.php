@@ -46,9 +46,9 @@ class Ping extends Admin {
         $mongo = Registry::get('MongoDB');
         $website = $mongo->website;
 
-        $row = $website->findOne(array('website_id' => (int) $id);
+        $row = $website->findOne(array('website_id' => (int) $id));
 
-        $interval = $row->ping_interval;
+        $interval = $row['ping_interval'];
         if(!empty($interval)){
                 
             if(RequestMethods::post('hours')){
@@ -91,17 +91,18 @@ class Ping extends Admin {
 
 
         $tB = microtime(true); 
-        $fP = fSockOpen($web_details->url, $port, $errno); 
+        $fP = fSockOpen($web_details['url'], $port, $errno); 
         if (!$fP) { 
             return "down"; 
         } 
             $tA = microtime(true); 
-            return round((($tA - $tB) * 1000), 0)." ms";
+            $rs =round((($tA - $tB) * 1000), 0)." ms";
 
         $ping = $mongo->ping;
 
         $ping->insert(array(
-            'website_id' => $id));
+            'website_id' => $id,
+            'respnse_time' => $rs));
 
 
     }
