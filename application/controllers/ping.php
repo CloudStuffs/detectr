@@ -11,60 +11,66 @@ use Framework\Registry as Registry;
 class Ping extends Admin {
 
     /**
-     * @before _secure, _admin
+     * @before _secure, memberLayout
      */
-    public function create($id = ''){
+    public function create(){
         
         $this->seo(array("title" => "Ping | Create","view" => $this->getLayoutView()));
+        $view = $this->getActionView();
 
-        if(RequestMethods::post('hours')){
+        if(RequestMethods::post('title')){
 
             $mongo = Registry::get('MongoDB');
-            $website = $mongo->website;
-            $website->update(array("website_id"=> (int) "$id"), 
-                      array('$set'=>array("ping_live"=> (int) "1")));
+            $ping = $mongo->ping;
+            $time = strtotime(date('d-m-Y H:i:s'));
+            $mongo_date = new MongoDate($time);
 
-            $hours = RequestMethods::post('hours');
-            $min = RequestMethods::post('minutes');
+            $count = $ping->count();
+            $ping->insert(array(
+                "user_id" => (int) $this->user->id,
+                "record_id" => $count + 1,
+                "title" => RequestMethods::post('title'),
+                "url" => RequestMethods::post('url'),
+                "interval" => RequestMethods::post('interval'),
+                "live" => (int) "1",
+                "created" => $mongo_date,
+                ));
 
-            $total_min = ($hours * 60) + $min;
-
-            $website->update(array("website_id"=> (int) "$id"), 
-                  array('$set'=>array("ping_interval"=> (int) "$total_min")));
-
-            self::redirect('/member/index');
+            $view->set('success', 'Ping Created Successfully');
         }
     }
 	
     /**
-     * @before _secure, _admin
+     * @before _secure, memberLayout
      */
     public function edit($id){
 
         $this->seo(array("title" => "Ping | Edit","view" => $this->getLayoutView()));
 
         $mongo = Registry::get('MongoDB');
-        $website = $mongo->website;
+        $ping = $mongo->ping;
+        $view = $this->getActionView();
 
-        $row = $website->findOne(array('website_id' => (int) $id));
+        $record = $ping->findOne(array('record_id' => (int) $id));
 
-        $interval = $row['ping_interval'];
-        if(!empty($interval)){
+        if(!empty($record['url'])){
                 
-            if(RequestMethods::post('hours')){
+            if(RequestMethods::post('title')){
 
-                $website->update(array("website_id"=> (int) "$id"), 
-                          array('$set'=>array("ping_live"=> (int) "1")));
+                $time = strtotime(date('d-m-Y H:i:s'));
+                $mongo_date = new MongoDate($time);
 
-                $hours = RequestMethods::post('hours');
-                $min = RequestMethods::post('minutes');
+                $ping->update(array("record_id"=> (int) $id), 
+                  array('$set'=>array(
+                    "title" => RequestMethods::post('title'),
+                    "interval" => RequestMethods::post('interval'),
+                    "modified" => $mongo_date,
+                    )));
 
-                $total_min = ($hours * 60) + $min;
+                self::redirect('/ping/manage');
+            }else{
 
-                $website->update(array("website_id"=> (int) "$id"), 
-                      array('$set'=>array("ping_interval"=> (int) "$total_min")));
-
-                self::redirect('/member/index');
+                $view->set('title', $record['title'])->set('url', $record['url'])->set('interval', $record['interval']);
             }
         }else{
             self::redirect('/member/index');
@@ -72,16 +78,50 @@ class Ping extends Admin {
     }
 
     /**
-     * @before _secure, _admin
+     * @before _secure, memberLayout
+     */
+
+    public function manage(){
+
+        $this->seo(array("title" => "Ping | Manage","view" => $this->getLayoutView()));
+
+        $mongo = Registry::get('MongoDB');
+        $ping = $mongo->ping;
+        $view = $this->getActionView();
+
+        $records = $ping->find(array('live' => 1));
+        $result = array();
+        foreach ($records as $r) {
+            $result[] = $r;
+        }
+        $count = $ping->count(array('live' => 1));
+        $view->set('records', $result)->set('count', $count);
+
+    }
+/*
+    public function hits(){
+        $url, $user_id
+        $view->set('c')
+    }
+*/
+    /**
+     * @before _secure, memberLayout
      */
     public function remove($id){
 
         $mongo = Registry::get('MongoDB');
 
-        $website = $mongo->website;
-        $website->update(array("website_id"=> (int) "$id"), 
-                  array('$set'=>array("ping_live"=> (int) "0")));
+        $ping = $mongo->ping;
+        $ping->update(array("record_id" => (int) $id), 
+                  array('$set'=>array("live" => 0)));
+
+        self::redirect('/ping/manage');
+
     }
+    
+    /**
+     * @before _secure, memberLayout
+     */
 
     public function execute($id='', $port = 80, $errno = 10){
 

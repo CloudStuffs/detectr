@@ -1,0 +1,69 @@
+<div id="page-wrapper">
+    <div class="row">
+        <div class="col-lg-12">
+            <h3 class="page-header"><i class="fa fa-anchor"></i> Manage Pings</h3>
+        </div>
+        <!-- /.col-lg-12 -->
+    </div>
+    <div class="row">
+        <h4 class="pull-left">Total: <span class="label label-primary">{echo $count}</span><h4>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>URL</th>
+                            <th>Interval</th>
+                            <th>Status</th>
+                            <th>Hits</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {script $i = 1} {foreach $ping in $records}
+                        <tr>
+                            <td>{echo $i}</td>
+                            <td>{echo $ping['title']}</td>
+                            <td>{echo $ping['url']}</td>
+                            <td>{echo $ping['interval']}</td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                {script $date = date('d-M-Y', $ping['created']->sec)}
+                                {$date}
+                            </td>
+                                
+                            <td>
+                                {if $ping['live']}
+                                <a href="/ping/edit/{echo $ping['record_id']}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Edit</a>
+                                <a href="/ping/remove/{echo $ping['record_id']}" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>
+                                {/if}
+                            </td>
+                        </tr>
+                        {script ++$i} {/foreach}
+                    </tbody>
+                </table>
+
+                <div class="">
+                    <div class="text-center">
+                    {if($page != 1)}
+                        <a href="{echo Shared\Markup::pagination($page - 1)}" class="btn btn-primary"><i class="fa fa-arrow-left"></i> Previous</a>
+                    {/if}
+                    {if($page < $count/$limit)}
+                        <a href="{echo Shared\Markup::pagination($page + 1)}" class="btn btn-primary">Next <i class="fa fa-arrow-right"></i></a>
+                    {/if}
+                    </div>
+                </div>
+                
+                <!-- /.panel-body -->
+            </div>
+            <!-- /.panel -->
+        </div>
+    </div>
+</div>
