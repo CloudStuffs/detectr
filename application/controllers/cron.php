@@ -7,7 +7,6 @@
  */
 use Framework\Registry as Registry;
 use \SEOstats\Services\Google as Google;
-use Shared\SocialLinks as SocialLinks;
 
 class CRON extends Auth {
 
@@ -127,37 +126,8 @@ class CRON extends Auth {
             return;
         }
 
-        $today = date('Y-m-d');
-        $socials = Registry::get("MongoDB")->socials;
         foreach ($keywords as $k) {
-            $record = $socials->findOne(array('keyword_id' => (int) $k->id, 'user_id' => (int) $k->user_id, 'created' => $today));
-            if (isset($record)) {
-                continue;
-            }
-            $responses = $this->_getSocialStats($k->link);
-            foreach ($responses as $r) {
-                $doc = array(
-                    'count_type' => $r["count_type"],
-                    'count' => (string) $r["count"],
-                    'social_media' => $r["social_media"],
-                    'user_id' => (int) $k->user_id,
-                    'live' => true,
-                    'created' => $today,
-                    'keyword_id' => (int) $k->id
-                );
-                $socials->insert($doc);
-            }
-        }
-
-    }
-
-    protected function _getSocialStats($url) {
-        $social_stats = new SocialLinks($url);
-        try {
-            $responses = $social_stats->getResponses();
-            return $responses;
-        } catch (\Exception $e) {
-            die($e->getMessage());
+            Shared\Service\Social::record($k);
         }
     }
 
