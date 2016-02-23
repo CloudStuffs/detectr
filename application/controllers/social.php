@@ -61,7 +61,7 @@ class Social extends Serp {
 
 		$socials = Registry::get("MongoDB")->socials;
 		$start_time = strtotime($start_date); $end_time = strtotime($end_date);
-		$i = 1; $obj = array();
+		$obj = array();
 
 		$records = $socials->find(array(
 			'created' => array('$gte' => new MongoDate($start_time), '$lte' => new MongoDate($end_time)),
@@ -79,6 +79,7 @@ class Social extends Serp {
 		}
 
         $view->set("keyword", $keyword)
+        	->set("label", $media['count_type'])
 			->set("social", array("type" => $media['count_type'], "media" => $media['social_media']))
         	->set("data", ArrayMethods::toObject($obj));
 	}

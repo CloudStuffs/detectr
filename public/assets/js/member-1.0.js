@@ -66,12 +66,12 @@ $(document).ready(function () {
                     $('#socialType').html(data.social.type + " of " + data.social.media);
                 }
                 if (data.data) {
-                    Morris.Bar({
+                    Morris.Line({
                         element: 'stats',
                         data: toArray(data.data),
                         xkey: 'y',
                         ykeys: ['a'],
-                        labels: ['Total']
+                        labels: [data.label || 'Rank']
                     });
                 }
             }

@@ -12,7 +12,7 @@ RewriteRule ^([^.]+)\.?([a-zA-Z]+)?$ index.php?url=$1&extension=$2 [QSA,L]
 </ifModule>
 
 # Protecting Cron.php
-<Files "cron.php">
+<Files ~ "((ping)?cron).php">
     Order deny,allow
     Allow from 45.79.178.187
     Deny from all

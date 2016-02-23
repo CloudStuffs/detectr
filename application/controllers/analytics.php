@@ -8,7 +8,7 @@
 use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 
-class Analytics extends Admin {
+class Analytics extends Auth {
 
     /**
      * @before _secure, _admin
@@ -61,14 +61,24 @@ class Analytics extends Admin {
         $view = $this->getActionView();
 
         $website = RequestMethods::get("website");
-        
+        if (!$website) {
+            self::redirect("/404");
+        }
+
         $count = 0;
         $logs = Registry::get("MongoDB")->logs;
-        $c = $logs->count(array('website_id' => (int) $website));
+        $c = $logs->count(array('website_id' => (int) $website, 'user_id' => (int) $this->user->id));
         $count += $c;
 
         $view->set("count", $count)
             ->set("success", true);
+    }
+
+    /**
+     * @before _secure
+     */
+    public function ping() {
+        
     }
 
 }

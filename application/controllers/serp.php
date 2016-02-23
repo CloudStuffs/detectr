@@ -57,7 +57,9 @@ class Serp extends Admin {
 	public function stats($keyword_id) {
 		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => true));
 		$this->_authority($keyword);
-		Shared\Service\Serp::record(array($keyword));
+		if ($keyword->live) {
+			Shared\Service\Serp::record(array($keyword));	
+		}
 		$end_date = RequestMethods::get("enddate", date("Y-m-d"));
 		$start_date = RequestMethods::get("startdate", date("Y-m-d", strtotime($end_date."-7 day")));
 
@@ -82,8 +84,9 @@ class Serp extends Admin {
 
             ++$i;
         }
-        $view->set("keyword", $keyword);
-        $view->set("data", ArrayMethods::toObject($obj));
+        $view->set("keyword", $keyword)
+        	->set("label", "Rank")
+        	->set("data", ArrayMethods::toObject($obj));
 	}
 
 	/**

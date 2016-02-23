@@ -1,0 +1,43 @@
+<div id="page-wrapper">
+    <div class="row col-lg-12">
+        <h1 class="page-header text-center text-warning">Ping Stats</h1>
+        <p class="text-center">
+            Site: <a href="{echo $ping->url}" target="_blank"><strong>{echo $ping->url}</strong></a>
+        </p>
+        <form class="form-inline text-center" method="get" action="ping/stats/{echo $ping->record_id}" role="form" id="serp_stats">
+            <div class="form-group">
+                <div class="input-group">
+                    <label class="sr-only">From</label>
+                    <span class="add-on input-group-addon"><i class="fa fa-calendar fa-fw"></i> From</span>
+                    <input type="date" style="width: 200px" name="startdate" class="form-control" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <label class="sr-only">To</label>
+                    <span class="add-on input-group-addon"><i class="fa fa-calendar fa-fw"></i> To</span>
+                    <input type="date" style="width: 200px" name="enddate" class="form-control" />
+                </div>
+            </div>
+            <input type="hidden" name="action" value="dataAnalysis">
+            <button type="submit" class="btn btn-primary">Analyze</button>
+        </form>
+        <hr>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <i class="fa fa-bar-chart-o fa-fw"></i> Latency
+            </div>
+            <div class="panel-body">
+                <div id="stats">
+                    <code>
+                        <ul>
+                            <li>Enter Start Range (optional)</li>
+                            <li>Enter End Range (optional)</li>
+                            <li>Click 'Analyze' To see the results</li>
+                        </ul>
+                    </code>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

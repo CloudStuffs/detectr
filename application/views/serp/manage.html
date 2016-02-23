@@ -42,7 +42,7 @@
                                     {script $date_today = date("Y-m-d")} {script $old_date = date("Y-m-d", strtotime($date_today."-7 day"))} 
 
                                     {script $old_rank = $rank->findOne(array("keyword_id" => (int) $serp->id, "created" => $old_date))}
-                                    <td>{echo (($old_rank["position"]) ? $old_rank["position"] : 0)}</td>
+                                    <td>{echo (($old_rank["position"]) ? $old_rank["position"] : "No record")}</td>
                                     {script $new_rank = $rank->findOne(array("keyword_id" => (int) $serp->id, "created" => $date_today))}
                                     <td>{echo (($new_rank["position"]) ? $new_rank["position"] : "Not updated")}</td>
 

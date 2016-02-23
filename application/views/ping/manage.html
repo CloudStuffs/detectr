@@ -40,10 +40,11 @@
                             </td>
                                 
                             <td>
-                                {if $ping['live']}
-                                <a href="/ping/edit/{echo $ping['record_id']}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Edit</a>
+
+                                <a href="/ping/edit/{echo $ping['record_id']}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
+                                <a href="/ping/stats/{echo $ping['record_id']}" class="btn btn-primary btn-xs"><i class="fa fa-space-shuttle"></i> Stats</a>
                                 <a href="/ping/remove/{echo $ping['record_id']}" class="btn btn-danger btn-xs delete"><i class="fa fa-trash-o"></i> Delete</a>
-                                {/if}
+
                             </td>
                         </tr>
                         {script ++$i} {/foreach}

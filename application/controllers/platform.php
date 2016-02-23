@@ -84,16 +84,21 @@ class Platform extends Member {
             $url = preg_replace('/^https?:\/\//', '', $url);
             $url = rtrim($url, "/");
 
-            $website->url = $url;
-            $website->title = $title;
-            $website->save();
+            $exists = Website::first(array('url = ?' => $url));
+            if ($exists) {
+                $view->set("message", "Website already exists");   
+            } else {
+                $website->url = $url;
+                $website->title = $title;
+                $website->save();
 
-            $collection = Registry::get("MongoDB")->selectCollection("website");
-            $record = $collection->findOne(array('website_id' => (int) $website->id));
-            if (isset($record)) {
-                $collection->update(array('website_id' => (int) $website->id), array('$set' => array("title" => $website->title, "url" => $website->url)));
+                $collection = Registry::get("MongoDB")->selectCollection("website");
+                $record = $collection->findOne(array('website_id' => (int) $website->id));
+                if (isset($record)) {
+                    $collection->update(array('website_id' => (int) $website->id), array('$set' => array("title" => $website->title, "url" => $website->url)));
+                }
+                $view->set("message", "Website Changed Successfully");
             }
-            $view->set("message", "Website Changed Successfully");
         }
         $view->set('website', $website);
     }

@@ -3,7 +3,7 @@
 /**
  * Scheduler Class which executes daily and perfoms the initiated job
  * 
- * @author Faizan Ayubi
+ * @author Faizan Ayubi, Hemant Mann
  */
 use Framework\Registry as Registry;
 use \SEOstats\Services\Google as Google;
@@ -122,8 +122,8 @@ class CRON extends Auth {
      * @protected
      */
     public function _secure() {
-        if ($_SERVER['REMOTE_ADDR'] != $_SERVER['SERVER_ADDR']) {
-            die('Path not found');
+        if (php_sapi_name() !== 'cli') {
+            self::redirect("/404");
         }
     }
 }

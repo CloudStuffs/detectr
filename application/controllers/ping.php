@@ -3,10 +3,11 @@
 /**
  * Ping controller
  *
- * @author Shreyansh Goel
+ * @author Shreyansh Goel, Hemant Mann
  */
 use Framework\RequestMethods as RequestMethods;
 use Framework\Registry as Registry;
+use Framework\ArrayMethods as ArrayMethods;
 
 class Ping extends Admin {
 
@@ -85,7 +86,6 @@ class Ping extends Admin {
     /**
      * @before _secure, memberLayout
      */
-
     public function manage() {
         $this->seo(array("title" => "Ping | Manage","view" => $this->getLayoutView()));
         $view = $this->getActionView();
@@ -112,7 +112,6 @@ class Ping extends Admin {
             ->set('page', $page)
             ->set('limit', $limit)
             ->set('count', $count);
-
     }
 /*
     public function hits(){
@@ -156,5 +155,36 @@ class Ping extends Admin {
             'website_id' => (int) $id,
             'respnse_time' => $rs
         ));
+    }
+
+    /**
+     * @before _secure, memberLayout
+     */
+    public function stats($record_id) {
+        $this->seo(array("title" => "Ping | Stats","view" => $this->getLayoutView()));
+        $view = $this->getActionView();
+
+        $ping = Registry::get("MongoDB")->ping;
+        $record = $ping->findOne(array('record_id' => (int) $record_id));
+        if (!$record) {
+            self::redirect("/404");
+        }
+
+        $end_date = RequestMethods::get("enddate", date("Y-m-d"));
+        $start_date = RequestMethods::get("startdate", date("Y-m-d", strtotime($end_date."-7 day")));
+        $start_time = strtotime($start_date); $end_time = strtotime($end_date);
+
+        $ping_stats = Registry::get("MongoDB")->pingStats;
+        $records = $ping_stats->find(array(
+            'created' => array('$gte' => new \MongoDate($start_time), '$lte' => new \MongoDate($end_time))
+        ));
+
+        $obj = array();
+        foreach ($records as $r) {
+            $obj[] = array('y' => date('Y-m-d', $r['created']->sec), 'a' => $r['latency']);
+        }
+        $view->set('ping', ArrayMethods::toObject($record))
+            ->set('label', 'Latency')
+            ->set('data', ArrayMethods::toObject($obj));
     }
 }
