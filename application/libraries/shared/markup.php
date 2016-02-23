@@ -77,7 +77,7 @@ class Markup {
         return array("limit" => $limit, "page" => $page, "count" => $count);
     }
 
-    public function nice_number($n) {
+    public static function nice_number($n) {
         // first strip any formatting;
         $n = (0+str_replace(",", "", $n));
 
@@ -91,6 +91,18 @@ class Markup {
         elseif ($n > 1000) return round(($n/1000), 2).'K';
 
         return number_format($n);
+    }
+
+    public static function websiteRegex() {
+        $regex = "((https?|ftp)\:\/\/)"; // SCHEME
+        $regex .= "([a-z0-9+!*(),;?&=\$_.-]+(\:[a-z0-9+!*(),;?&=\$_.-]+)?@)?"; // User and Pass
+        $regex .= "([a-z0-9-.]*)\.([a-z]{2,4})"; // Host or IP
+        $regex .= "(\:[0-9]{2,5})?"; // Port
+        $regex .= "(\/([a-z0-9+\$_-]\.?)+)*\/?"; // Path
+        $regex .= "(\?[a-z+&\$_.-][a-z0-9;:@&%=+\/\$_.-]*)?"; // GET Query
+        $regex .= "(#[a-z_.-][a-z0-9+\$_.-]*)?"; // Anchor
+
+        return $regex;
     }
 
 }

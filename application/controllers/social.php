@@ -101,7 +101,7 @@ class Social extends Serp {
 	 * @return string
 	 */
 	private function _saveSocial() {
-		$regex = $this->_websiteRegex();
+		$regex = Shared\Markup::websiteRegex();
 		$link = RequestMethods::post("link");
 
 		if (!preg_match("/^$regex$/", $link)) {

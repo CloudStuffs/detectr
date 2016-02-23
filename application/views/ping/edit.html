@@ -5,7 +5,7 @@
                 <h2 class="page-header">Edit Ping</h2>
                 <div class="row">
                     {if isset($success)}
-                    <div class="alert alert-info alert-dismissible fade in" role="alert">
+                    <div class="alert alert-success alert-dismissible fade in" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
                         {echo $success}
                     </div>
@@ -24,6 +24,7 @@
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
+                        <a href="/ping/manage" class="btn btn-danger"><i class="fa fa-times"></i> Cancel</a>
                     </form>
                 </div>
             </div>
