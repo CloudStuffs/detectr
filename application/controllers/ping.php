@@ -132,30 +132,6 @@ class Ping extends Admin {
 
         self::redirect('/ping/manage');
     }
-    
-    /**
-     * @before _secure, memberLayout
-     */
-    public function execute($id='', $port = 80, $errno = 10){
-        $mongo = Registry::get('MongoDB');
-        $website = $mongo->website;
-        $web_details = $website->findOne(array('website_id' => $id));
-
-        $tB = microtime(true); 
-        $fP = fSockOpen($web_details['url'], $port, $errno); 
-        if (!$fP) { 
-            return "down"; 
-        } 
-        $tA = microtime(true); 
-        $rs = round((($tA - $tB) * 1000), 0)." ms";
-
-        $ping = $mongo->ping;
-
-        $ping->insert(array(
-            'website_id' => (int) $id,
-            'respnse_time' => $rs
-        ));
-    }
 
     /**
      * @before _secure, memberLayout

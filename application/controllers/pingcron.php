@@ -8,6 +8,7 @@
 use Framework\Registry as Registry;
 
 class PingCron extends Auth {
+	
 	public function __construct($options = array()) {
 		parent::__construct($options);
 
@@ -36,15 +37,20 @@ class PingCron extends Auth {
 		));
 
 		foreach ($records as $r) {
-			/*$ping = new JJ\Ping($r['url']);
+			$ping = new JJ\Ping($r['url']);
 			$latency = $ping->ping();
-			// todo
-			'ping_id' => $r['_id'],
-			'record_id' => $r['record_id'],
-			'created' => date,
-			'latency' => ''
+			
+			$time = strtotime(date('d-m-Y H:i:s'));
+            $mongo_date = new MongoDate($time);
 
-			$ping_stats->insert()*/
+            $count = $ping_stats->count();
+
+			$ping_stats->insert(array(
+				'ping_id' => $count + 1,
+				'record_id' => $r['record_id'],
+				'created' => $mongo_date,
+				'latency' => $latency,
+				));
 		}
 	}
 
