@@ -28,6 +28,7 @@ class PingCron extends Auth {
 	protected function _execute($type) {
 		$mongo = Registry::get("MongoDB");
 		$ping = $mongo->ping;
+		$ping_stats = $mongo->ping_stats;
 
 		$records = $ping->find(array(
 			'live' => 1,
@@ -35,7 +36,15 @@ class PingCron extends Auth {
 		));
 
 		foreach ($records as $r) {
+			/*$ping = new JJ\Ping($r['url']);
+			$latency = $ping->ping();
 			// todo
+			'ping_id' => $r['_id'],
+			'record_id' => $r['record_id'],
+			'created' => date,
+			'latency' => ''
+
+			$ping_stats->insert()*/
 		}
 	}
 
