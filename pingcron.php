@@ -68,7 +68,7 @@ try {
     
     // 7. load the Router class and provide the url + extension
     $router = new Framework\Router(array(
-        "url" => "pingcron/index/" . $argv[2],
+        "url" => "pingcron/index/" . $argv[1],
         "extension" => !empty($_GET["extension"]) ? $_GET["extension"] : "html"
     ));
     Framework\Registry::set("router", $router);

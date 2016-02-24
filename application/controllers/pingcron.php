@@ -37,7 +37,8 @@ class PingCron extends Auth {
 		));
 
 		foreach ($records as $r) {
-			$ping = new JJ\Ping($r['url']);
+			$host = preg_replace('/^https?:\/\//', '', $r['url']);
+			$ping = new JJG\Ping($host);
 			$latency = $ping->ping();
 			
 			$time = strtotime(date('d-m-Y H:i:s'));

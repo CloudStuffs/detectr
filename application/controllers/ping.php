@@ -150,14 +150,18 @@ class Ping extends Admin {
         $start_date = RequestMethods::get("startdate", date("Y-m-d", strtotime($end_date."-7 day")));
         $start_time = strtotime($start_date); $end_time = strtotime($end_date);
 
-        $ping_stats = Registry::get("MongoDB")->pingStats;
+        $ping_stats = Registry::get("MongoDB")->ping_stats;
         $records = $ping_stats->find(array(
-            'created' => array('$gte' => new \MongoDate($start_time), '$lte' => new \MongoDate($end_time))
+            'record_id' => (int) $record_id,
+            'created' => array(
+                '$gte' => new \MongoDate($start_time),
+                '$lte' => new \MongoDate($end_time)
+            )
         ));
 
         $obj = array();
         foreach ($records as $r) {
-            $obj[] = array('y' => date('Y-m-d', $r['created']->sec), 'a' => $r['latency']);
+            $obj[] = array('y' => date('Y-m-d H:i:s', $r['created']->sec), 'a' => $r['latency']);
         }
         $view->set('ping', ArrayMethods::toObject($record))
             ->set('label', 'Latency')
