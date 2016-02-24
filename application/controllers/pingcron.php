@@ -39,7 +39,7 @@ class PingCron extends Auth {
 		foreach ($records as $r) {
 			$host = preg_replace('/^https?:\/\//', '', $r['url']);
 			$ping = new JJG\Ping($host);
-			$latency = $ping->ping();
+			$latency = $ping->ping('fsockopen');
 			
 			$time = strtotime(date('d-m-Y H:i:s'));
             $mongo_date = new MongoDate($time);
@@ -47,11 +47,11 @@ class PingCron extends Auth {
             $count = $ping_stats->count();
 
 			$ping_stats->insert(array(
-				'ping_id' => $count + 1,
+				'ping_id' => $r['_id'],
 				'record_id' => $r['record_id'],
 				'created' => $mongo_date,
 				'latency' => $latency,
-				));
+			));
 		}
 	}
 

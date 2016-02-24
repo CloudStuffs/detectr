@@ -78,7 +78,30 @@ class Analytics extends Auth {
      * @before _secure
      */
     public function ping() {
-        
+        $this->JSONview();
+        $view = $this->getActionView();
+
+        $id = RequestMethods::get("record");
+        if (!$id) {
+            self::redirect("/404");
+        }
+
+        $count = 0;
+        $stats = Registry::get("MongoDB")->ping_stats;
+        $ping = Registry::get("MongoDB")->ping;
+        $record = $ping->findOne(array('record_id' => (int) $id, 'user_id' => (int) $this->user->id));
+        if (!$record) {
+            self::redirect("/404");
+        }
+        $c = $stats->count(array('ping_id' => $record['_id']));
+
+        $stat = $stats->findOne(array('ping_id' => $record['_id']));
+        $live = $stat['latency'];
+        $count += $c;
+
+        $view->set("count", $count)
+            ->set("status", ($live === false) ? "down" : "up")
+            ->set("success", true);
     }
 
 }

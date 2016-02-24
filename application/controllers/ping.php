@@ -142,7 +142,7 @@ class Ping extends Admin {
 
         $ping = Registry::get("MongoDB")->ping;
         $record = $ping->findOne(array('record_id' => (int) $record_id));
-        if (!$record) {
+        if (!$record || $record['user_id'] != $this->user->id) {
             self::redirect("/404");
         }
 

@@ -32,8 +32,8 @@
                             <td>{echo $ping['title']}</td>
                             <td>{echo $ping['url']}</td>
                             <td>{echo $ping['interval']}</td>
-                            <td></td>
-                            <td></td>
+                            <td class="pingStats" data-record="{echo $ping['record_id']}"><span class="label label-info">Click Me !!</span></td>
+                            <td id="status_{echo $ping['record_id']}"></td>
                             <td>
                                 {script $date = date('Y-m-d', $ping['created']->sec)}
                                 {echo Framework\StringMethods::only_date($date)}

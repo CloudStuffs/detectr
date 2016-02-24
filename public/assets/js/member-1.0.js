@@ -267,6 +267,29 @@ $(document).ready(function () {
         })
     });
 
+    $('.pingStats').on('click', function (e) {
+        e.preventDefault();
+        var item = $(this),
+            status = $('#status_' + item.data('record'));
+        item.html('<i class="fa fa-spinner fa-pulse"></i>');
+        request.read({
+            action: 'analytics/ping',
+            data: {record: item.data('record')},
+            callback: function (data) {
+                if (data.success) {
+                    item.html('Pinged: ' + data.count);
+                } else {
+                    item.html('Pinged: 0');
+                }
+
+                if (data.status == "up") {
+                    status.html('<span class="label label-success"><i class="fa fa-arrow-up"></i> UP</span>');
+                } else if (data.status == "down") {
+                    status.html('<span class="label label-danger"><i class="fa fa-arrow-down"></i> DOWN</span>')
+                }
+            }
+        });
+    });
 });
 
 function toArray(object) {
