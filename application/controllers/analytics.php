@@ -104,4 +104,31 @@ class Analytics extends Auth {
             ->set("success", true);
     }
 
+    /**
+     * @before _secure
+     */
+    public function detector() {
+        $this->JSONview();
+        $connection = new Mongo();
+        $db = $connection->stats;
+        $collection = $db->clicks;
+
+        $cursor = $collection->find($query);
+        foreach ($cursor as $id => $result) {
+            $code = $result["country"];
+            $total_click += $result["click"];
+            if (array_key_exists($code, $rpm)) {
+                $earning += ($rpm[$code])*($result["click"])/1000;
+            } else {
+                $earning += ($rpm["NONE"])*($result["click"])/1000;
+            }
+            if (array_key_exists($code, $analytics)) {
+                $analytics[$code] += $result["click"];
+            } else {
+                $analytics[$code] = $result["click"];
+            }
+            
+        }
+    }
+
 }

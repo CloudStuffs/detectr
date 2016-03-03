@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{echo CDN}plugins/jvectormap/jquery-jvectormap-2.0.3.css" type="text/css" media="screen" />
 <div id="page-wrapper">
     <div class="container-fluid">
         <div class="row">
@@ -14,7 +15,48 @@
         </div>
         <div class="row">
             <div class="col-lg-12">
-                {if($referers)}
+                {if($websites)}
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <i class="fa fa-globe"></i> Platforms
+                        <span class="pull-right">
+                            <a href="/platform/add.html" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Create</a>
+                            <a href="/platform.html" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage</a>
+                        </span>
+                    </div>
+                    <div class="panel-body">
+                        <div class="text-center" id="world-map" style="max-width: 1200px; height: 400px"></div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Website</th>
+                                    <th>Stats</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {foreach $website in $websites}
+                                <tr>
+                                    <td>{echo $website->title} ({echo $website->url})</td>
+                                    <td class="website" data-website="{$website->id}">
+                                        <span class="label label-info">Click ME !!</span>
+                                    </td>
+                                    <td>
+                                        <a href="/platform/edit/{echo $website->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
+                                        <a href="/detector/logs/{echo $website->id}" class="btn btn-default btn-xs"><i class="fa fa-file-code-o"></i> Logs</a>
+                                        <a href="/detector/create/{echo $website->id}" class="btn btn-primary btn-xs"><i class="fa fa-link"></i> Create Trigger</a>
+                                        <a href="/detector/manage/{echo $website->id}" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage Triggers</a>
+                                        <a href="/platform/removeWebsite/{echo $website->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
+                                    </td>
+                                </tr>
+                                {/foreach}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                {/if} {if($referers)}
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         FakeReferers
@@ -38,63 +80,15 @@
                         {/foreach}
                     </table>
                 </div>
-                {/if} {if($websites)} 
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <i class="fa fa-globe"></i> Platforms
-                        <span class="pull-right">
-                            <a href="/platform/add.html" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Create</a>
-                            <a href="/platform.html" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage</a>
-                        </span>
-                    </div>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-hover table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Website</th>
-                                    <th>Domain</th>
-                                    <th>Stats</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {foreach $website in $websites}
-                                <tr>
-                                    <td>{echo $website->title}</td>
-                                    <td>{echo $website->url}</td>
-                                    <td class="website" data-website="{$website->id}">
-                                        <span class="label label-info">Click ME !!</span>
-                                    </td>
-                                    <td>
-                                        <a href="/platform/edit/{echo $website->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
-                                        <a href="/detector/logs/{echo $website->id}" class="btn btn-default btn-xs"><i class="fa fa-file-code-o"></i> Logs</a>
-                                        <a href="/detector/create/{echo $website->id}" class="btn btn-primary btn-xs"><i class="fa fa-link"></i> Create Trigger</a>
-                                        <a href="/detector/manage/{echo $website->id}" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage Triggers</a>
-                                        {if !$website->ping_live}
-                                        <a class="btn btn-primary btn-xs" href="/ping/create/{echo $website->id}"><i class="fa fa-link"></i> Create Ping</a>
-                                        {/if}
-                                        {else}
-                                        <a class="btn btn-primary btn-xs" href="/ping/edit/{echo $website->id}"><i class="fa fa-link"></i> Edit Ping</a>
-                                        <a class="btn btn-primary btn-xs" href="/ping/remove/{echo $website->id}"><i class="fa fa-link"></i> Remove Ping</a>
-                                        
-                                        {/else}
-                                        <a href="/platform/removeWebsite/{echo $website->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
-                                    </td>
-                                </tr>
-                                {/foreach}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                {/if}
+                {/if} 
             </div>
         </div>
     </div>
 </div>
+<script src="{echo CDN}plugins/jvectormap/jquery-jvectormap-2.0.3.min.js"></script>
+<script src="{echo CDN}plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>
 <script type="text/javascript">
-    
-    function value(id, web_id){
-
-        document.getElementById(id).value = web_id;
-    }
+function value(id, web_id) {
+    document.getElementById(id).value = web_id;
+}
 </script>

@@ -292,6 +292,32 @@ $(document).ready(function () {
     });
 });
 
+function stats() {
+    request.read({
+        action: "analytics/detector",
+        callback: function(data) {
+            var gdpData = data.stats.analytics;
+            $('#world-map').vectorMap({
+                map: 'world_mill_en',
+                series: {
+                    regions: [{
+                        values: gdpData,
+                        scale: ['#C8EEFF', '#0071A4'],
+                        normalizeFunction: 'polynomial'
+                    }]
+                },
+                onRegionTipShow: function(e, el, code) {
+                    if (gdpData.hasOwnProperty(code)) {
+                        el.html(el.html() + ' (Clicks - ' + gdpData[code] + ')');
+                    } else{
+                        el.html(el.html() + ' (Clicks - 0)');
+                    };
+                }
+            });
+        }
+    });
+}
+
 function toArray(object) {
     var array = $.map(object, function (value, index) {
         return [value];
