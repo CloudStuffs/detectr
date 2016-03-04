@@ -109,26 +109,18 @@ class Analytics extends Auth {
      */
     public function detector() {
         $this->JSONview();
+        $view = $this->getActionView();
+        $analytics = array();
+
         $connection = new Mongo();
         $db = $connection->stats;
-        $collection = $db->clicks;
+        $c = $db->logs;
 
-        $cursor = $collection->find($query);
-        foreach ($cursor as $id => $result) {
-            $code = $result["country"];
-            $total_click += $result["click"];
-            if (array_key_exists($code, $rpm)) {
-                $earning += ($rpm[$code])*($result["click"])/1000;
-            } else {
-                $earning += ($rpm["NONE"])*($result["click"])/1000;
-            }
-            if (array_key_exists($code, $analytics)) {
-                $analytics[$code] += $result["click"];
-            } else {
-                $analytics[$code] = $result["click"];
-            }
-            
+        $countries = $c->distinct("user_location", array("user_id" => (int) $this->user->id));
+        foreach ($countries as $key => $value) {
+            $analytics[$value] = $c->count(array('user_location' => $value, "user_id" => (int) $this->user->id));
         }
+        $view->set("analytics", $analytics);
     }
 
 }

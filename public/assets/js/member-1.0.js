@@ -296,7 +296,7 @@ function stats() {
     request.read({
         action: "analytics/detector",
         callback: function(data) {
-            var gdpData = data.stats.analytics;
+            var gdpData = data.analytics;
             $('#world-map').vectorMap({
                 map: 'world_mill_en',
                 series: {
