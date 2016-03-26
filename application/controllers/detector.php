@@ -263,7 +263,7 @@ class Detector extends Admin {
 	 */
 	public function edit($trigger_id) {
 		if (!$trigger_id) {
-			self::redirect("/member");
+			$this->redirect("/member");
 		}
 		$trigger = Trigger::first(array("id = ?" => $trigger_id));
 		$this->_authority($trigger);
@@ -361,7 +361,7 @@ class Detector extends Admin {
 			$trig->update(array('trigger_id' => (int) $t->id), array('$set' => array('priority' => (int) $t->priority)));
 			$view->set("success", true);
 		} else {
-			self::redirect("/404");
+			$this->redirect("/404");
 		}
 	}
 
@@ -392,7 +392,7 @@ class Detector extends Admin {
 		$website = $mongo->website;
 		$record = $website->findOne(array("website_id" => (int) $website_id));
 		if (!$record || $record['user_id'] != $this->user->id) {
-			self::redirect("/404");
+			$this->redirect("/404");
 		}
 		$this->_clearLogs($website_id);
 

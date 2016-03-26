@@ -45,7 +45,7 @@ class Plan extends Shared\Controller {
 	public function edit($item_id) {
 		$item = Item::first(array("id = ?" => $item_id));
 		if (!$item) {
-			self::redirect("/admin");
+			$this->redirect("/admin");
 		}
 
 		$this->seo(array("title" => "Items | Edit", "view" => $this->getLayoutView()));
@@ -185,7 +185,7 @@ class Plan extends Shared\Controller {
     	$package = Package::first(array("id = ?" => $package_id));
     	if ($package) {
     		$url = $this->initializePay($package, $user);
-    		self::redirect($url);
+    		$this->redirect($url);
     	}
     }
 
@@ -234,7 +234,7 @@ class Plan extends Shared\Controller {
         }
 
         $this->session($user);
-        self::redirect('/member/index.html');
+        $this->redirect('/member/index.html');
     }
 
     /**

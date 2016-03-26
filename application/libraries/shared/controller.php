@@ -34,7 +34,7 @@ namespace Shared {
         public function _admin() {
             if (!$this->user->admin) {
                 $this->setUser(false);
-                self::redirect("/404");
+                $this->redirect("/404");
             }
             $this->defaultLayout = "layouts/admin";
             $this->setLayout();
@@ -62,14 +62,15 @@ namespace Shared {
             }
         }
 
-        public static function redirect($url) {
+        public function redirect($url) {
+            $this->noview();
             header("Location: {$url}");
             exit();
         }
 
         public function logout() {
             $this->setUser(false);
-            self::redirect("/home");
+            $this->redirect("/home");
         }
         
         public function noview() {

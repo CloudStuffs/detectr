@@ -61,7 +61,7 @@ class Ping extends Admin {
         $ping = Registry::get('MongoDB')->ping;
         $record = $ping->findOne(array('record_id' => (int) $id));
         if (!$record) {
-            self::redirect('/member/index');
+            $this->redirect('/member/index');
         }
 
         if (RequestMethods::post('title')) {
@@ -130,7 +130,7 @@ class Ping extends Admin {
             '$set' => array("live" => 0)
         ));
 
-        self::redirect('/ping/manage');
+        $this->redirect('/ping/manage');
     }
 
     /**
@@ -143,7 +143,7 @@ class Ping extends Admin {
         $ping = Registry::get("MongoDB")->ping;
         $record = $ping->findOne(array('record_id' => (int) $record_id));
         if (!$record || $record['user_id'] != $this->user->id) {
-            self::redirect("/404");
+            $this->redirect("/404");
         }
 
         $end_date = RequestMethods::get("enddate", date("Y-m-d"));

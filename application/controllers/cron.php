@@ -123,7 +123,7 @@ class CRON extends Auth {
      */
     public function _secure() {
         if (php_sapi_name() !== 'cli') {
-            self::redirect("/404");
+            $this->redirect("/404");
         }
     }
 }

@@ -107,7 +107,7 @@ class Marketing extends Admin {
     public function editPackage($package_id) {
         $package = Package::first(array("id = ?" => $package_id));
         if (!$package) {
-            self::redirect("/admin");
+            $this->redirect("/admin");
         }
         $this->seo(array("title" => "Create Package", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
@@ -159,7 +159,7 @@ class Marketing extends Admin {
             $opts["users"] = "";
             $group = $this->_createGroup($opts);
             if ($group) {
-                self::redirect("/marketing/groupMembers/{$group->id}");
+                $this->redirect("/marketing/groupMembers/{$group->id}");
             }
         }
     }
@@ -170,7 +170,7 @@ class Marketing extends Admin {
     public function groupMembers($group_id) {
         $group = Group::first(array("id = ?" => $group_id));
         if (!$group || $group->name == "All") {
-            self::redirect("/admin");
+            $this->redirect("/admin");
         }
 
         $this->seo(array("title" => "Manage Group Members", "view" => $this->getLayoutView()));

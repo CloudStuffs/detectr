@@ -114,11 +114,11 @@ class FakeReferer extends Admin {
 
 		$referer = \Referer::first(array("id = ?" => $ref_id));
 		if ((!$referer || $referer->user_id != $this->user->id) && !$this->user->admin) {
-			self::redirect("/member");
+			$this->redirect("/member");
 		}
 
 		if ($referer->short_url) {
-			self::redirect("/fakereferer/manage");
+			$this->redirect("/fakereferer/manage");
 		}
 
 		if (RequestMethods::post("action") == "editSubmission") {
@@ -140,7 +140,7 @@ class FakeReferer extends Admin {
 		$this->noview();
 		$referer = \Referer::first(array("id = ?" => $ref_id));
 		if (!$referer) {
-			self::redirect("/member");
+			$this->redirect("/member");
 		}
 
 		$this->delete("Referer", $ref_id);
@@ -157,7 +157,7 @@ class FakeReferer extends Admin {
 		$view = $this->getActionView();
 		$referer = \Referer::first(array("id = ?" => $ref_id));
 		if (!$referer) {
-			self::redirect("/admin");
+			$this->redirect("/admin");
 		}
 		if (RequestMethods::post("action") == "approve") {
 			$url = RequestMethods::post("url");

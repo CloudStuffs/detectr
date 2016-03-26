@@ -68,7 +68,7 @@ class Platform extends Member {
      */
     public function edit($id) {
         if (!$id) {
-            self::redirect("/member");
+            $this->redirect("/member");
         }
         $website = Website::first(array("id = ?" => $id));
         $this->_authority($website);

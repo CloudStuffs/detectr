@@ -20,7 +20,7 @@ class Analytics extends Auth {
         if ($action == "unlink") {
             $file = APP_PATH ."/logs/". $name . ".txt";
             @unlink($file);
-            self::redirect("/analytics/logs");
+            $this->redirect("/analytics/logs");
         }
 
         $logs = array();
@@ -62,7 +62,7 @@ class Analytics extends Auth {
 
         $website = RequestMethods::get("website");
         if (!$website) {
-            self::redirect("/404");
+            $this->redirect("/404");
         }
 
         $count = 0;
@@ -83,7 +83,7 @@ class Analytics extends Auth {
 
         $id = RequestMethods::get("record");
         if (!$id) {
-            self::redirect("/404");
+            $this->redirect("/404");
         }
 
         $count = 0;
@@ -91,7 +91,7 @@ class Analytics extends Auth {
         $ping = Registry::get("MongoDB")->ping;
         $record = $ping->findOne(array('record_id' => (int) $id, 'user_id' => (int) $this->user->id));
         if (!$record) {
-            self::redirect("/404");
+            $this->redirect("/404");
         }
         $c = $stats->count(array('ping_id' => $record['_id']));
 

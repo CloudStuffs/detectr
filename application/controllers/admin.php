@@ -173,7 +173,7 @@ class Admin extends Auth {
 
         $view->set("object", $object);
 
-        self::redirect($_SERVER['HTTP_REFERER']);
+        $this->redirect($_SERVER['HTTP_REFERER']);
     }
 
     /**
@@ -192,7 +192,7 @@ class Admin extends Auth {
         $view->set("deleted", true);
         
         if ($redirect) {
-            self::redirect($_SERVER['HTTP_REFERER']);    
+            $this->redirect($_SERVER['HTTP_REFERER']);    
         }
     }
 

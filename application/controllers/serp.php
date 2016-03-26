@@ -100,7 +100,7 @@ class Serp extends Admin {
 			$keyword->live = $live;
 			$keyword->save();
 		}
-		self::redirect($_SERVER['HTTP_REFERER']);
+		$this->redirect($_SERVER['HTTP_REFERER']);
 	}
 
 	/**

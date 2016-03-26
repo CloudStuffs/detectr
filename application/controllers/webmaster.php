@@ -23,7 +23,7 @@ class Webmaster extends Admin {
 		if ($code) {
 			$gClient->authenticate($code);
 			$session->set('Webmaster\Authenticate:$token', $gClient->getAccessToken());
-			self::redirect("/webmaster");
+			$this->redirect("/webmaster");
 		}
 	}
 
@@ -173,7 +173,7 @@ class Webmaster extends Admin {
 			$url = $gClient->createAuthUrl();
 			return array("url" => $url);
 		} elseif ($gClient->isAccessTokenExpired()) {
-			self::redirect($gClient->createAuthUrl());
+			$this->redirect($gClient->createAuthUrl());
 		} else {
 			return array("gClient" => $gClient);
 		}

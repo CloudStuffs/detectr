@@ -42,7 +42,7 @@ class Auth extends Plan {
                 if($user) {
                     if ($user->live) {
                         $this->session($user);
-                        self::redirect('/member/index.html');
+                        $this->redirect('/member/index.html');
                     } else {
                         $view->set("message", "Invalid login or user blocked");
                     }
@@ -60,7 +60,7 @@ class Auth extends Plan {
      */
     public function register($package_id = NULL) {
         if (!$package_id) {
-            self::redirect('/packages');
+            $this->redirect('/packages');
         }
         $this->seo(array("title" => "Register", "view" => $this->getLayoutView()));
         $view = $this->getActionView();
@@ -103,7 +103,7 @@ class Auth extends Plan {
                 $user->password = sha1(RequestMethods::post("password"));
                 $user->save();
                 $this->session($user);
-                self::redirect("/member");
+                $this->redirect("/member");
             } else{
                 $view->set("message", 'Password Does not match');
             }
@@ -180,7 +180,7 @@ class Auth extends Plan {
             }
         }
         if ($redirect) {
-            self::redirect("/member");
+            $this->redirect("/member");
         }
     }
 

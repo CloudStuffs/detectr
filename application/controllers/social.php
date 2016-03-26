@@ -95,7 +95,7 @@ class Social extends Serp {
 			$keyword->live = $live;
 			$keyword->save();
 		}
-		self::redirect(RequestMethods::server('HTTP_REFERER', '/member'));
+		$this->redirect(RequestMethods::server('HTTP_REFERER', '/member'));
 	}
 
 	/**
