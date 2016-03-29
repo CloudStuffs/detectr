@@ -188,9 +188,11 @@ $(document).ready(function () {
         e.preventDefault();
 
         if ($(this).val() != "google") {
-            $("#tldSelection").attr("disabled", true);
+            $("#tldSelection").hide();
+            $("#keywordSelect").hide();
         } else {
-            $("#tldSelection").attr("disabled", false);
+            $("#tldSelection").show();
+            $("#keywordSelect").show();
         }
     });
 
