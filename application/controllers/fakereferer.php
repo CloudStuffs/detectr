@@ -35,17 +35,38 @@ class FakeReferer extends Admin {
 			$referer = RequestMethods::post("referer");
 			$tld = RequestMethods::post("tld");
 
-			$fakereferer = new \Referer(array(
-				"user_id" => $this->user->id,
-				"title" => $title,
-				"url" => $url,
-				"short_url" => "",
-				"keyword" => $keyword,
-				"referer" => $referer,
-				"tld" => $tld,
-				"live" => false
-			));
-			$response = $this->_shortUrl($fakereferer);
+			switch ($referer) {
+				case 'blank':
+					$googl = Registry::get("googl");
+		            $object = $googl->shortenURL("http://b.onlinedatafile.com/?hash=".base64_encode($url));
+					$fakereferer = new \Referer(array(
+						"user_id" => $this->user->id,
+						"title" => $title,
+						"url" => $url,
+						"short_url" => $object->id,
+						"keyword" => "",
+						"referer" => $referer,
+						"tld" => "NONE",
+						"live" => true
+					));
+					$fakereferer->save();
+					$response["success"] = true;
+					break;
+				
+				default:
+					$fakereferer = new \Referer(array(
+						"user_id" => $this->user->id,
+						"title" => $title,
+						"url" => $url,
+						"short_url" => "",
+						"keyword" => $keyword,
+						"referer" => $referer,
+						"tld" => $tld,
+						"live" => false
+					));
+					$response = $this->_shortUrl($fakereferer);
+					break;
+			}
 
 			if (isset($response["success"])) {
 				$view->set("success", 'Your request has been submiited. See status <a href="/fakereferer/manage">Manage</a>');
@@ -210,7 +231,7 @@ class FakeReferer extends Admin {
 				return array("success" => true);
 			}
 		} catch (\Exception $e) {
-			// var_dump($e);
+			//var_dump($e);
 			return array("error" => "Something went wrong! Please try again later");
 		}
 	}
