@@ -47,20 +47,19 @@
                             <td>{echo $website->url}</td>
                             {if $t->live}
                             <td>
-                                <div class="label label-success">Approved</div>
+                                <div class="label label-success">Active</div>
                             </td>
                             {/if} {else}
                             <td>
-                                <div class="label label-warning">Unapproved</div>
+                                <div class="label label-warning">Inactive</div>
                             </td>
                             {/else}
                             <td>{echo Framework\StringMethods::only_date($t->created)}</td>
                             <td>
                                 {if $t->live}
-                                <a href="/detector/status/{echo $t->id}/0" class="btn btn-warning btn-xs"><i class="fa fa-times"></i> Disapprove</a>
-                                {/if}
-                                {else}
-                                <a href="/detector/status/{echo $t->id}/1" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Approve</a>
+                                <a href="/detector/status/{echo $t->id}/0" class="btn btn-warning btn-xs"><i class="fa fa-times"></i> Disable</a>
+                                {/if} {else}
+                                <a href="/detector/status/{echo $t->id}/1" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Enable</a>
                                 {/else}
                                 {script $action = Action::first(array("trigger_id = ?" => $t->id))}
                                 <a href="/detector/remove/{echo $t->id}/{echo $action->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash-o"></i> Delete</a>

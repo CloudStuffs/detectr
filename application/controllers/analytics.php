@@ -9,6 +9,14 @@ use Framework\Registry as Registry;
 use Framework\RequestMethods as RequestMethods;
 
 class Analytics extends Auth {
+    /**
+     * @protected
+     */
+    public function _admin() {
+        parent::_admin();
+        $this->defaultLayout = "layouts/admin";
+        $this->setLayout();
+    }
 
     /**
      * @before _secure, _admin
@@ -25,18 +33,26 @@ class Analytics extends Auth {
 
         $logs = array();
         $path = APP_PATH . "/logs";
-        try {
-            $iterator = new DirectoryIterator($path);
+        $iterator = new DirectoryIterator($path);
 
-            foreach ($iterator as $item) {
-                if (!$item->isDot()) {
-                    array_push($logs, $item->getFilename());
-                }
+        foreach ($iterator as $item) {
+            if (!$item->isDot() && substr($item->getFilename(), 0, 1) != ".") {
+                $logs[] = $item->getFilename();
             }
-        } catch (\Exception $e) {
-            $logs = array();
         }
+        arsort($logs);
 
+        // find the directory size
+        exec('du -h '. $path, $output, $return);
+        if ($return == 0) {
+            $output = array_pop($output);
+            $output = explode("/", $output);
+            $size = array_shift($output);
+            $size = trim($size);
+        } else {
+            $size = 'Failed to get size';
+        }
+        $view->set("size", $size);
         $view->set("logs", $logs);
     }
 

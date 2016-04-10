@@ -111,7 +111,7 @@ class CRON extends Auth {
     protected function _removeLogs() {
         $logs = Registry::get("MongoDB")->logs;
 
-        $date = strtotime("-30 day");
+        $date = strtotime("-20 day");
         $date = new \MongoDate($date);
         $logs->remove(array(
             'created' => array('$lte' => $date)

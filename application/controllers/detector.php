@@ -366,15 +366,25 @@ class Detector extends Admin {
 	}
 
 	/**
-	 * @before _secure, _admin
+	 * @before _secure
 	 */
 	public function status($id, $value) {
 		$m = strtolower($model);
 
 		$trigger = Registry::get("MongoDB")->triggers;
 		$live = (bool) ((int) $value);
-		$trigger->update(array('trigger_id' => (int) $id), array('$set' => array('live' => $live)));
-		parent::edit('trigger', $id, 'live', $value);
+		if ($this->user->admin) {
+			$trigger->update(array('trigger_id' => (int) $id), array('$set' => array('live' => $live)));
+			parent::edit('trigger', $id, 'live', $value);	
+		} else {
+			$trigger->update(array('trigger_id' => (int) $id, 'user_id' => $this->user->id), array('$set' => array('live' => $live)));
+			$t = Trigger::first(array("id = ?" => $id, "user_id = ?" => $this->user->id));
+			if ($t) {
+				$t->live = $value;
+				$t->save();
+			}
+			$this->redirect(RequestMethods::server('HTTP_REFERER', '/member'));
+		}
 	}
 
 	/**
@@ -398,8 +408,7 @@ class Detector extends Admin {
 
 		$logs = $mongo->logs;
 		$where = array('website_id' => (int) $website_id);
-		$page = RequestMethods::get("page", 1);
-        $limit = RequestMethods::get("limit", 30);
+		$page = RequestMethods::get("page", 1); $limit = RequestMethods::get("limit", 30);
         $count = $logs->count($where);
 
 		$cursor = $logs->find($where, array('_id' => false));

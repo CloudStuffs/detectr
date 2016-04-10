@@ -129,6 +129,7 @@ class Platform extends Member {
         }
 
         $mongo_db->selectCollection("website")->remove(array('website_id' => (int) $website->id), array('justOne' => true));
+        $mongo_db->selectCollection("logs")->remove(array('website_id' => (int) $website->id));
         $this->delete('Website', $website->id);
     }
 

@@ -26,7 +26,7 @@
                             <a href="/detector/logs/{echo $website->id}" class="btn btn-default btn-xs"><i class="fa fa-file-code-o"></i> Logs</a>
                             <a href="/detector/create/{echo $website->id}" class="btn btn-primary btn-xs"><i class="fa fa-link"></i> Create Trigger</a>
                             <a href="/detector/manage/{echo $website->id}" class="btn btn-success btn-xs"><i class="fa fa-list-ul"></i> Manage Triggers</a>
-                            <a href="/platform/removeWebsite/{echo $website->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
+                            <a href="/platform/removeWebsite/{echo $website->id}" data-message="Are you sure you want to remove this platform? It will delete all the data related to this platform!!" class="delete btn btn-danger btn-xs"><i class="fa fa-trash"></i> Remove</a>
                         </span>
                     </div>
                     {script $triggers = Trigger::all(array("website_id = ?" => $website->id, "user_id = ?" => $user->id, "live = ?" => true), array("title", "meta", "website_id", "user_id", "id", "live"))} {if ($triggers)}
@@ -61,7 +61,7 @@
                                     </td>
                                     <td>
                                         <a href="/detector/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i></a>
-                                        <a href="/detector/remove/{echo $trigger->id}/{echo $action->id}" class="delete btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
+                                        <a href="/detector/remove/{echo $trigger->id}/{echo $action->id}" data-message="Are you sure you want to remove this trigger?! (Action: Irreversible once done!!)" class="delete btn btn-danger btn-xs"><i class="fa fa-trash"></i></a>
                                     </td>
                                 </tr>
                                 {/foreach}

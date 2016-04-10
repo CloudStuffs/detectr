@@ -58,7 +58,12 @@
                                     </td>
                                     <td>
                                         <a href="/detector/edit/{echo $trigger->id}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
-                                        <a href="/detector/remove/{echo $trigger->id}/{echo $action->id}" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
+                                        {if $trigger->live}
+                                        <a href="/detector/status/{echo $trigger->id}/0" class="btn btn-warning btn-xs"><i class="fa fa-times"></i> Disable</a>
+                                        {/if} {else}
+                                        <a href="/detector/status/{echo $trigger->id}/1" class="btn btn-success btn-xs"><i class="fa fa-check"></i> Enable</a>
+                                        {/else}
+                                        <a href="/detector/remove/{echo $trigger->id}/{echo $action->id}" data-message="Are you sure you want to delete the trigger??" class="delete btn btn-danger btn-xs"><i class="fa fa-trash"></i> Delete</a>
                                     </td>
                                 </tr>
                                 {/foreach}

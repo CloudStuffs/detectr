@@ -176,8 +176,14 @@ $(document).ready(function () {
 
     $('.delete').click(function(e) {
         e.preventDefault();
-        var self = $(this);
-        bootbox.confirm("Are you sure, you want to proceed with the action?", function(result) {
+        var self = $(this), message = '';
+
+        if (self.data('message')) {
+            message += self.data('message');
+        } else {
+            message += 'Are you sure, you want to proceed with the action?!';
+        }
+        bootbox.confirm(message, function(result) {
             if (result) {
                 window.location.href = self.attr('href');
             }

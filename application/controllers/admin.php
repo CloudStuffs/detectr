@@ -10,6 +10,14 @@ use Framework\Registry as Registry;
 use Framework\ArrayMethods as ArrayMethods;
 
 class Admin extends Auth {
+    /**
+     * @protected
+     */
+    public function _admin() {
+        parent::_admin();
+        $this->defaultLayout = "layouts/admin";
+        $this->setLayout();
+    }
 
     /**
      * @before _secure, _admin
@@ -173,13 +181,13 @@ class Admin extends Auth {
 
         $view->set("object", $object);
 
-        $this->redirect($_SERVER['HTTP_REFERER']);
+        $this->redirect(RequestMethods::server('HTTP_REFERER', '/admin'));
     }
 
     /**
      * Deletes any model with given id
      * 
-     * @before _secure, changeLayout
+     * @before _secure, _admin
      * @param type $model the model object to be deleted
      * @param type $id the id of object to be deleted
      */
@@ -192,7 +200,7 @@ class Admin extends Auth {
         $view->set("deleted", true);
         
         if ($redirect) {
-            $this->redirect($_SERVER['HTTP_REFERER']);    
+            $this->redirect(RequestMethods::server('HTTP_REFERER', '/admin'));    
         }
     }
 
@@ -217,7 +225,7 @@ class Admin extends Auth {
         }
     }
 
-    public function sync($model) {
+    protected function sync($model) {
         $this->noview();
         $db = Framework\Registry::get("database");
         $db->sync(new $model);
