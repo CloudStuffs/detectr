@@ -19,7 +19,8 @@
   "dependencies": {
     "cheerio": "0.19.x",
     "mongoose": "^4.3.7",
-    "request": "2.67.x"
+    "request": "2.67.x",
+    "sleep": "^3.0.1"
   },
   "author": "Hemant Mann <hemant.mann121@gmail.com>",
   "license": "ISC",

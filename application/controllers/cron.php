@@ -20,23 +20,27 @@ class CRON extends Auth {
      * @before _secure
      */
     public function index() {
-        $this->log("CRON Started");
-        $this->_newsletters();
-        $this->log("Newsletters Sent");
-        $this->_serpRank();
-        $this->log("Serp Done");
-        $this->_social();
-        $this->log("Social Stats Done");
-        $this->_removeLogs();
-        $this->log("Removed older Logs");
-        $this->log("CRON Ended");
+        try {
+            $this->log("CRON Started");
+            $this->_newsletters();
+            $this->log("Newsletters Sent");
+            $this->_serpRank();
+            $this->log("Serp Done");
+            $this->_social();
+            $this->log("Social Stats Done");
+            $this->_removeLogs();
+            $this->log("Removed older Logs + obsolete records");
+            $this->log("CRON Ended");
+        } catch (\Exception $e) {
+            $this->log(print_r($e));
+        }
     }
 
     /**
      * Sends newsletter to User groups
      */
     protected function _newsletters() {
-        $now = strftime("%Y-%m-%d", strtotime('now'));
+        $now = date('Y-m-d');
         $emails = array();
         $newsletters = Newsletter::all(array("scheduled = ?" => $now));
         foreach ($newsletters as $n) {
@@ -84,28 +88,23 @@ class CRON extends Auth {
                 "link" => $k->link
             );
         }
-        Shared\Service\Serp::record($arr, true);
-    }
-
-    protected function _getRank($keyword) {
-        $return = false;
-        $response = Google::getSerps($keyword->keyword, 100, $keyword->link);
-        if ($response) {
-            $response = array_shift($response);
-            $return = $response["position"];
+        try {
+            Shared\Service\Serp::record($arr, true);
+        } catch (\Exception $e) {
+            $this->log($e->getMessage());
         }
-        return $return;
     }
 
     protected function _social() {
         try {
             $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => false));
         } catch (\Exception $e) {
-            return;
+            $this->log("Error in getting Social Link Stats");
         }
 
         foreach ($keywords as $k) {
             Shared\Service\Social::record($k);
+            sleep(2); // to prevent bandwidth load
         }
     }
 
@@ -113,7 +112,14 @@ class CRON extends Auth {
         $logs = Registry::get("MongoDB")->logs;
 
         $date = strtotime("-30 day");
+        $date = new \MongoDate($date);
         $logs->remove(array(
+            'created' => array('$lte' => $date)
+        ));
+
+        $ping_stats = Registry::get("MongoDB")->ping_stats;
+        $date = new \MongoDate(strtotime("-5 day"));
+        $ping_stats->remove(array(
             'created' => array('$lte' => $date)
         ));
     }

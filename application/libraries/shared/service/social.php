@@ -44,7 +44,7 @@ class Social {
             $responses = $social_stats->getResponses();
             return $responses;
         } catch (\Exception $e) {
-            // die($e->getMessage());
+        	return [];
         }
 	}
 }

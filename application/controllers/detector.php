@@ -43,7 +43,7 @@ class Detector extends Admin {
 				"func" => function ($inputs) {
 					return 'header("Location: '.$inputs.'");exit;';
 				},
-				"help" => "Enter the location where to redirect"
+				"help" => "Enter the location (URL) where to redirect. Eg: http://www.google.com/"
 			),
 			"4" => array(
 				"title" => "POST Values",
@@ -194,7 +194,7 @@ class Detector extends Admin {
 			"11" => array(
 				"title" => "Referrer",
 				"verify" => function ($inputs) {},
-				"help" => "URL from which the visit was done"
+				"help" => "URL (http://domain.com/search) from which the visit was done. Leave field empty for making a trigger on 'Blank' Referrers"
 			),
 			"12" => array(
 				"title" => "Active Login",

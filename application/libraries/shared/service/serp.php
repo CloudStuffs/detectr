@@ -35,7 +35,7 @@ class Serp {
 
 	private static function execute($file, $content, $cmd = '') {
 		if (file_put_contents($file, json_encode($content)) === false) {
-			throw new \Exception("Something went wrong", 1);
+			throw new \Exception("Unable to write content file for -----SERP stats----", 1);
 		}
 		
 		exec('node '. APP_PATH.'/application/libraries/NodeSEO/index.js ' . $cmd);

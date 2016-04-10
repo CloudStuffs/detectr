@@ -1,6 +1,7 @@
 var scraper = require('./scraper'),
     Rank = require('../models/rank'),
-    mongoose = require('mongoose');
+    mongoose = require('mongoose'),
+    sleep = require('sleep');
 
 var Serp = (function (Rank, scraper, mongoose) {
     'use strict';
@@ -69,6 +70,7 @@ var Serp = (function (Rank, scraper, mongoose) {
                     top;
                 // set keyword before scraping
                 self.scraper.options.keyword = keyword.keyword;
+                sleep(5);
                 try {
                     self.scraper.getSerps(keyword.link, function (results) {
                         self.counter++;

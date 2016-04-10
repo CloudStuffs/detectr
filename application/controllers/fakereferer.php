@@ -207,7 +207,9 @@ class FakeReferer extends Admin {
 	protected function _shortUrl($referer) {
 		if ($referer->referer == "google") {
 			exec("node ". APP_PATH.'/application/libraries/NodeSEO/fakereferer.js '. "'{$referer->url}'", $output, $return);
-			if ($return !== 0) {
+			if ($return !== 0) { // Most probable cause: Server IP Blocked by Google
+				$this->log('******** Error ********');
+				$this->log('Fake Referer not working');
 				return ["error" => "Something went wrong"];
 			}
 
