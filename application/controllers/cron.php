@@ -98,13 +98,12 @@ class CRON extends Auth {
     protected function _social() {
         try {
             $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => false));
+            foreach ($keywords as $k) {
+                Shared\Service\Social::record($k);
+                sleep(2); // to prevent bandwidth load
+            }
         } catch (\Exception $e) {
             $this->log("Error in getting Social Link Stats");
-        }
-
-        foreach ($keywords as $k) {
-            Shared\Service\Social::record($k);
-            sleep(2); // to prevent bandwidth load
         }
     }
 

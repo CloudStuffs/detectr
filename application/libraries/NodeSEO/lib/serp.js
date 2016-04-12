@@ -70,7 +70,7 @@ var Serp = (function (Rank, scraper, mongoose) {
                     top;
                 // set keyword before scraping
                 self.scraper.options.keyword = keyword.keyword;
-                sleep(5);
+                sleep.sleep(5);
                 try {
                     self.scraper.getSerps(keyword.link, function (results) {
                         self.counter++;
