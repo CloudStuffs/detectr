@@ -97,23 +97,28 @@ class Analytics extends Auth {
         $this->JSONview();
         $view = $this->getActionView();
 
-        $id = RequestMethods::get("record");
-        if (!$id) {
+        $url = (RequestMethods::get("link"));
+        if (!$url) {
             $this->redirect("/404");
         }
 
         $count = 0;
         $stats = Registry::get("MongoDB")->ping_stats;
         $ping = Registry::get("MongoDB")->ping;
-        $record = $ping->findOne(array('record_id' => (int) $id, 'user_id' => (int) $this->user->id));
+        $record = $ping->findOne(array('url' => $url, 'user_id' => (int) $this->user->id));
         if (!$record) {
             $this->redirect("/404");
         }
-        $c = $stats->count(array('ping_id' => $record['_id']));
+        $count = $stats->count(array('ping_id' => $record['_id']));
 
-        $stat = $stats->findOne(array('ping_id' => $record['_id']));
-        $live = $stat['latency'];
-        $count += $c;
+        $cursor = $stats->find(array('ping_id' => $record['_id']));
+        $cursor->sort(['created' => -1]);
+        $cursor->limit(1);
+
+        foreach ($cursor as $c) {
+            $live = $c['latency'];
+        }
+        $count += $count;
 
         $view->set("count", $count)
             ->set("status", ($live === false) ? "down" : "up")

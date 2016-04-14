@@ -3,7 +3,7 @@ var scraper = require('./lib/scraper');
 var uri = process.argv[2],
     options = {
         keyword: uri,
-        num: 100,
+        num: 10,
         language: "en",
         tld: "com"
     },

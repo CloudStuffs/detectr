@@ -32,14 +32,12 @@ class Ping extends Admin {
 
             $record = $ping->findOne(array('user_id' => (int) $this->user->id, 'url' => $url));
             if ($record) {
-                $view->set("success", "Ping already created! Go to <a href='/ping/edit/".$record['record_id']."'>Edit</a>");
+                $view->set("success", "Ping already created! Go to <a href='/ping/edit/". $record['url'] ."'>Edit</a>");
                 return;
             }
 
-            $count = $ping->count();
             $ping->insert(array(
                 "user_id" => (int) $this->user->id,
-                "record_id" => $count + 1,
                 "title" => RequestMethods::post('title'),
                 "url" => $url,
                 "interval" => RequestMethods::post('interval'),
@@ -54,28 +52,27 @@ class Ping extends Admin {
     /**
      * @before _secure, memberLayout
      */
-    public function edit($id) {
+    public function edit() {
         $this->seo(array("title" => "Ping | Edit","view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
+        $url = RequestMethods::get("link");
+
         $ping = Registry::get('MongoDB')->ping;
-        $record = $ping->findOne(array('record_id' => (int) $id));
+        $search = ['url' => $url, 'user_id' => (int) $this->user->id];
+        $record = $ping->findOne($search);
         if (!$record) {
             $this->redirect('/member/index');
         }
 
         if (RequestMethods::post('title')) {
-            $time = strtotime(date('d-m-Y H:i:s'));
-            $mongo_date = new MongoDate($time);
-
-            $ping->update(array("record_id"=> (int) $id), array(
+            $ping->update($search, array(
                 '$set' => array(
                     "title" => RequestMethods::post('title'),
-                    "interval" => RequestMethods::post('interval'),
-                    "modified" => $mongo_date,
+                    "interval" => RequestMethods::post('interval')
                 )
             ));
-            $record = $ping->findOne(array('record_id' => (int) $id));
+            $record = $ping->findOne($search);
             $view->set("success", "Updated!!");
         }
         $view->set('title', $record['title'])
@@ -90,11 +87,9 @@ class Ping extends Admin {
         $this->seo(array("title" => "Ping | Manage","view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
-        $mongo = Registry::get('MongoDB');
-        $ping = $mongo->ping;
+        $ping = Registry::get('MongoDB')->ping;
 
-        $page = RequestMethods::get("page", 1);
-        $limit = RequestMethods::get("limit", 30);
+        $page = RequestMethods::get("page", 1); $limit = RequestMethods::get("limit", 30);
         $where = array('live' => 1, 'user_id' => (int) $this->user->id);
         $count = $ping->count($where);
         
@@ -103,7 +98,7 @@ class Ping extends Admin {
         $records->limit($limit);
         $records->sort(array('created' => -1));
         
-        $result = array();
+        $result = [];
         foreach ($records as $r) {
             $result[] = $r;
         }
@@ -113,22 +108,24 @@ class Ping extends Admin {
             ->set('limit', $limit)
             ->set('count', $count);
     }
-/*
-    public function hits(){
-        $url, $user_id
-        $view->set('c')
-    }
-*/
+
     /**
      * @before _secure, memberLayout
      */
-    public function remove($id){
+    public function remove() {
         $mongo = Registry::get('MongoDB');
 
+        $url = RequestMethods::get("link");
         $ping = $mongo->ping;
-        $ping->update(array("record_id" => (int) $id), array(
-            '$set' => array("live" => 0)
-        ));
+        $search = ['url' => $url, 'user_id' => (int) $this->user->id];
+        $r = $ping->findOne($search);
+        if (!$r) {
+            $this->redirect('/ping/manage');
+        }
+
+        $ping_stats = $mongo->ping_stats;
+        $ping_stats->remove(['ping_id' => $r['_id']]);
+        $ping->remove($search, ['justOne' => true]);
 
         $this->redirect('/ping/manage');
     }
@@ -136,13 +133,15 @@ class Ping extends Admin {
     /**
      * @before _secure, memberLayout
      */
-    public function stats($record_id) {
+    public function stats() {
         $this->seo(array("title" => "Ping | Stats","view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
+        $url = RequestMethods::get("link");
         $ping = Registry::get("MongoDB")->ping;
-        $record = $ping->findOne(array('record_id' => (int) $record_id));
-        if (!$record || $record['user_id'] != $this->user->id) {
+        $search = array('user_id' => (int) $this->user->id, 'url' => $url);
+        $record = $ping->findOne($search);
+        if (!$record) {
             $this->redirect("/404");
         }
 
@@ -152,7 +151,7 @@ class Ping extends Admin {
 
         $ping_stats = Registry::get("MongoDB")->ping_stats;
         $records = $ping_stats->find(array(
-            'record_id' => (int) $record_id,
+            'ping_id' => $record['_id'],
             'created' => array(
                 '$gte' => new \MongoDate($start_time),
                 '$lte' => new \MongoDate($end_time)

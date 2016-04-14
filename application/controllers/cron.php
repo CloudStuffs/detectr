@@ -103,6 +103,7 @@ class CRON extends Auth {
                 sleep(2); // to prevent bandwidth load
             }
         } catch (\Exception $e) {
+            $this->log(print_r($e));
             $this->log("Error in getting Social Link Stats");
         }
     }
@@ -117,7 +118,7 @@ class CRON extends Auth {
         ));
 
         $ping_stats = Registry::get("MongoDB")->ping_stats;
-        $date = new \MongoDate(strtotime("-5 day"));
+        $date = new \MongoDate(strtotime("-4 day"));
         $ping_stats->remove(array(
             'created' => array('$lte' => $date)
         ));

@@ -56,17 +56,20 @@ class Serp extends Admin {
 	 */
 	public function stats($keyword_id) {
 		$keyword = \Keyword::first(array("id = ?" => $keyword_id, "serp = ?" => true));
-		$this->_authority($keyword);
-		if ($keyword->live) {
-			Shared\Service\Serp::record(array($keyword));	
+		$this->_authority($keyword); $rank = Registry::get("MongoDB")->rank;
+
+		$r = $rank->findOne(['keyword_id' => (int) $keyword->id, 'created' => date('Y-m-d')]);
+		if ($keyword->live && !$r) {
+			try {
+				Shared\Service\Serp::record(array($keyword));	
+			} catch (\Exception $e) {}
+			
 		}
 		$end_date = RequestMethods::get("enddate", date("Y-m-d"));
 		$start_date = RequestMethods::get("startdate", date("Y-m-d", strtotime($end_date."-7 day")));
 
 		$this->seo(array("title" => "Serp | Stats","view" => $this->getLayoutView()));
 		$view = $this->getActionView();
-
-		$rank = Registry::get("MongoDB")->rank;
 		
 		$start_time = strtotime($start_date); $end_time = strtotime($end_date); $i = 0;
 

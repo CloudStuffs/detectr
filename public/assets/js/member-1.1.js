@@ -278,11 +278,12 @@ $(document).ready(function () {
     $('.pingStats').on('click', function (e) {
         e.preventDefault();
         var item = $(this),
-            status = $('#status_' + item.data('record'));
+            status = $('#status_' + item.data('pingid'));
         item.html('<i class="fa fa-spinner fa-pulse"></i>');
+
         request.read({
             action: 'analytics/ping',
-            data: {record: item.data('record')},
+            data: {link: item.data('record')},
             callback: function (data) {
                 if (data.success) {
                     item.html('Pinged: ' + data.count);

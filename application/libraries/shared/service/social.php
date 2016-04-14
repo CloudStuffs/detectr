@@ -40,11 +40,7 @@ class Social {
 
 	private static function getStats($url) {
 		$social_stats = new SocialLinks($url);
-        try {
-            $responses = $social_stats->getResponses();
-            return $responses;
-        } catch (\Exception $e) {
-        	return [];
-        }
+        $responses = $social_stats->getResponses();
+        return $responses;
 	}
 }

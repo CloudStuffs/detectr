@@ -32,8 +32,8 @@
                             <td>{echo $ping['title']}</td>
                             <td>{echo $ping['url']}</td>
                             <td>{echo $ping['interval']}</td>
-                            <td class="pingStats" data-record="{echo $ping['record_id']}"><span class="label label-info">Click Me !!</span></td>
-                            <td id="status_{echo $ping['record_id']}"></td>
+                            <td class="pingStats" data-record="{echo ($ping['url'])}" data-pingid="{echo $ping['_id']}"><span class="label label-info">Click Me !!</span></td>
+                            <td id="status_{echo $ping['_id']}"></td>
                             <td>
                                 {script $date = date('Y-m-d', $ping['created']->sec)}
                                 {echo Framework\StringMethods::only_date($date)}
@@ -41,9 +41,9 @@
                                 
                             <td>
 
-                                <a href="/ping/edit/{echo $ping['record_id']}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
-                                <a href="/ping/stats/{echo $ping['record_id']}" class="btn btn-primary btn-xs"><i class="fa fa-space-shuttle"></i> Stats</a>
-                                <a href="/ping/remove/{echo $ping['record_id']}" class="btn btn-danger btn-xs delete"><i class="fa fa-trash-o"></i> Delete</a>
+                                <a href="/ping/edit?link={echo $ping['url']}" class="btn btn-info btn-xs"><i class="fa fa-edit"></i> Edit</a>
+                                <a href="/ping/stats?link={echo $ping['url']}" class="btn btn-primary btn-xs"><i class="fa fa-space-shuttle"></i> Stats</a>
+                                <a href="/ping/remove?link={echo $ping['url']}" data-message="Are you sure want to delete this ping?" class="btn btn-danger btn-xs delete"><i class="fa fa-trash-o"></i> Delete</a>
 
                             </td>
                         </tr>

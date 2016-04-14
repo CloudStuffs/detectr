@@ -38,7 +38,12 @@ class Serp {
 			throw new \Exception("Unable to write content file for -----SERP stats----", 1);
 		}
 		
-		exec('node '. APP_PATH.'/application/libraries/NodeSEO/index.js ' . $cmd);
+		$command = 'node '. APP_PATH.'/application/libraries/NodeSEO/index.js ' . $cmd;
+		$command .= ' &>> ' . APP_PATH .'/logs/' . date('Y-m-d') . '.txt';
+		exec($command, $output, $return);
+		if ($return != 0) {
+			throw new \Exception('Unable to fetch Serp data');
+		}
 		unlink($file);
 	}
 
