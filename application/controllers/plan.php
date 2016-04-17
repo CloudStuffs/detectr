@@ -120,6 +120,9 @@ class Plan extends Shared\Controller {
 					$parsed->payment->paypal->clientid, $parsed->payment->paypal->secret
 				)
 			);
+            $apiContext->setConfig(array(
+                'mode' => 'live'
+            ));
             return $apiContext;
         }
 	}

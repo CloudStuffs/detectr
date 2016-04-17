@@ -14,6 +14,16 @@ class Platform extends Member {
      * @before _secure, memberLayout
      */
     public function index() {
+        if (RequestMethods::get("download")) {
+            $this->noview();
+            $file = APP_PATH . '/public/detector.txt';
+            header("Content-Type: application/octet-stream; "); 
+            header("Content-Transfer-Encoding: binary"); 
+            header("Content-Length: ". filesize($file).";"); 
+            header("Content-disposition: attachment; filename=" . 'trafficmonitor.php');
+            readfile($file);
+            return;
+        }
         $this->seo(array("title" => "Dashboard","view" => $this->getLayoutView()));
         $view = $this->getActionView();
 
