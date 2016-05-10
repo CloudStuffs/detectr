@@ -26,6 +26,14 @@ class Subscription extends Shared\Model {
     /**
      * @column
      * @readwrite
+     * @type integer
+     * @index
+     */
+    protected $_period;
+
+    /**
+     * @column
+     * @readwrite
      * @type date
      * @label expiry date
      */

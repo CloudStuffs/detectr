@@ -18,7 +18,7 @@ class Home extends Controller {
         $view = $this->getActionView();
 
         $ps = array();
-        $packages = Package::all(array("live = ?" => 1));
+        $packages = Package::all(array("live = ?" => 1), array("*"), "created", "desc");
         foreach ($packages as $p) {
         	$is = array();
         	$items = json_decode($p->item);

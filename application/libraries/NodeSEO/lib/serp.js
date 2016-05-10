@@ -73,7 +73,6 @@ var Serp = (function (Rank, scraper, mongoose) {
                 sleep.sleep(5);
                 try {
                     self.scraper.getSerps(keyword.link, function (results) {
-                        self.counter++;
                         if (results.length === 0) {
                             self._saveRank(-1, keyword);
                             return;
@@ -83,7 +82,6 @@ var Serp = (function (Rank, scraper, mongoose) {
                         self._saveRank(top.position, keyword);
                     });
                 } catch (ex) {
-                    self.counter++;
                     self._saveRank(-2, keyword);
                     console(ex);
                 }
@@ -103,6 +101,7 @@ var Serp = (function (Rank, scraper, mongoose) {
                         throw err;
                     }
 
+                    self.counter++;
                     console.log('Rank saved');
                     // disconnect if all the records are saved
                     if (self.counter === self.total) {

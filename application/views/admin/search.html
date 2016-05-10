@@ -8,6 +8,7 @@
                         <label class="sr-only">Table</label>
                         <select name="model" class="form-control" value="{$model}" id="searchModel">
                             {script $models = Shared\Markup::models()}
+                            {script asort($models)}
                             {foreach $m in $models}
                             <option value="{echo $m}">{echo ucfirst($m)}</option>
                             {/foreach}
@@ -25,8 +26,8 @@
                 <div class="form-group">
                     <div class="input-group">
                         <label class="sr-only">Sign</label>
-                        <select name="sign" class="form-control" value="{$sign}">
-                            <option value="equal">Equal</option>
+                        <select name="sign" class="form-control">
+                            <option value="equal" selected="">Equal</option>
                             <option value="like">Like</option>
                         </select>
                     </div>

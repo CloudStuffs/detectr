@@ -103,7 +103,7 @@ class Serp extends Admin {
 			$keyword->live = $live;
 			$keyword->save();
 		}
-		$this->redirect($_SERVER['HTTP_REFERER']);
+		$this->redirect(RequestMethods::server('HTTP_REFERER', '/member'));
 	}
 
 	/**

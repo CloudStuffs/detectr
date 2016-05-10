@@ -186,10 +186,25 @@ class Plan extends Shared\Controller {
 
     protected function pay($package_id, $user) {
     	$package = Package::first(array("id = ?" => $package_id));
-    	if ($package) {
+    	if ($package && (int) $package->price !== 0) {
     		$url = $this->initializePay($package, $user);
     		$this->redirect($url);
-    	}
+    	} else {
+            $transaction = Transaction::first(["user_id = ?" => $user->id, "property = ?" => "package", "property_id = ?" => $package->id]);
+            if (!$transaction) {
+                $transaction = new Transaction([
+                    'user_id' => $user->id,
+                    'property' => 'package',
+                    'property_id' => $package->id,
+                    'payment_id' => 'free',
+                    'amount' => $package->price,
+                    'live' => 1
+                ]);   
+            }
+
+            $transaction->save();
+            $this->addSubscription($transaction);
+        }
     }
 
     public function success() {
@@ -212,8 +227,7 @@ class Plan extends Shared\Controller {
     				}
     			}
     		} catch (Exception $e) {
-    			echo "<pre>", print_r($e), "</pre>";
-    			die();
+    			die('Error, Please contact to info@trafficmonitor.ca');
     		}
     	} else {
     		die('Error, Please contact to info@trafficmonitor.ca');
@@ -221,17 +235,20 @@ class Plan extends Shared\Controller {
     }
 
     protected function addSubscription($transaction) {
-        $package = Package::first(array("id = ?" => $transaction->package_id));
+        $package = Package::first(array("id = ?" => $transaction->property_id));
         $items = json_decode($package->item);
         $user = User::first(array("id = ?" => $transaction->user_id));
         $user->live = 1;
         $user->save();
+
+        $days = (int) $package->period;
         foreach ($items as $key => $value) {
             $s = new Subscription(array(
                 "user_id" => $user->id,
                 "item_id" => $value,
-                "period" => 30,
-                "expiry" => strftime("%Y-%m-%d", strtotime('+31 Day')),
+                "period" => $days,
+                "expiry" => strftime("%Y-%m-%d", strtotime("+" . ($days + 1) . " Day")),
+                "is_promo" => false
             ));
             $s->save();
         }
