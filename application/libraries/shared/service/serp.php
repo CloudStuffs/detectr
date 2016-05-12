@@ -22,9 +22,7 @@ class Serp {
 				'created' => $today
 			));
 
-			if (isset($record)) {
-				return;
-			}
+			if (isset($record)) return;
 
 			$file = dirname(__FILE__) . '/' . uniqid() . '.json';
 			self::execute($file, array($k), $file);

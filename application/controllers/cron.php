@@ -24,12 +24,14 @@ class CRON extends Auth {
             $this->log("CRON Started");
             $this->_newsletters();
             $this->log("Newsletters Sent");
-            $this->_serpRank();
-            $this->log("Serp Done");
             $this->_social();
             $this->log("Social Stats Done");
             $this->_removeLogs();
             $this->log("Removed older Logs + obsolete records");
+
+            $this->_serpRank();
+            $this->log("Serp Done");
+
             $this->log("CRON Ended");
         } catch (\Exception $e) {
             $this->log(print_r($e));
@@ -81,17 +83,12 @@ class CRON extends Auth {
 
         $arr = array();
         foreach ($keywords as $k) {
-            $arr[] = array(
-                "keyword_id" => (int) $k->id,
-                "user_id" => (int) $k->user_id,
-                "keyword" => $k->keyword,
-                "link" => $k->link
-            );
-        }
-        try {
-            Shared\Service\Serp::record($arr, true);
-        } catch (\Exception $e) {
-            $this->log($e->getMessage());
+            try {
+                Shared\Service\Serp::record([$k]);
+            } catch (\Exception $e) {
+                $this->log($e->getMessage());
+            }
+            sleep(30); // sleep 30 seconds for every crawl
         }
     }
 
