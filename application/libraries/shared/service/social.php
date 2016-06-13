@@ -19,9 +19,7 @@ class Social {
 			'created' => $today
 		));
 
-		if (isset($record)) {
-		    return false;
-		}
+		if (isset($record)) return false;
 
 		$responses = self::getStats($k->link);
 		foreach ($responses as $r) {

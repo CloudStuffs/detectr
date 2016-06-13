@@ -1,6 +1,7 @@
 <?php
 
 namespace Shared\Service;
+use Framework\ArrayMethods as ArrayMethods;
 use Framework\Registry as Registry;
 
 /**
@@ -36,8 +37,8 @@ class Serp {
 			throw new \Exception("Unable to write content file for -----SERP stats----", 1);
 		}
 		
-		$command = 'node '. APP_PATH.'/application/libraries/NodeSEO/index.js ' . $cmd;
-		$command .= ' &>> ' . APP_PATH .'/logs/' . date('Y-m-d') . '.txt';
+		$command = '/usr/local/bin/node '. APP_PATH.'/application/libraries/NodeSEO/index.js ' . $cmd;
+		$command .= ' >> ' . APP_PATH .'/logs/' . date('Y-m-d') . '.txt 2>&1';
 		exec($command, $output, $return);
 		if ($return != 0) {
 			throw new \Exception('Unable to fetch Serp data');
@@ -46,12 +47,11 @@ class Serp {
 	}
 
 	private static function makeObject($k) {
-		$obj = array(
-			"keyword_id" => (int) $k->id,
-			"user_id" => (int) $k->user_id,
-			"keyword" => $k->keyword,
-			"link" => $k->link
-		);
-		return $obj;
+		return ArrayMethods::toObject([
+					"keyword_id" => (int) $k->id,
+					"user_id" => (int) $k->user_id,
+					"keyword" => $k->keyword,
+					"link" => $k->link
+				]);
 	}
 }

@@ -24,13 +24,14 @@ class CRON extends Auth {
             $this->log("CRON Started");
             $this->_newsletters();
             $this->log("Newsletters Sent");
-            $this->_social();
-            $this->log("Social Stats Done");
             $this->_removeLogs();
             $this->log("Removed older Logs + obsolete records");
 
             $this->_serpRank();
             $this->log("Serp Done");
+
+            $this->_social();
+            $this->log("Social Stats Done");
 
             $this->log("CRON Ended");
         } catch (\Exception $e) {
@@ -44,7 +45,7 @@ class CRON extends Auth {
     protected function _newsletters() {
         $now = date('Y-m-d');
         $emails = array();
-        $newsletters = Newsletter::all(array("scheduled = ?" => $now));
+        $newsletters = Newsletter::all(array("scheduled = ?" => $now), array("template_id", "group_id"));
         foreach ($newsletters as $n) {
             $template = Template::first(array("id = ?" => $n->template_id));
             $group = Group::first(array("id = ?" => $n->group_id), array("users"));
@@ -77,24 +78,26 @@ class CRON extends Auth {
 
     /**
      * Check SERP stats
+     * Error: Showing MySql server has gone away,
+     * Possible solutions: Add Limit + page (2nd store in mongoDB)
      */
     protected function _serpRank() {
-        $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => true));
+        try {
+            $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => true), array("id", "user_id", "keyword", "link"));
 
-        $arr = array();
-        foreach ($keywords as $k) {
-            try {
+            $arr = array();
+            foreach ($keywords as $k) {
                 Shared\Service\Serp::record([$k]);
-            } catch (\Exception $e) {
-                $this->log($e->getMessage());
+                sleep(30); // sleep 30 seconds for every crawl
             }
-            sleep(30); // sleep 30 seconds for every crawl
+        } catch (\Exception $e) {
+            $this->log($e->getMessage());
         }
     }
 
     protected function _social() {
         try {
-            $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => false));
+            $keywords = Keyword::all(array("live = ?" => true, "serp = ?" => false), array("id", "user_id", "link"));
             foreach ($keywords as $k) {
                 Shared\Service\Social::record($k);
                 sleep(2); // to prevent bandwidth load
@@ -106,7 +109,8 @@ class CRON extends Auth {
     }
 
     protected function _removeLogs() {
-        $logs = Registry::get("MongoDB")->logs;
+        $mongoDB = Registry::get("MongoDB");
+        $logs = $mongoDB->logs;
 
         $date = strtotime("-20 day");
         $date = new \MongoDate($date);
@@ -114,7 +118,20 @@ class CRON extends Auth {
             'created' => array('$lte' => $date)
         ));
 
-        $ping_stats = Registry::get("MongoDB")->ping_stats;
+        $ping_stats = $mongoDB->ping_stats;
+        $pings = $mongoDB->ping;
+
+        // minutely - should be removed more than 2 days old
+        $find = $pings->find(array("interval" => "Minutely"));
+        $date = new \MongoDate(strtotime("-1 day"));
+        foreach ($find as $f) {
+            $ping_stats->remove(array(
+                'ping_id' => $f['_id'],
+                'created' => array('$lte' => $date)
+            ));
+        }
+
+        // else remove more than 4 days old
         $date = new \MongoDate(strtotime("-4 day"));
         $ping_stats->remove(array(
             'created' => array('$lte' => $date)
